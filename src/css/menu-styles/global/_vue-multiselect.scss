@@ -1,0 +1,218 @@
+@use "../variables";
+/* Start:: vue - multiselect */
+:root {
+  --ms-dropdown-bg: #{variables.$form-control-bg};
+  --ms-dropdown-border-color: #{variables.$input-border} !important;
+  --ms-dropdown-radius: #{variables.$default-radius};
+  --ms-option-bg-selected-pointed: var(--primary-color);
+  --ms-option-bg-selected: var(--primary-color);
+  --ms-option-bg-pointed: rgba(var(--light-rgb), 0.25);
+  --ms-option-color-pointed: var(--primary-color);
+}
+.multiselect.is-active {
+  box-shadow: none !important;
+}
+.form-group {
+  .multiselect {
+    color: variables.$text-muted !important;
+  }
+}
+
+.multiselect {
+  min-height: 40px !important;
+  max-height: 48px !important;
+  height: auto;
+}
+
+[dir="rtl"] {
+  .multiselect-option {
+    direction: rtl;
+  }
+}
+
+.input-group-btn {
+  .multiselect {
+    border: 0;
+    border-start-end-radius: 0 !important;
+    border-end-end-radius: 0 !important;
+  }
+}
+
+.multiselect.form-control-sm {
+  height: calc(1.5em + 0.5rem + calc(var(--bs-border-width) * 2)) !important;
+}
+
+.multiselect__single,
+.multiselect__input,
+.multiselect-placeholder {
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 70%;
+}
+
+.multiselect,
+.multiselect__content-wrapper {
+  background-color: variables.$form-control-bg !important;
+  border: 0.1px solid variables.$input-border !important;
+  border-radius: 0.35rem !important;
+}
+
+.multiselect-group-left {
+  border-end-end-radius: 0 !important;
+  border-start-end-radius: 0 !important;
+}
+
+.multiselect {
+  color: variables.$default-text-color !important;
+  line-height: 1.2rem !important;
+  border: 1px solid variables.$input-border !important;
+  border-radius: 0.35rem;
+}
+
+.multiselect__option--selected {
+  background-color: variables.$primary !important;
+  color: variables.$white !important;
+}
+
+.multiselect__option--highlight,
+.multiselect__option--group {
+  background-color: variables.$default-background !important;
+  color: variables.$default-text-color !important;
+}
+
+.multiselect__tags,
+.multiselect__single {
+  background: transparent !important;
+  border: none !important;
+}
+.tags-multiselect {
+  .multiselect__tags {
+    background: variables.$form-control-bg !important;
+    border: 1px solid variables.$input-border !important;
+    display: inline-block;
+    width: 100%;
+  }
+  .multiselect {
+    background: transparent !important;
+    border: none !important;
+    display: inline-block;
+  }
+}
+
+.multiselect__tags {
+  min-height: 38px !important;
+}
+
+.multiselect__tag {
+  background-color: var(--primary-color) !important;
+}
+
+.multiselect__placeholder {
+  margin: 0 !important;
+}
+
+.multiselect__input {
+  height: 1.5rem;
+  margin: 0 !important;
+  background-color: variables.$form-control-bg !important;
+  color: variables.$default-text-color !important;
+}
+
+.multiselect__placeholder,
+.multiselect__input {
+  text-wrap: nowrap;
+  width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.multiselect.input-group-multipselect {
+  max-width: 100px;
+  min-width: 40px;
+}
+
+html[dir="rtl"]
+  .input-group
+  > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(
+    .valid-feedback
+  ):not(.invalid-tooltip):not(.invalid-feedback) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+html:not([dir="rtl"])
+  .input-group
+  > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(
+    .valid-feedback
+  ):not(.invalid-tooltip):not(.invalid-feedback) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.multiselect__option {
+  font-size: 14px;
+  padding: 10px !important;
+}
+
+.multiselect__placeholder {
+  margin-bottom: 0;
+  color: var(--default-text-color) !important;
+  opacity: 0.5;
+}
+
+.multiselect,
+.multiselect__input,
+.multiselect__single {
+  font-size: 14px !important;
+}
+
+.multiselect__input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.multiselect--above .multiselect__content-wrapper {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: 5px !important;
+  border-top-right-radius: 5px !important;
+}
+
+.rounded-0 {
+  border-radius: 0 !important;
+}
+
+.multiselect__tag .multiselect__tag-icon::after {
+  color: var(--gray-1);
+}
+
+@media (max-width: 622px) {
+  .multiselect.form-select {
+    width: 90% !important;
+  }
+}
+
+.multiselect.form-select.rounded-0 {
+  border-radius: 0 !important;
+}
+
+.multiselect--disabled .multiselect__current,
+.multiselect--disabled .multiselect__select {
+  background: var(--body-bg-rgb);
+  color: #a6a6a6;
+}
+//multiselect
+.multiselect {
+  border-radius: 0.35rem !important;
+  .multiselect-option {
+    font-size: 14px !important;
+  }
+}
+.form-group .multiselect {
+  border-radius: 0.35rem !important;
+}
+
+.multiselect-dropdown {
+  z-index: 99 !important;
+}
+/* End:: vue - multiselect */

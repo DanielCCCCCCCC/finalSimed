@@ -1,0 +1,47 @@
+{
+  "name": "simedq",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "productName": "SIMED",
+  "author": "Daniel Claros <daniellopez8350@gmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "sass": "sass ./src/assets/scss:./src/assets/css/",
+    "sass-min": "sass ./src/assets/scss:./src/assets/css/ --style compressed"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.4",
+    "@supabase/supabase-js": "^2.46.1",
+    "apexcharts": "^4.1.0",
+    "axios": "^1.2.1",
+    "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
+    "devextreme": "^23.1.5",
+    "devextreme-vue": "^23.1.5",
+    "pinia": "^2.0.11",
+    "quasar": "^2.16.0",
+    "simplebar": "^6.2.7",
+    "simplebar-vue": "^2.3.5",
+    "uuid": "^11.0.3",
+    "vue": "^3.4.18",
+    "vue-router": "^4.0.12",
+    "vue3-apexcharts": "^1.8.0"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^1.9.0",
+    "autoprefixer": "^10.4.2",
+    "postcss": "^8.4.14",
+    "prettier": "^2.5.1",
+    "sass": "^1.81.0"
+  },
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}

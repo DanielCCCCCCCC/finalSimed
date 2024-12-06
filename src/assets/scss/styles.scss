@@ -1,0 +1,162 @@
+/*------------------------------------------------------------------
+[Master Stylesheet]
+
+Project                            :   SPRUHA - HTML5 Bootstrap Admin Template
+Create Date                        :
+Author & Copyright Ownership       :   Spruko Technologies Private Limited
+Author URL                         :   https://themeforest.net/user/spruko
+Support	                           :   https://support.spruko.com/
+License Details                    :   https://spruko.com/licenses-details
+------------------------------------------------------------------*/
+
+/* Table Of Content
+variables
+switcher
+accordion
+alerts
+badge
+buttons
+cards
+dropdown
+forms
+input_group
+list_group
+modals
+navbar
+navs_tabs
+pagination
+popovers
+progress
+tables
+toast
+tooltips
+custom
+dashboard_styles
+error
+header
+image
+plugins
+widgets
+Tags
+Pricing
+sign-up
+closed_menu
+detached_menu
+double_menu
+horizontal
+icon_click
+icon_hover
+icon_overlay
+icontext
+menu_click
+vertical
+chat
+ecommerce
+file-manager
+mail
+task
+Timeline
+Profile
+Notifications
+Cryptocurrency
+Landing
+avatars
+background
+border
+opacity
+typography
+Height
+Margin
+Padding
+Width
+vue3-form-wizard
+vue-multiselect
+vue3-datepicker
+vue3colorpicker
+vuepic_vue-datepicker
+vue-good-table-next
+*/
+
+/* FONT */
+/* Roboto */
+
+@use "variables";
+@use "switcher";
+
+/* BOOTSTRAP */
+@use "bootstrap/accordion";
+@use "bootstrap/alerts";
+@use "bootstrap/badge";
+@use "bootstrap/breadcrumb";
+@use "bootstrap/buttons";
+@use "bootstrap/cards";
+@use "bootstrap/dropdown";
+@use "bootstrap/forms";
+@use "bootstrap/input_group";
+@use "bootstrap/list_group";
+@use "bootstrap/modals";
+@use "bootstrap/navbar";
+@use "bootstrap/navs_tabs";
+@use "bootstrap/pagination";
+@use "bootstrap/popovers";
+@use "bootstrap/progress";
+@use "bootstrap/tables";
+@use "bootstrap/toast";
+@use "bootstrap/tooltips";
+
+/* CUSTOM */
+@use "custom/custom";
+@use "custom/dashboard_styles";
+@use "custom/error";
+@use "custom/header";
+@use "custom/image";
+@use "custom/plugins";
+@use "custom/pricing";
+@use "custom/tags";
+@use "custom/widgets";
+
+/* MENU-STYLES */
+@use "menu-styles/closed_menu";
+@use "menu-styles/detached_menu";
+@use "menu-styles/double_menu";
+@use "menu-styles/horizontal";
+@use "menu-styles/icon_click";
+@use "menu-styles/icon_hover";
+@use "menu-styles/icon_overlay";
+@use "menu-styles/icontext";
+@use "menu-styles/menu_click";
+@use "menu-styles/menu_hover";
+@use "menu-styles/vertical";
+
+/* PAGES */
+@use "pages/chat";
+@use "pages/cryptocurrency";
+@use "pages/ecommerce";
+@use "pages/file-manager";
+@use "pages/landing";
+@use "pages/mail";
+@use "pages/notifications";
+@use "pages/profile";
+@use "pages/task";
+@use "pages/timeline";
+
+/* UTILITIES */
+@use "util/avatars";
+@use "util/background";
+@use "util/border";
+@use "util/height";
+@use "util/margin";
+@use "util/opacity";
+@use "util/padding";
+@use "util/typography";
+@use "util/width";
+
+/* Global */
+@use "global/vue3-form-wizard";
+@use "global/vue-multiselect";
+@use "global/vue3-datepicker";
+@use "global/vue3colorpicker";
+@use "global/vuepic_vue-datepicker";
+@use "global/vue3-easy-data-table";
+@use "global/vue-good-table-next";
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900");
