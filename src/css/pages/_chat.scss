@@ -30,7 +30,7 @@
 }
 
 .main-nav-line-chat {
-  // border: 1px solid variables.$default-border;
+  // border: 1px solid $default-border;
   padding: 17px !important;
   flex-shrink: 0;
   flex-direction: row;
@@ -58,7 +58,7 @@
 .main-chat-contacts-wrapper {
   padding: 10px 20px;
   flex-shrink: 0;
-  border-block-end: 1px solid variables.$default-border;
+  border-block-end: 1px solid $default-border;
   overflow: hidden;
 
   .main-content-label,
@@ -122,7 +122,7 @@
   border-radius: 100%;
   font-size: 12px;
   font-weight: 500;
-  color: variables.$white;
+  color: $white;
 }
 
 @media (min-width: 992px) {
@@ -149,11 +149,11 @@
 
     + .media {
       margin-block-start: -1px;
-      border-block-start: 1px solid variables.$default-border;
+      border-block-start: 1px solid $default-border;
     }
 
     &.new {
-      background-color: variables.$custom-white;
+      background-color: $custom-white;
 
       .main-img-user span {
         display: flex;
@@ -161,7 +161,7 @@
 
       .media-contact-name span:first-child {
         font-weight: 500;
-        color: variables.$default-text-color;
+        color: $default-text-color;
       }
 
       .media-body p {
@@ -172,9 +172,9 @@
     &:hover,
     &:focus {
       cursor: pointer;
-      background-color: variables.$default-background;
-      border-top-color: variables.$default-background;
-      border-bottom-color: variables.$default-background;
+      background-color: $default-background;
+      border-top-color: $default-background;
+      border-bottom-color: $default-background;
     }
 
     &:hover:first-child,
@@ -191,9 +191,9 @@
     }
 
     &.selected {
-      background-color: variables.$default-background;
-      border-top-color: variables.$default-background;
-      border-bottom-color: variables.$default-background;
+      background-color: $default-background;
+      border-top-color: $default-background;
+      border-bottom-color: $default-background;
 
       &:first-child {
         border-top-color: transparent;
@@ -204,7 +204,7 @@
       }
 
       .media-contact-name span:first-child {
-        color: variables.$default-text-color;
+        color: $default-text-color;
       }
 
       .media-body p {
@@ -225,9 +225,9 @@
     border-radius: 100%;
     font-size: 9px;
     font-weight: 500;
-    color: variables.$white;
+    color: $white;
     background-color: #f16d75;
-    box-shadow: 0 0 0 2px variables.$white;
+    box-shadow: 0 0 0 2px $white;
   }
 
   .media-body {
@@ -252,7 +252,7 @@
         display: block;
         font-size: 14px;
         font-weight: 500;
-        color: variables.$default-text-color;
+        color: $default-text-color;
       }
 
       &:last-child {
@@ -286,7 +286,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: 15px 12px;
-  border-block-end: 1px solid variables.$default-border;
+  border-block-end: 1px solid $default-border;
 
   .nav {
     margin-inline-start: auto;
@@ -367,7 +367,7 @@
       }
 
       .main-msg-wrapper {
-        background-color: variables.$default-background;
+        background-color: $default-background;
         position: relative;
 
         &:before,
@@ -375,7 +375,7 @@
           right: auto;
           left: 100%;
           border-right-color: transparent;
-          border-left-color: variables.$default-background;
+          border-left-color: $default-background;
         }
 
         &:after {
@@ -391,8 +391,7 @@
   .main-msg-wrapper:after {
     right: auto;
     left: 100%;
-    border-color: transparent transparent transparent
-      variables.$default-background !important;
+    border-color: transparent transparent transparent $default-background !important;
   }
 }
 
@@ -412,7 +411,7 @@
 
 .main-msg-wrapper {
   padding: 10px 15px;
-  background-color: variables.$default-background;
+  background-color: $default-background;
   font-size: 13px;
   margin-block-end: 5px;
   display: inline-block;
@@ -420,8 +419,7 @@
   position: relative;
 
   &:after {
-    border-color: transparent variables.$default-background transparent
-      transparent;
+    border-color: transparent $default-background transparent transparent;
     border-image: none;
     border-style: solid;
     border-width: medium;
@@ -475,7 +473,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     background: #e6f3f9;
-    color: variables.$black;
+    color: $black;
     padding: 5px;
     border-radius: 4px;
   }
@@ -487,8 +485,8 @@
   align-items: center;
   height: 50px;
   padding: 0 20px;
-  border-block-start: 1px solid variables.$default-border;
-  background-color: variables.$custom-white;
+  border-block-start: 1px solid $default-border;
+  background-color: $custom-white;
   position: fixed;
   inset-block-end: 0;
   inset-inline: 0;
@@ -586,13 +584,13 @@
   }
 }
 .main-chat-body .media.flex-row-reverse .main-msg-wrapper2 {
-  background-color: variables.$default-background;
-  color: variables.$default-text-color;
+  background-color: $default-background;
+  color: $default-text-color;
   position: relative;
 }
 .main-msg-wrapper2 {
   padding: 10px 15px;
-  background-color: variables.$default-background;
+  background-color: $default-background;
   font-size: 13px;
   margin-block-end: 5px;
   display: inline-block;
@@ -609,8 +607,8 @@
   justify-content: center;
   border-radius: 6px;
   margin: 4px;
-  background-color: variables.$primary-01;
-  color: variables.$primary;
+  background-color: $primary-01;
+  color: $primary;
 }
 .media {
   display: flex;

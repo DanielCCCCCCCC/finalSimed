@@ -39,8 +39,8 @@
   height: 64px;
   border-radius: 5px;
   margin-inline-end: 20px;
-  border: 1px solid variables.$default-background;
-  background: variables.$default-background;
+  border: 1px solid $default-background;
+  background: $default-background;
   padding: 10px;
 }
 
@@ -72,7 +72,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: variables.$white;
+  color: $white;
   font-weight: 600;
   font-size: 16px;
 }
@@ -85,7 +85,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: variables.$white;
+  color: $white;
   font-weight: 600;
   font-size: 16px;
 
@@ -102,7 +102,7 @@
   }
 
   &.online::after {
-    background-color: variables.$success;
+    background-color: $success;
   }
 }
 
@@ -164,7 +164,7 @@
     height: 11px;
     bottom: 4px;
     right: 5px;
-    box-shadow: 0 0 0 2.5px variables.$white;
+    box-shadow: 0 0 0 2.5px $white;
   }
 }
 
@@ -178,7 +178,7 @@
     height: 13px;
     bottom: 6px;
     right: 7px;
-    box-shadow: 0 0 0 3px variables.$white;
+    box-shadow: 0 0 0 3px $white;
   }
 }
 
@@ -212,7 +212,7 @@
       .main-img-user,
       .main-avatar {
         margin-inline-start: -9px;
-        border: 2px solid variables.$custom-white;
+        border: 2px solid $custom-white;
       }
     }
 
@@ -220,7 +220,7 @@
       .main-img-user,
       .main-avatar {
         margin-inline-start: -9px;
-        border: 2px solid variables.$custom-white;
+        border: 2px solid $custom-white;
       }
     }
   }
@@ -232,13 +232,13 @@
       .main-img-user,
       .main-avatar {
         margin-inline-start: 9px;
-        border: 0px solid variables.$custom-white;
+        border: 0px solid $custom-white;
       }
     }
   }
 }
 .main-avatar {
-  background-color: variables.$primary;
+  background-color: $primary;
 }
 img {
   vertical-align: middle;

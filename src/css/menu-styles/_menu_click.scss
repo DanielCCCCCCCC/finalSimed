@@ -160,7 +160,7 @@
         position: absolute !important;
         background: var(--menu-bg);
         inset-block-start: auto !important;
-        box-shadow: 0.125rem 0.063rem 0.5rem variables.$black-1;
+        box-shadow: 0.125rem 0.063rem 0.5rem $black-1;
         transition: none !important;
 
         &.child2,

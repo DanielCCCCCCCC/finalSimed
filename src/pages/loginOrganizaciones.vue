@@ -1,61 +1,133 @@
 <template>
-  <div class="login-organizaciones">
-    <q-card class="form-card">
-      <q-card-section>
-        <h1>Login de Organizaciones</h1>
+  <div class="page main-signin-wrapper">
+    <!-- Icono de Configuración en el Encabezado -->
+    <div
+      class="d-flex header-setting-icon"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#switcher-canvas"
+    >
+      <a class="nav-link icon" href="javascript:;">
+        <i class="fe text-dark"></i>
+      </a>
+    </div>
 
-        <q-form @submit.prevent="handleLogin">
-          <div class="q-mb-lg">
-            <q-input
-              v-model="email"
-              label="Correo Electrónico"
-              type="email"
-              outlined
-              dense
-              required
-              :class="{ 'input-error': error }"
-            />
+    <!-- Row Principal -->
+    <div class="row signpages text-center">
+      <div class="col-md-12 my-auto">
+        <div class="card">
+          <div class="row row-sm">
+            <!-- Columna Izquierda (Detalles) -->
+            <div
+              class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary details"
+            >
+              <div class="mt-5 pt-4 p-2 position-absolute">
+                <router-link :to="{ name: 'dashboard' }">
+                  <img
+                    src="../../public/logo2.jpeg"
+                    class="header-brand-img mb-4 tamano"
+                    alt="logo"
+                  />
+                </router-link>
+                <div class="clearfix"></div>
+                <!-- <img
+                  src="/images/svgs/user.svg"
+                  class="ht-100 mb-0"
+                  alt="user"
+                /> -->
+                <h5 class="mt-4 text-fixed-white">Inicia sesion tu cuenta</h5>
+                <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
+                  Inicia sesion para adminisitrar tu centro médico.
+                </span>
+              </div>
+            </div>
+
+            <!-- Columna Derecha (Formulario de Login) -->
+            <div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form">
+              <div class="main-container container-fluid">
+                <div class="row row-sm">
+                  <div class="card-body mt-2 mb-2">
+                    <div class="clearfix"></div>
+                    <q-form @submit.prevent="handleLogin">
+                      <h5 class="text-start mb-2">Inicia sesion</h5>
+                      <p class="mb-4 text-muted fs-13 ms-0 text-start">
+                        Inicia sesion para adminisitrar tu centro médico.
+                      </p>
+                      <div class="form-group text-start">
+                        <label for="email">Email</label>
+                        <q-input
+                          id="email"
+                          v-model="email"
+                          type="email"
+                          placeholder="Enter your email"
+                          dense
+                          required
+                          :error="!!error"
+                          error-message="Correo inválido"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label for="password">Password</label>
+                        <q-input
+                          id="password"
+                          v-model="password"
+                          type="password"
+                          placeholder="Enter your password"
+                          dense
+                          required
+                          :error="!!error"
+                          error-message="Contraseña inválida"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="flex justify-center q-mt-lg">
+                        <q-btn
+                          type="submit"
+                          :label="cargando ? 'Iniciando...' : 'Sign In'"
+                          color="primary"
+                          :disable="cargando"
+                          unelevated
+                          rounded
+                          class="btn ripple btn-primary d-grid"
+                        />
+                      </div>
+                    </q-form>
+                    <div class="text-start mt-5 ms-0">
+                      <div class="mb-1">
+                        <!-- Eliminado el enlace "Forgot password?" por ahora -->
+                      </div>
+                      <div>
+                        No tienes una cuenta?
+                        <router-link :to="{ name: 'registrarOrganizacion' }"
+                          >Registrate aqui
+                        </router-link>
+                      </div>
+                    </div>
+                    <div v-if="error" class="error-message">
+                      <q-banner class="bg-negative text-white" dense>
+                        {{ error }}
+                      </q-banner>
+                    </div>
+                    <div v-if="mensajeExito" class="success-message">
+                      <q-banner class="bg-positive text-white" dense>
+                        {{ mensajeExito }}
+                      </q-banner>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="q-mb-lg">
-            <q-input
-              v-model="password"
-              label="Contraseña"
-              type="password"
-              outlined
-              dense
-              required
-              :class="{ 'input-error': error }"
-            />
-          </div>
-
-          <div class="flex justify-center q-mt-lg">
-            <q-btn
-              type="submit"
-              :label="cargando ? 'Iniciando...' : 'Iniciar Sesión'"
-              color="primary"
-              :disable="cargando"
-              unelevated
-              rounded
-              class="btn-login"
-            />
-          </div>
-        </q-form>
-
-        <div v-if="error" class="error-message">
-          <q-banner class="bg-negative text-white" dense>
-            {{ error }}
-          </q-banner>
+          <!-- Fin de row-sm -->
         </div>
-
-        <div v-if="mensajeExito" class="success-message">
-          <q-banner class="bg-positive text-white" dense>
-            {{ mensajeExito }}
-          </q-banner>
-        </div>
-      </q-card-section>
-    </q-card>
+        <!-- Fin de card -->
+      </div>
+      <!-- Fin de col-md-12 -->
+    </div>
+    <!-- Fin de row signpages -->
+    <!-- End Row Principal -->
   </div>
+  <!-- Fin de main-signin-wrapper -->
 </template>
 
 <script setup>
@@ -63,6 +135,9 @@ import { ref } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
+import { onMounted } from "vue";
+import { useThemeStore } from "../stores/themeStore"; // Asegúrate de que la ruta es correcta
+const themeStore = useThemeStore();
 
 const email = ref("");
 const password = ref("");
@@ -117,59 +192,79 @@ const validarCampos = () => {
 
   return true;
 };
+
+onMounted(() => {
+  // Definir el tema light
+  themeStore.colorThemeFn("light");
+  themeStore.layoutStylesFn("icon-overlay");
+
+  // Establecer el color naranja para --primary-rgb
+  document.documentElement.style.setProperty("--primary-rgb", "223, 90, 90"); // RGB para naranja
+});
 </script>
+
 <style scoped>
-/* Fondo que cubre toda la página */
-body {
-  margin: 0; /* Elimina márgenes del body */
-  overflow: hidden; /* Evita barras de desplazamiento */
+.tamano {
+  width: 50%;
+  height: 50%;
+}
+/*
+.page {
 }
 
-.login-organizaciones {
+.main-signin-wrapper {
   position: relative;
-  min-height: 100vh; /* Asegura que el contenedor abarque toda la pantalla */
+  min-height: 100vh;
   background: linear-gradient(
     135deg,
     #3f51b5,
     #2196f3
-  ); /* Fondo en toda la página */
+  );
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.form-card {
-  top: -50px;
+.card {
   width: 100%;
-  max-width: 500px; /* Ancho máximo de la tarjeta */
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
+  max-width: 900px;
+  margin: auto;
+  border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-h1 {
-  font-size: 1.8rem;
-  padding: -50px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-  color: #3f51b5;
+.details {
+  padding: 30px;
 }
 
-.q-input {
+.header-brand-img {
+  max-width: 150px;
+}
+
+.ht-100 {
+  height: 100px;
+}
+
+.text-fixed-white {
+  color: #ffffff;
+}
+
+.fs-white-6 {
+  font-size: 0.6rem;
+}
+
+.fs-13 {
+  font-size: 13px;
+}
+
+.login_form {
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+.form-control {
   width: 100%;
-}
-
-.q-input input {
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.q-btn {
-  width: 100%;
-  font-size: 1rem;
-  padding: 0.75rem;
 }
 
 .error-message,
@@ -190,4 +285,22 @@ h1 {
 .success-message {
   color: #4caf50;
 }
+
+@media (max-width: 991.98px) {
+  .details {
+    display: none;
+  }
+}
+
+.header-setting-icon {
+}
+
+.demo-icon {
+}
+
+.icon {
+}
+
+.settings-icon {
+}  */
 </style>

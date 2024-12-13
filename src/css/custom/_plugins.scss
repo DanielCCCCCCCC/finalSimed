@@ -3,10 +3,10 @@
 /* Start:Choices JS */
 .choices__inner {
   padding: 0.5rem 0.85rem !important;
-  background-color: variables.$form-control-bg !important;
+  background-color: $form-control-bg !important;
   border-radius: 0.35rem !important;
-  font-size: variables.$default-font-size !important;
-  border: 1px solid variables.$input-border !important;
+  font-size: $default-font-size !important;
+  border: 1px solid $input-border !important;
   min-height: auto !important;
   line-height: 1.7;
 }
@@ -26,7 +26,7 @@
 }
 
 .choices[data-type*="select-one"]::after {
-  color: variables.$text-muted !important;
+  color: $text-muted !important;
 }
 
 .choices[data-type*="select-one"] .choices__input {
@@ -40,21 +40,21 @@
 }
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
   z-index: 1 !important;
   border-radius: 0 !important;
 }
 
 .choices[data-type*="select-one"] .choices__input {
-  border-block-end: 1px solid variables.$default-border !important;
-  background-color: variables.$custom-white !important;
-  color: variables.$default-text-color;
+  border-block-end: 1px solid $default-border !important;
+  background-color: $custom-white !important;
+  color: $default-text-color;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-  background-color: variables.$default-background !important;
+  background-color: $default-background !important;
 }
 
 .choices__list--dropdown .choices__list {
@@ -62,17 +62,17 @@
 }
 
 .choices[data-type*="select-one"]::after {
-  border-color: variables.$text-muted transparent transparent !important;
+  border-color: $text-muted transparent transparent !important;
 }
 
 .choices__input {
   background-color: transparent !important;
-  color: variables.$custom-black;
+  color: $custom-black;
 }
 
 .choices__list--multiple .choices__item {
-  background-color: variables.$primary !important;
-  border: 1px solid variables.$primary !important;
+  background-color: $primary !important;
+  border: 1px solid $primary !important;
 }
 
 .choices[data-type*="select-multiple"] .choices__button,
@@ -85,7 +85,7 @@
 }
 
 // .choices__list--single .choices__item {
-//   color: variables.$gray-3 !important;
+//   color: $gray-3 !important;
 // }
 
 .choices__input {
@@ -115,8 +115,8 @@
 }
 
 .choices__heading {
-  border-bottom: 1px solid variables.$default-border !important;
-  color: variables.$text-muted !important;
+  border-bottom: 1px solid $default-border !important;
+  color: $text-muted !important;
 }
 
 [dir="rtl"] {
@@ -162,7 +162,7 @@
 /* Start:Apex Charts */
 #marketCap {
   .apexcharts-canvas line {
-    stroke: variables.$default-border;
+    stroke: $default-border;
   }
 }
 
@@ -175,20 +175,20 @@
 }
 
 .apexcharts-tooltip.apexcharts-theme-light {
-  border: 1px solid variables.$default-border !important;
-  background: variables.$custom-white !important;
+  border: 1px solid $default-border !important;
+  background: $custom-white !important;
 }
 
 .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
-  background: variables.$custom-white !important;
-  border-block-end: 1px solid variables.$default-border !important;
+  background: $custom-white !important;
+  border-block-end: 1px solid $default-border !important;
 }
 
 .apexcharts-grid,
 .apexcharts-xaxis,
 .apexcharts-grid-borders {
   line {
-    stroke: variables.$default-border;
+    stroke: $default-border;
   }
 }
 
@@ -213,18 +213,18 @@
 
 .apexcharts-radialbar-track.apexcharts-track {
   path {
-    stroke: variables.$default-background;
+    stroke: $default-background;
   }
 }
 
 .apexcharts-menu {
-  background: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
-  border-radius: variables.$default-radius !important;
+  background: $custom-white !important;
+  border: 1px solid $default-border !important;
+  border-radius: $default-radius !important;
 }
 
 .apexcharts-theme-light .apexcharts-menu-item:hover {
-  background: variables.$light !important;
+  background: $light !important;
 }
 
 .apexcharts-inner.apexcharts-graphical {
@@ -243,14 +243,14 @@
 
 #chart-year,
 #chart-quarter {
-  background: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
+  background: $custom-white !important;
+  border: 1px solid $default-border !important;
 }
 
 .apexcharts-bar-series.apexcharts-plot-series {
   .apexcharts-series {
     .apexcharts-bar-area {
-      stroke: variables.$default-border !important;
+      stroke: $default-border !important;
     }
   }
 }
@@ -258,42 +258,42 @@
 .apexcharts-treemap {
   .apexcharts-series.apexcharts-treemap-series {
     rect {
-      stroke: variables.$custom-white !important;
+      stroke: $custom-white !important;
     }
   }
 }
 
 .apexcharts-series.apexcharts-pie-series {
   .apexcharts-pie-area {
-    stroke: variables.$custom-white !important;
+    stroke: $custom-white !important;
   }
 }
 
 .apexcharts-datalabels-group {
   .apexcharts-text.apexcharts-datalabel-value {
-    fill: variables.$default-text-color;
+    fill: $default-text-color;
   }
 }
 
 .apexcharts-radialbar-hollow {
-  fill: variables.$custom-white;
+  fill: $custom-white;
 }
 
 .apexcharts-radar-series.apexcharts-plot-series {
   polygon,
   line {
-    stroke: variables.$default-border;
+    stroke: $default-border;
   }
 }
 
 .apexcharts-pie {
   line,
   circle {
-    stroke: variables.$default-border;
+    stroke: $default-border;
   }
 
   text {
-    fill: variables.$default-text-color;
+    fill: $default-text-color;
   }
 }
 
@@ -302,7 +302,7 @@
 }
 
 .apexcharts-subtitle-text {
-  fill: variables.$text-muted;
+  fill: $text-muted;
 }
 
 .apexcharts-pie {
@@ -311,7 +311,7 @@
   }
 
   text {
-    fill: variables.$default-text-color;
+    fill: $default-text-color;
   }
 }
 
@@ -328,7 +328,7 @@
 // }
 
 .apexcharts-boxPlot-area {
-  stroke: variables.$default-text-color !important;
+  stroke: $default-text-color !important;
 }
 
 /* End:Apex Charts */
@@ -336,7 +336,7 @@
 /* Start:Full Calendar */
 .fc-theme-standard .fc-scrollgrid.fc-scrollgrid-liquid {
   border: 0px !important;
-  border-top: 1px solid variables.$default-border !important;
+  border-top: 1px solid $default-border !important;
 }
 
 .fc-daygrid-block-event .fc-event-time,
@@ -345,15 +345,15 @@
 }
 
 .fc .fc-button-primary {
-  background-color: variables.$primary !important;
-  border-color: variables.$primary !important;
+  background-color: $primary !important;
+  border-color: $primary !important;
   &.fc-button-active {
-    background-color: variables.$primary-09 !important;
+    background-color: $primary-09 !important;
   }
 }
 
 .fc .fc-non-business {
-  background: variables.$custom-white !important;
+  background: $custom-white !important;
 }
 
 .fc .fc-button-primary:focus,
@@ -364,7 +364,7 @@
 
 .fc-theme-standard td,
 .fc-theme-standard th {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
   border-top: 0px !important;
 }
 
@@ -377,15 +377,15 @@
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: variables.$primary-01 !important;
+  background-color: $primary-01 !important;
 }
 
 .fc-theme-standard .fc-list {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 .fc .fc-list-event:hover td {
-  background-color: variables.$light !important;
+  background-color: $light !important;
 }
 
 .fc-timegrid-event-harness-inset .fc-timegrid-event,
@@ -395,18 +395,18 @@
 }
 
 .fc-theme-standard .fc-list-day-cushion {
-  background-color: variables.$light !important;
+  background-color: $light !important;
 }
 
 .fc-theme-standard .fc-scrollgrid {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 .fc-theme-bootstrap5 .fc-list,
 .fc-theme-bootstrap5 .fc-scrollgrid,
 .fc-theme-bootstrap5 td,
 .fc-theme-bootstrap5 th {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 @media (max-width: 420px) {
@@ -438,24 +438,24 @@
 
 /* Start:Pickers */
 .flatpickr-calendar {
-  background-color: variables.$custom-white !important;
-  box-shadow: variables.$box-shadow !important;
-  border: 1px solid variables.$default-border !important;
-  font-size: variables.$default-font-size !important;
+  background-color: $custom-white !important;
+  box-shadow: $box-shadow !important;
+  border: 1px solid $default-border !important;
+  font-size: $default-font-size !important;
 }
 
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
-  color: variables.$black-9 !important;
-  fill: variables.$black-9 !important;
+  color: $black-9 !important;
+  fill: $black-9 !important;
 }
 
 .flatpickr-monthDropdown-months,
 .numInput {
-  color: variables.$custom-black !important;
+  color: $custom-black !important;
 }
 .flatpickr-day.today.inRange {
-  color: variables.$primary !important;
+  color: $primary !important;
 }
 .dayContainer {
   padding: 0.25rem !important;
@@ -464,7 +464,7 @@
 .flatpickr-current-month
   .flatpickr-monthDropdown-months
   .flatpickr-monthDropdown-month {
-  background-color: variables.$custom-white !important;
+  background-color: $custom-white !important;
   font-size: 0.813rem;
 }
 
@@ -473,7 +473,7 @@
   width: 1.25rem !important;
   height: 1.25rem !important;
   padding: 0.25rem;
-  fill: variables.$primary;
+  fill: $primary;
 }
 
 .flatpickr-day.inRange {
@@ -485,17 +485,17 @@
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-  background-color: variables.$primary-01 !important;
+  background-color: $primary-01 !important;
   border-radius: 0.25rem !important;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowDown:after,
 .flatpickr-calendar.arrowBottom:before {
-  border-top-color: variables.$text-muted !important;
+  border-top-color: $text-muted !important;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
-  border-bottom-color: variables.$text-muted !important;
+  border-bottom-color: $text-muted !important;
 }
 
 .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n + 1)),
@@ -505,7 +505,7 @@
 }
 
 .flatpickr-day {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   font-weight: 500 !important;
 
   &.nextMonthDay,
@@ -515,9 +515,9 @@
 }
 
 .flatpickr-day.today {
-  border-color: variables.$primary !important;
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
+  border-color: $primary !important;
+  background-color: $primary !important;
+  color: $white !important;
 }
 
 .flatpickr-day.selected,
@@ -538,9 +538,9 @@
 .flatpickr-day.selected.nextMonthDay,
 .flatpickr-day.startRange.nextMonthDay,
 .flatpickr-day.endRange.nextMonthDay {
-  background: variables.$primary !important;
-  color: variables.$white !important;
-  border-color: variables.$primary !important;
+  background: $primary !important;
+  color: $white !important;
+  border-color: $primary !important;
 }
 
 .flatpickr-day.inRange,
@@ -555,35 +555,35 @@
 .flatpickr-day:focus,
 .flatpickr-day.prevMonthDay:focus,
 .flatpickr-day.nextMonthDay:focus {
-  background: variables.$default-background !important;
-  border-color: variables.$default-border !important;
+  background: $default-background !important;
+  border-color: $default-border !important;
 }
 
 .flatpickr-day.today:hover {
-  background-color: variables.$primary !important;
-  border-color: variables.$primary !important;
-  color: variables.$white !important;
+  background-color: $primary !important;
+  border-color: $primary !important;
+  color: $white !important;
 }
 
 .flatpickr-calendar.hasTime .flatpickr-time {
-  border-top: 1px solid variables.$default-border !important;
+  border-top: 1px solid $default-border !important;
 }
 
 .flatpickr-calendar.arrowTop:after,
 .flatpickr-calendar.arrowTop:before {
-  border-bottom-color: variables.$default-border !important;
+  border-bottom-color: $default-border !important;
 }
 
 .flatpickr-time input:hover,
 .flatpickr-time .flatpickr-am-pm:hover,
 .flatpickr-time input:focus,
 .flatpickr-time .flatpickr-am-pm:focus {
-  background: variables.$default-background !important;
+  background: $default-background !important;
 }
 
 .flatpickr-time .flatpickr-time-separator,
 .flatpickr-time .flatpickr-am-pm {
-  color: variables.$text-muted !important;
+  color: $text-muted !important;
 }
 
 .flatpickr-months .flatpickr-prev-month.flatpickr-prev-month {
@@ -592,7 +592,7 @@
 
 .flatpickr-months,
 .flatpickr-weekdays {
-  background-color: variables.$primary-01 !important;
+  background-color: $primary-01 !important;
 }
 
 .flatpickr-months .flatpickr-prev-month,
@@ -601,8 +601,8 @@
   padding-block-start: 0.313rem !important;
   padding-inline: 0.313rem !important;
   padding-block-end: 0 !important;
-  color: variables.$primary !important;
-  fill: variables.$primary !important;
+  color: $primary !important;
+  fill: $primary !important;
 }
 
 @media (min-width: 420px) {
@@ -612,7 +612,7 @@
 }
 
 .flatpickr-weekdays {
-  border-block-end: 1px solid variables.$default-border !important;
+  border-block-end: 1px solid $default-border !important;
 }
 
 .numInputWrapper span.arrowUp {
@@ -657,11 +657,11 @@
 
 .flatpickr-months .flatpickr-prev-month:hover,
 .flatpickr-months .flatpickr-next-month:hover {
-  stroke: variables.$primary;
+  stroke: $primary;
 }
 
 .flatpickr-day {
-  border-radius: variables.$default-radius !important;
+  border-radius: $default-radius !important;
 }
 
 .numInputWrapper:hover {
@@ -673,12 +673,12 @@
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
-  border-block-end-color: variables.$primary !important;
+  border-block-end-color: $primary !important;
 }
 
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
-  fill: variables.$white !important;
+  fill: $white !important;
 }
 
 .numInputWrapper span:hover {
@@ -688,43 +688,43 @@
 .numInputWrapper span.arrowUp:after {
   border-inline-start: 0.25rem solid transparent !important;
   border-inline-end: 0.25rem solid transparent !important;
-  border-block-end: 0.25rem solid variables.$primary-05 !important;
+  border-block-end: 0.25rem solid $primary-05 !important;
   inset-block-start: 75% !important;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowDown:after {
-  border-block-start-color: variables.$primary !important;
+  border-block-start-color: $primary !important;
 }
 
 .numInputWrapper span.arrowDown:after {
   border-inline-start: 0.25rem solid transparent !important;
   border-inline-end: 0.25rem solid transparent !important;
-  border-block-start: 0.25rem solid variables.$primary-05 !important;
+  border-block-start: 0.25rem solid $primary-05 !important;
   inset-block-start: 15% !important;
 }
 
 span.flatpickr-weekday {
-  color: variables.$primary-08 !important;
+  color: $primary-08 !important;
   font-weight: 700 !important;
 }
 
 .flatpickr-months .flatpickr-month {
-  color: variables.$primary !important;
-  fill: variables.$primary !important;
+  color: $primary !important;
+  fill: $primary !important;
 }
 
 .flatpickr-monthDropdown-months,
 .numInput {
-  color: variables.$primary !important;
+  color: $primary !important;
 }
 
 .pcr-app {
-  background: variables.$custom-white !important;
+  background: $custom-white !important;
 }
 
 .pcr-app .pcr-interaction .pcr-result {
-  color: variables.$default-text-color !important;
-  background: variables.$default-background !important;
+  color: $default-text-color !important;
+  background: $default-background !important;
 }
 
 .theme-container,
@@ -745,7 +745,7 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-weekwrapper .flatpickr-weeks {
-  box-shadow: 1px 0 0 variables.$default-border !important;
+  box-shadow: 1px 0 0 $default-border !important;
 }
 
 /* End:Pickers */
@@ -784,38 +784,38 @@ span.flatpickr-weekday {
 }
 
 .noUi-target {
-  background: variables.$default-background !important;
-  border: 1px solid variables.$default-border !important;
-  box-shadow: variables.$box-shadow !important;
+  background: $default-background !important;
+  border: 1px solid $default-border !important;
+  box-shadow: $box-shadow !important;
 }
 
 .noUi-handle {
-  border: 1px solid variables.$default-border !important;
-  background: variables.$custom-white !important;
-  box-shadow: variables.$box-shadow !important;
+  border: 1px solid $default-border !important;
+  background: $custom-white !important;
+  box-shadow: $box-shadow !important;
 }
 
 #result {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 .noUi-handle:after,
 .noUi-handle:before {
-  background: variables.$black-3 !important;
+  background: $black-3 !important;
 }
 
 .noUi-marker {
   position: absolute;
-  background: variables.$default-border !important;
+  background: $default-border !important;
 }
 
 .noUi-tooltip {
-  border: 1px solid variables.$default-border !important;
-  border-radius: variables.$default-radius !important;
-  background: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  border: 1px solid $default-border !important;
+  border-radius: $default-radius !important;
+  background: $custom-white !important;
+  color: $default-text-color !important;
   padding: 0.25rem 0.75rem !important;
-  font-size: variables.$default-font-size !important;
+  font-size: $default-font-size !important;
   line-height: 1 !important;
 }
 
@@ -824,7 +824,7 @@ span.flatpickr-weekday {
 }
 
 .noUi-connect {
-  background: variables.$primary !important;
+  background: $primary !important;
 }
 
 .noUi-vertical .noUi-handle {
@@ -834,31 +834,31 @@ span.flatpickr-weekday {
 
 #secondary-colored-slider {
   .noUi-connect {
-    background-color: variables.$secondary !important;
+    background-color: $secondary !important;
   }
 }
 
 #warning-colored-slider {
   .noUi-connect {
-    background-color: variables.$warning !important;
+    background-color: $warning !important;
   }
 }
 
 #info-colored-slider {
   .noUi-connect {
-    background-color: variables.$info !important;
+    background-color: $info !important;
   }
 }
 
 #success-colored-slider {
   .noUi-connect {
-    background-color: variables.$success !important;
+    background-color: $success !important;
   }
 }
 
 #danger-colored-slider {
   .noUi-connect {
-    background-color: variables.$danger !important;
+    background-color: $danger !important;
   }
 }
 
@@ -872,8 +872,8 @@ span.flatpickr-weekday {
     inset-inline-end: -0.563rem;
     /* half the width */
     border-radius: 50px !important;
-    background-color: variables.$primary !important;
-    border: 1px solid variables.$custom-white !important;
+    background-color: $primary !important;
+    border: 1px solid $custom-white !important;
 
     &:before,
     &:after {
@@ -889,7 +889,7 @@ span.flatpickr-weekday {
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
-    background: variables.$primary !important;
+    background: $primary !important;
     height: 1.125rem !important;
     width: 1.125rem !important;
     inset-block-start: -0.45rem !important;
@@ -915,7 +915,7 @@ span.flatpickr-weekday {
   width: 19.375rem !important;
   margin: 0 auto !important;
   padding: 0.625rem !important;
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 #result {
@@ -924,22 +924,22 @@ span.flatpickr-weekday {
   width: 6.25rem;
   display: inline-block;
   vertical-align: top;
-  color: variables.$gray-5;
-  background: variables.$gray-5;
-  border: 1px solid variables.$white;
+  color: $gray-5;
+  background: $gray-5;
+  border: 1px solid $white;
   box-shadow: 0 0 0.625rem;
 }
 
 #color1 .noUi-connect {
-  background: variables.$danger !important;
+  background: $danger !important;
 }
 
 #color2 .noUi-connect {
-  background: variables.$secondary !important;
+  background: $secondary !important;
 }
 
 #color3 .noUi-connect {
-  background: variables.$primary !important;
+  background: $primary !important;
 }
 
 #slider-hide .noUi-tooltip {
@@ -951,23 +951,23 @@ span.flatpickr-weekday {
 }
 
 .c-1-color {
-  background: variables.$secondary !important;
+  background: $secondary !important;
 }
 
 .c-2-color {
-  background: variables.$warning !important;
+  background: $warning !important;
 }
 
 .c-3-color {
-  background: variables.$info !important;
+  background: $info !important;
 }
 
 .c-4-color {
-  background: variables.$danger !important;
+  background: $danger !important;
 }
 
 .c-5-color {
-  background: variables.$indigo !important;
+  background: $indigo !important;
 }
 
 #slider-toggle {
@@ -975,7 +975,7 @@ span.flatpickr-weekday {
 }
 
 #slider-toggle.off .noUi-handle {
-  border-color: variables.$success !important;
+  border-color: $success !important;
 }
 
 /* End:noUi Slider */
@@ -987,7 +987,7 @@ span.flatpickr-weekday {
 
 @media (min-width: 769px) {
   .gslide-image img {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 
   .glightbox-clean .gclose,
@@ -1058,7 +1058,7 @@ span.flatpickr-weekday {
 #visitors-countries,
 #users-map {
   #jvm-regions-group path {
-    fill: variables.$light !important;
+    fill: $light !important;
   }
 }
 
@@ -1073,7 +1073,7 @@ span.flatpickr-weekday {
 }
 
 #jvm-markers-labels-group text {
-  fill: variables.$text-muted;
+  fill: $text-muted;
 }
 
 /* End::Vector Maps */
@@ -1091,15 +1091,15 @@ span.flatpickr-weekday {
 .google-map-overlay {
   display: block;
   text-align: center;
-  color: variables.$white;
+  color: $white;
   font-size: 1.25rem;
   line-height: 0.875rem;
   opacity: 0.8;
-  background: variables.$primary;
-  border: solid 0.188rem variables.$primary;
+  background: $primary;
+  border: solid 0.188rem $primary;
   border-radius: 0.25rem;
-  box-shadow: 0.125rem 0.125rem 0.625rem variables.$black-3;
-  text-shadow: 0.063rem 0.063rem 0.063rem variables.$gray-6;
+  box-shadow: 0.125rem 0.125rem 0.625rem $black-3;
+  text-shadow: 0.063rem 0.063rem 0.063rem $gray-6;
   padding: 0 0.25rem;
 }
 
@@ -1142,7 +1142,7 @@ span.flatpickr-weekday {
 }
 
 .apexcharts-legend-text {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   padding-inline-start: 0.9375rem !important;
   margin-inline-start: -0.625rem !important;
 }
@@ -1151,21 +1151,21 @@ span.flatpickr-weekday {
   &.apexcharts-yaxis-label,
   &.apexcharts-xaxis-label {
     tspan {
-      fill: variables.$text-muted;
+      fill: $text-muted;
     }
   }
 }
 
 .apexcharts-canvas .apexcharts-series.apexcharts-heatmap-series rect {
-  stroke: variables.$custom-white;
+  stroke: $custom-white;
 }
 
 .apexcharts-canvas .apexcharts-series-markers.apexcharts-series-bubble circle {
-  stroke: variables.$custom-white;
+  stroke: $custom-white;
 }
 
 .apexcharts-yaxis .apexcharts-text {
-  fill: variables.$text-muted;
+  fill: $text-muted;
 }
 
 /* End::Apex Charts */
@@ -1185,7 +1185,7 @@ span.flatpickr-weekday {
   box-shadow: none;
   padding-inline-start: 0;
   padding-block-start: 1.25rem;
-  background: variables.$white;
+  background: $white;
   border: 1px solid #ddd;
 }
 
@@ -1235,7 +1235,7 @@ span.flatpickr-weekday {
 
 /* Start::Simplebar */
 .simplebar-scrollbar:before {
-  background: variables.$gray-4 !important;
+  background: $gray-4 !important;
   border-radius: 0.3rem !important;
   inset-inline-end: 0 !important;
   width: 0.375rem;
@@ -1250,12 +1250,12 @@ span.flatpickr-weekday {
 
 /* Start::dropzone */
 .dropzone {
-  border: 0.125rem dashed variables.$default-border !important;
-  background-color: variables.$default-background !important;
+  border: 0.125rem dashed $default-border !important;
+  background-color: $default-background !important;
 
   .dz-message .dz-button {
     font-size: 1.25rem !important;
-    color: variables.$default-text-color !important;
+    color: $default-text-color !important;
   }
 }
 
@@ -1267,7 +1267,7 @@ span.flatpickr-weekday {
 
 /* Start::filepond */
 .filepond--drop-label {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   border-radius: 0.3rem !important;
 }
 
@@ -1276,13 +1276,13 @@ span.flatpickr-weekday {
 }
 
 .filepond--panel-root {
-  background-color: variables.$custom-white !important;
-  border: 0.125rem dashed variables.$default-border !important;
+  background-color: $custom-white !important;
+  border: 0.125rem dashed $default-border !important;
 }
 
 .filepond--drop-label.filepond--drop-label label {
   padding: 1.5em !important;
-  font-size: variables.$default-font-size;
+  font-size: $default-font-size;
 }
 
 .filepond--root {
@@ -1290,7 +1290,7 @@ span.flatpickr-weekday {
 }
 
 .filepond--file {
-  background-color: variables.$primary !important;
+  background-color: $primary !important;
 }
 
 .single-fileupload {
@@ -1303,25 +1303,25 @@ span.flatpickr-weekday {
 
 /* Start:: quill editor */
 .ql-bubble .ql-editor blockquote {
-  border-inline-start: 4px solid variables.$default-background !important;
+  border-inline-start: 4px solid $default-background !important;
 }
 
 .ql-toolbar.ql-snow,
 .ql-container.ql-snow {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
 }
 
 .ql-snow .ql-picker {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 
 .ql-snow .ql-stroke,
 .ql-snow .ql-stroke.ql-fill {
-  stroke: variables.$default-text-color !important;
+  stroke: $default-text-color !important;
 }
 
 .ql-snow .ql-fill {
-  fill: variables.$default-text-color !important;
+  fill: $default-text-color !important;
 }
 
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
@@ -1342,31 +1342,31 @@ span.flatpickr-weekday {
 }
 
 .ql-snow .ql-formats {
-  border: 1px solid variables.$default-border;
-  border-radius: variables.$default-radius;
+  border: 1px solid $default-border;
+  border-radius: $default-radius;
 }
 
 .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label,
 .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
   border-color: transparent !important;
-  border-radius: variables.$default-radius !important;
+  border-radius: $default-radius !important;
 }
 
 .ql-snow .ql-picker-options {
-  background-color: variables.$custom-white !important;
+  background-color: $custom-white !important;
 }
 
 .ql-snow .ql-tooltip {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
-  box-shadow: variables.$box-shadow !important;
-  color: variables.$default-text-color !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
+  box-shadow: $box-shadow !important;
+  color: $default-text-color !important;
 }
 
 .ql-snow .ql-tooltip input[type="text"] {
-  border: 1px solid variables.$default-border !important;
-  background-color: variables.$default-background !important;
-  color: variables.$default-text-color !important;
+  border: 1px solid $default-border !important;
+  background-color: $default-background !important;
+  color: $default-text-color !important;
   outline: 0;
 }
 
@@ -1394,7 +1394,7 @@ span.flatpickr-weekday {
 }
 
 .ql-snow .ql-picker.ql-expanded .ql-picker-label {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 
 .ql-editor {
@@ -1405,7 +1405,7 @@ span.flatpickr-weekday {
   height: 100% !important;
 }
 .ql-container {
-  font-family: variables.$default-font-family !important;
+  font-family: $default-font-family !important;
 }
 
 .ql-snow .ql-editor {
@@ -1413,8 +1413,8 @@ span.flatpickr-weekday {
 }
 
 .ql-bubble {
-  border: 1px solid variables.$default-border !important;
-  border-radius: variables.$default-radius !important;
+  border: 1px solid $default-border !important;
+  border-radius: $default-radius !important;
 }
 
 .ql-editor li:not(.ql-direction-rtl)::before {
@@ -1457,16 +1457,16 @@ span.flatpickr-weekday {
 .select2-container--default
   .select2-selection--single
   .select2-selection__rendered {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   line-height: 2.25rem !important;
-  border: 1px solid variables.$input-border !important;
-  border-radius: variables.$default-radius !important;
+  border: 1px solid $input-border !important;
+  border-radius: $default-radius !important;
 }
 
 .select2-container--default .select2-selection--single {
-  background-color: variables.$form-control-bg !important;
-  border: 0px solid variables.$input-border !important;
-  border-radius: variables.$default-radius !important;
+  background-color: $form-control-bg !important;
+  border: 0px solid $input-border !important;
+  border-radius: $default-radius !important;
 }
 
 .select2-container .select2-selection--single,
@@ -1477,20 +1477,20 @@ span.flatpickr-weekday {
 }
 
 .select2-dropdown {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$input-border !important;
-  border-radius: variables.$default-radius !important;
+  background-color: $custom-white !important;
+  border: 1px solid $input-border !important;
+  border-radius: $default-radius !important;
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field {
-  border: 1px solid variables.$input-border !important;
-  border-radius: variables.$default-radius !important;
+  border: 1px solid $input-border !important;
+  border-radius: $default-radius !important;
 }
 
 .select2-container--default
   .select2-results__option--highlighted.select2-results__option--selectable {
-  background-color: variables.$default-background !important;
-  color: variables.$default-text-color !important;
+  background-color: $default-background !important;
+  color: $default-text-color !important;
 }
 
 .select2-results__option--selectable {
@@ -1498,18 +1498,18 @@ span.flatpickr-weekday {
 }
 
 .select2-container--default .select2-results__option--selected {
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
+  background-color: $primary !important;
+  color: $white !important;
 
   &.select2-results__option--highlighted {
-    background-color: variables.$primary !important;
-    color: variables.$white !important;
+    background-color: $primary !important;
+    color: $white !important;
   }
 }
 
 .select2-search__field {
-  background-color: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  background-color: $custom-white !important;
+  color: $default-text-color !important;
 
   &:focus-visible {
     outline: none !important;
@@ -1517,9 +1517,9 @@ span.flatpickr-weekday {
 }
 
 .select2-container--default .select2-selection--multiple {
-  background-color: variables.$form-control-bg !important;
-  border: 1px solid variables.$input-border !important;
-  border-radius: variables.$default-radius !important;
+  background-color: $form-control-bg !important;
+  border: 1px solid $input-border !important;
+  border-radius: $default-radius !important;
 }
 
 .select2-container .select2-selection--multiple {
@@ -1529,9 +1529,9 @@ span.flatpickr-weekday {
 .select2-container--default
   .select2-selection--multiple
   .select2-selection__choice {
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
-  border: 1px solid variables.$primary !important;
+  background-color: $primary !important;
+  color: $white !important;
+  border: 1px solid $primary !important;
   border-radius: 0.15rem !important;
   margin-block-start: 0.375rem !important;
 }
@@ -1544,7 +1544,7 @@ span.flatpickr-weekday {
   .select2-selection--multiple
   .select2-selection__choice__remove {
   border-inline-end: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: variables.$white !important;
+  color: $white !important;
   inset-block-start: -0.3rem !important;
   font-weight: 500 !important;
   font-size: 1.125rem !important;
@@ -1560,7 +1560,7 @@ span.flatpickr-weekday {
 .select2-container--default
   .select2-selection--multiple
   .select2-selection__choice__remove:focus {
-  background-color: variables.$primary !important;
+  background-color: $primary !important;
 }
 
 .select2-results__option span img,
@@ -1569,7 +1569,7 @@ span.flatpickr-weekday {
   height: 1.45rem;
   border-radius: 1.25rem;
   margin-inline-end: 0.25rem;
-  box-shadow: variables.$box-shadow;
+  box-shadow: $box-shadow;
 }
 
 .select2-container .select2-search--inline .select2-search__field {
@@ -1581,7 +1581,7 @@ span.flatpickr-weekday {
     .select2-selection--single
     .select2-selection__rendered,
   .select2-selection.select2-selection--multiple {
-    background-color: variables.$default-background !important;
+    background-color: $default-background !important;
   }
 }
 
@@ -1597,7 +1597,7 @@ span.flatpickr-weekday {
 }
 
 .select2-selection__clear {
-  color: variables.$text-muted;
+  color: $text-muted;
 }
 .select2-dropdown {
   z-index: 10 !important;
@@ -1626,14 +1626,14 @@ span.flatpickr-weekday {
 
 .tabulator .tabulator-header {
   border-bottom: 0px !important;
-  background-color: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  background-color: $custom-white !important;
+  color: $default-text-color !important;
   font-weight: 600 !important;
 }
 
 .tabulator .tabulator-header .tabulator-col {
-  border-inline-end: 1px solid variables.$default-border !important;
-  background: variables.$custom-white !important;
+  border-inline-end: 1px solid $default-border !important;
+  background: $custom-white !important;
 }
 
 .tabulator
@@ -1642,8 +1642,8 @@ span.flatpickr-weekday {
   .tabulator-col-content
   .tabulator-col-sorter
   .tabulator-arrow {
-  border-top: 0.375rem solid variables.$text-muted !important;
-  color: variables.$text-muted !important;
+  border-top: 0.375rem solid $text-muted !important;
+  color: $text-muted !important;
 }
 
 .tabulator
@@ -1652,7 +1652,7 @@ span.flatpickr-weekday {
   .tabulator-col-content
   .tabulator-col-sorter
   .tabulator-arrow {
-  border-bottom: 0.375rem solid variables.$text-muted !important;
+  border-bottom: 0.375rem solid $text-muted !important;
 }
 
 .tabulator
@@ -1660,19 +1660,19 @@ span.flatpickr-weekday {
   .tabulator-col.tabulator-sortable[aria-sort="none"]
   .tabulator-col-content
   .tabulator-col-sorter {
-  color: variables.$light !important;
+  color: $light !important;
 }
 
 .tabulator {
-  border: 1px solid variables.$default-border !important;
-  background-color: variables.$custom-white !important;
-  font-size: variables.$default-font-size !important;
+  border: 1px solid $default-border !important;
+  background-color: $custom-white !important;
+  font-size: $default-font-size !important;
   text-align: start !important;
 
   .tabulator-footer {
-    border-block-start: 1px solid variables.$default-border !important;
-    background-color: variables.$custom-white !important;
-    color: variables.$default-text-color !important;
+    border-block-start: 1px solid $default-border !important;
+    background-color: $custom-white !important;
+    color: $default-text-color !important;
     font-weight: 600 !important;
 
     .tabulator-footer-contents {
@@ -1681,10 +1681,10 @@ span.flatpickr-weekday {
 
     .tabulator-page-size {
       padding: 0.375rem 0.25rem 0.375rem 0.25rem !important;
-      border: 1px solid variables.$default-border !important;
-      border-radius: variables.$default-radius !important;
-      background-color: variables.$custom-white !important;
-      color: variables.$default-text-color !important;
+      border: 1px solid $default-border !important;
+      border-radius: $default-radius !important;
+      background-color: $custom-white !important;
+      color: $default-text-color !important;
 
       &:focus-visible {
         outline: 0 !important;
@@ -1693,17 +1693,17 @@ span.flatpickr-weekday {
 
     .tabulator-paginator {
       text-align: end !important;
-      color: variables.$default-text-color !important;
+      color: $default-text-color !important;
     }
   }
 }
 
 .tabulator-row .tabulator-cell {
-  border-inline-end: 1px solid variables.$default-border !important;
+  border-inline-end: 1px solid $default-border !important;
 }
 
 .tabulator-row {
-  border-block-start: 1px solid variables.$default-border !important;
+  border-block-start: 1px solid $default-border !important;
 
   .tabulator-cell {
     padding: 0.75rem !important;
@@ -1711,21 +1711,21 @@ span.flatpickr-weekday {
 
   &.tabulator-row-even,
   &.tabulator-row-odd {
-    background-color: variables.$custom-white !important;
-    color: variables.$default-text-color !important;
+    background-color: $custom-white !important;
+    color: $default-text-color !important;
   }
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {
-  color: variables.$primary !important;
+  color: $primary !important;
 }
 
 .tabulator .tabulator-footer .tabulator-page {
   padding: 0.375rem 0.75rem !important;
-  border: 1px solid variables.$default-border !important;
-  border-radius: variables.$default-radius !important;
-  background: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  border: 1px solid $default-border !important;
+  border-radius: $default-radius !important;
+  background: $custom-white !important;
+  color: $default-text-color !important;
 }
 
 /* End:: tabulator */
@@ -1751,29 +1751,29 @@ table.gridjs-table {
 }
 
 .gridjs-container {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 
 th.gridjs-th {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
-  color: variables.$gray-6 !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
+  color: $gray-6 !important;
   padding: 0.75rem !important;
   font-weight: 500;
 }
 
 td.gridjs-td {
-  border: 1px solid variables.$default-border !important;
+  border: 1px solid $default-border !important;
   padding: 0.75rem !important;
 }
 
 .gridjs-tbody,
 td.gridjs-td {
-  background-color: variables.$custom-white !important;
+  background-color: $custom-white !important;
 }
 
 .gridjs-footer {
-  background-color: variables.$custom-white !important;
+  background-color: $custom-white !important;
   border-bottom-width: 0 !important;
   border-color: transparent !important;
   border-radius: 0 !important;
@@ -1783,12 +1783,12 @@ td.gridjs-td {
 }
 
 .gridjs-pagination {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 
 .gridjs-pagination .gridjs-pages button:first-child {
-  border-bottom-left-radius: variables.$default-radius !important;
-  border-top-left-radius: variables.$default-radius !important;
+  border-bottom-left-radius: $default-radius !important;
+  border-top-left-radius: $default-radius !important;
   border-bottom-right-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
@@ -1796,8 +1796,8 @@ td.gridjs-td {
 .gridjs-pagination .gridjs-pages button:last-child {
   border-bottom-left-radius: 0 !important;
   border-top-left-radius: 0 !important;
-  border-bottom-right-radius: variables.$default-radius !important;
-  border-top-right-radius: variables.$default-radius !important;
+  border-bottom-right-radius: $default-radius !important;
+  border-top-right-radius: $default-radius !important;
 }
 
 @media (max-width: 575.98px) {
@@ -1810,13 +1810,13 @@ td.gridjs-td {
   .gridjs-pagination .gridjs-pages button:first-child {
     border-bottom-left-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-right-radius: variables.$default-radius !important;
-    border-top-right-radius: variables.$default-radius !important;
+    border-bottom-right-radius: $default-radius !important;
+    border-top-right-radius: $default-radius !important;
   }
 
   .gridjs-pagination .gridjs-pages button:last-child {
-    border-bottom-left-radius: variables.$default-radius !important;
-    border-top-left-radius: variables.$default-radius !important;
+    border-bottom-left-radius: $default-radius !important;
+    border-top-left-radius: $default-radius !important;
     border-bottom-right-radius: 0 !important;
     border-top-right-radius: 0 !important;
   }
@@ -1825,15 +1825,15 @@ td.gridjs-td {
 .gridjs-pagination .gridjs-pages button:disabled,
 .gridjs-pagination .gridjs-pages button:hover:disabled,
 .gridjs-pagination .gridjs-pages button[disabled] {
-  background-color: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  background-color: $custom-white !important;
+  color: $default-text-color !important;
 }
 
 .gridjs-pagination .gridjs-pages button {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
   padding: 0.375 0.75rem !important;
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 
   &:focus {
     box-shadow: none !important;
@@ -1843,8 +1843,8 @@ td.gridjs-td {
 
 .gridjs-pagination .gridjs-pages button.gridjs-currentPage {
   font-weight: 600 !important;
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
+  background-color: $primary !important;
+  color: $white !important;
 }
 
 .gridjs-pagination .gridjs-pages {
@@ -1852,17 +1852,17 @@ td.gridjs-td {
 }
 
 input.gridjs-input {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
-  border-radius: variables.$default-radius !important;
-  font-size: variables.$default-font-size !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
+  border-radius: $default-radius !important;
+  font-size: $default-font-size !important;
   padding: 0.375rem 0.75rem !important;
   line-height: 1.6 !important;
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 
   &:focus {
     box-shadow: none !important;
-    border: 1px solid variables.$primary !important;
+    border: 1px solid $primary !important;
   }
 }
 
@@ -1883,13 +1883,13 @@ button.gridjs-sort-asc {
 }
 
 th.gridjs-th-fixed {
-  background-color: variables.$light !important;
+  background-color: $light !important;
 }
 
 #grid-header-fixed {
   .gridjs-wrapper {
-    border-block-start: 1px solid variables.$default-border !important;
-    border-block-end: 1px solid variables.$default-border !important;
+    border-block-start: 1px solid $default-border !important;
+    border-block-end: 1px solid $default-border !important;
   }
 
   .gridjs-container .gridjs-wrapper .gridjs-thead .gridjs-tr th {
@@ -2012,11 +2012,11 @@ div.dataTables_wrapper div.dataTables_length select {
 }
 
 div.dt-button-info {
-  background-color: variables.$custom-white !important;
-  border: 1px solid variables.$default-border !important;
+  background-color: $custom-white !important;
+  border: 1px solid $default-border !important;
   h2 {
-    background-color: variables.$custom-white !important;
-    border-bottom: 1px solid variables.$default-border !important;
+    background-color: $custom-white !important;
+    border-bottom: 1px solid $default-border !important;
   }
 }
 
@@ -2047,9 +2047,9 @@ div.dt-button-info {
   div.dtr-modal div.dtr-modal-display {
     width: 95% !important;
     height: 95% !important;
-    background-color: variables.$custom-white !important;
-    border: 1px solid variables.$default-border !important;
-    box-shadow: variables.$box-shadow !important;
+    background-color: $custom-white !important;
+    border: 1px solid $default-border !important;
+    box-shadow: $box-shadow !important;
   }
 
   div.dataTables_wrapper div.dataTables_length,
@@ -2075,10 +2075,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control {
 
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
 table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
-  color: variables.$white !important;
-  border: 0.15em solid variables.$white !important;
-  box-shadow: 0 0 0.2em variables.$primary !important;
-  background-color: variables.$primary !important;
+  color: $white !important;
+  border: 0.15em solid $white !important;
+  box-shadow: 0 0 0.2em $primary !important;
+  background-color: $primary !important;
 }
 
 table.dataTable.dtr-inline.collapsed
@@ -2090,7 +2090,7 @@ table.dataTable.dtr-inline.collapsed
   > tr.parent
   > th.dtr-control:before {
   content: "-";
-  background-color: variables.$success !important;
+  background-color: $success !important;
 }
 
 table.dataTable > tbody > tr.child ul.dtr-details > li:first-child {
@@ -2098,7 +2098,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li:first-child {
 }
 
 table.dataTable > tbody > tr.child ul.dtr-details > li {
-  border-block-end: 1px solid variables.$default-border !important;
+  border-block-end: 1px solid $default-border !important;
 }
 
 table.dataTable > tbody > tr.child span.dtr-title {
@@ -2107,7 +2107,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
 
 div.dtr-modal div.dtr-modal-close {
   top: 0px !important;
-  border: 0px solid variables.$default-border !important;
+  border: 0px solid $default-border !important;
   font-size: 1.5rem !important;
   background-color: transparent !important;
 }
@@ -2127,8 +2127,8 @@ div.dtr-modal div.dtr-modal-background {
   box-shadow: none !important;
   font-weight: 500 !important;
   padding: 0.375rem 0.75rem !important;
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
   border: 0;
 }
 
@@ -2216,8 +2216,8 @@ table.table-bordered.dataTable td:last-child {
 }
 
 table.dataTable > tbody > tr.selected > * {
-  background-color: variables.$primary-01;
-  color: variables.$default-text-color !important;
+  background-color: $primary-01;
+  color: $default-text-color !important;
   box-shadow: none !important;
 }
 
@@ -2255,8 +2255,8 @@ table.dataTable > tbody > tr.selected > * {
   }
 
   .swal2-popup {
-    background: variables.$custom-white;
-    color: variables.$default-text-color;
+    background: $custom-white;
+    color: $default-text-color;
     padding: 0 0 2rem;
   }
 
@@ -2285,12 +2285,12 @@ table.dataTable > tbody > tr.selected > * {
   }
 
   .swal2-styled.swal2-confirm {
-    background-color: variables.$primary !important;
-    color: variables.$white;
+    background-color: $primary !important;
+    color: $white;
   }
 
   .swal2-footer {
-    border-top: 1px solid variables.$default-border;
+    border-top: 1px solid $default-border;
   }
 
   .swal2-icon {
@@ -2300,23 +2300,23 @@ table.dataTable > tbody > tr.selected > * {
   }
 
   .swal2-icon.swal2-question {
-    border-color: variables.$success;
-    color: variables.$success;
+    border-color: $success;
+    color: $success;
   }
 
   .swal2-icon.swal2-error {
-    border-color: variables.$danger;
-    color: variables.$danger;
+    border-color: $danger;
+    color: $danger;
   }
 
   .swal2-icon.swal2-info {
-    border-color: variables.$info;
-    color: variables.$info;
+    border-color: $info;
+    color: $info;
   }
 
   .swal2-icon.swal2-warning {
-    border-color: variables.$warning;
-    color: variables.$warning;
+    border-color: $warning;
+    color: $warning;
   }
 
   .swal2-icon .swal2-icon-content {
@@ -2324,13 +2324,13 @@ table.dataTable > tbody > tr.selected > * {
   }
 
   .swal2-image {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 
   .swal2-html-container {
     margin: 1.6rem 1.6rem 0.3rem;
     font-size: 0.875rem;
-    color: variables.$text-muted;
+    color: $text-muted;
     line-height: 1.5;
   }
 
@@ -2342,7 +2342,7 @@ table.dataTable > tbody > tr.selected > * {
     top: 1.9em;
     width: 2em;
     height: 0.3em;
-    background-color: variables.$danger;
+    background-color: $danger;
   }
 
   .swal2-icon.swal2-error [class^="swal2-x-mark-line"][class$="right"] {
@@ -2361,16 +2361,16 @@ table.dataTable > tbody > tr.selected > * {
 
   .swal2-close {
     font-size: 2rem;
-    color: variables.$text-muted;
+    color: $text-muted;
     opacity: 0.5;
   }
 
   .swal2-close:hover {
-    color: variables.$primary;
+    color: $primary;
   }
 
   .swal2-styled.swal2-deny {
-    background-color: variables.$danger;
+    background-color: $danger;
     padding: 0.375em 0.75rem;
     box-shadow: none;
     font-size: 0.8125rem;
@@ -2378,8 +2378,8 @@ table.dataTable > tbody > tr.selected > * {
   }
 
   .swal2-styled.swal2-cancel {
-    background-color: variables.$light !important;
-    color: variables.$default-text-color;
+    background-color: $light !important;
+    color: $default-text-color;
     padding: 0.375em 0.75rem;
     box-shadow: none;
     font-size: 0.8125rem;
@@ -2401,7 +2401,7 @@ table.dataTable > tbody > tr.selected > * {
   .swal2-file:focus,
   .swal2-input:focus,
   .swal2-textarea:focus {
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
     box-shadow: none;
   }
 }
@@ -2418,7 +2418,7 @@ table.dataTable > tbody > tr.selected > * {
 
 /* Start:: swiper js */
 .swiper {
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 [dir="rtl"] {
@@ -2438,9 +2438,9 @@ table.dataTable > tbody > tr.selected > * {
 .swiper-button-prev {
   width: 1.563rem !important;
   height: 1.563rem !important;
-  color: variables.$white !important;
+  color: $white !important;
   background-color: rgba(255, 255, 255, 0.3);
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 .swiper-button-next:after,
@@ -2456,20 +2456,20 @@ table.dataTable > tbody > tr.selected > * {
 .swiper-pagination-bullet {
   width: 1.25rem !important;
   height: 0.25rem !important;
-  border-radius: variables.$default-radius !important;
-  background: variables.$white !important;
+  border-radius: $default-radius !important;
+  background: $white !important;
 }
 
 .swiper-pagination-bullet-active {
-  background: variables.$white !important;
+  background: $white !important;
 }
 
 .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
-  background: variables.$success !important;
+  background: $success !important;
 }
 
 .swiper-pagination {
-  color: variables.$white;
+  color: $white;
 }
 
 .custom-pagination {
@@ -2478,12 +2478,12 @@ table.dataTable > tbody > tr.selected > * {
     height: 1.5rem !important;
     padding: 0.188rem;
     background-color: rgba(255, 255, 255, 0.3) !important;
-    color: variables.$white !important;
+    color: $white !important;
     opacity: 1 !important;
 
     &.swiper-pagination-bullet-active {
-      background-color: variables.$white !important;
-      color: variables.$black !important;
+      background-color: $white !important;
+      color: $black !important;
     }
   }
 }
@@ -2493,7 +2493,7 @@ table.dataTable > tbody > tr.selected > * {
 }
 
 .swiper-scrollbar-drag {
-  background-color: variables.$white !important;
+  background-color: $white !important;
 }
 
 .swiper.vertical {
@@ -2526,7 +2526,7 @@ table.dataTable > tbody > tr.selected > * {
 }
 
 .swiper-thumbs .swiper-slide img {
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 /* End:: swiper js */
@@ -2538,27 +2538,27 @@ pre[class*="language-"]:before {
 }
 
 pre[class*="language-"] > code {
-  border-inline-start: 1px solid variables.$default-border !important;
+  border-inline-start: 1px solid $default-border !important;
   box-shadow: none !important;
-  background-color: variables.$light !important;
-  border: 1px solid variables.$default-border;
-  border-radius: variables.$default-radius;
+  background-color: $light !important;
+  border: 1px solid $default-border;
+  border-radius: $default-radius;
   background-image: none !important;
   white-space: pre-wrap;
 }
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-  background-color: variables.$custom-white !important;
+  background-color: $custom-white !important;
   margin-bottom: 0 !important;
   max-height: 400px;
   overflow-y: hidden !important;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   font-size: 0.82rem !important;
 }
 
@@ -2607,7 +2607,7 @@ code[class*="language-"] {
   svg,
 .apexcharts-theme-light .apexcharts-zoomin-icon:hover svg,
 .apexcharts-theme-light .apexcharts-zoomout-icon:hover svg {
-  fill: variables.$default-text-color !important;
+  fill: $default-text-color !important;
 }
 .select2-container--default
   .select2-selection--single
@@ -2615,5 +2615,5 @@ code[class*="language-"] {
   inset-inline-end: 10px !important;
 }
 .choices__item--selectable {
-  color: variables.$text-muted;
+  color: $text-muted;
 }

@@ -111,7 +111,7 @@ vue-good-table-next
   --default-text-color: #1d212f;
   --default-border: #e8e8f7;
   --default-background: #eaedf7;
-  --menu-bg: #0b0221;
+  --menu-bg: #ffffff;
   --menu-prime-color: #536485;
   --menu-border-color: #e8e8f7;
   --header-bg: #fff;
@@ -1082,6 +1082,8 @@ vue-good-table-next
   color: rgb(255, 255, 255);
   fill: rgb(255, 255, 255);
 }
+
+
 [data-menu-styles="dark"]
   .app-sidebar
   .slide-menu.child1
@@ -2083,6 +2085,8 @@ vue-good-table-next
 [data-header-styles="transparent"] {
   --header-bg: var(--default-body-bg-color);
 }
+
+
 [data-header-styles="transparent"] .app-header {
   backdrop-filter: blur(30px);
   box-shadow: none;
@@ -39879,7 +39883,7 @@ vue-good-table-next
         margin-top: 0.75rem;
     }
     .kanban-task-description {
-        color: variables.$text-muted;
+        color: $text-muted;
         font-size: 0.82rem;
     }
     .kanban-tasks-type {
@@ -39931,7 +39935,7 @@ vue-good-table-next
             right: 0;
             top: 0;
             bottom: 0;
-            background-color: variables.$custom-white;
+            background-color: $custom-white;
             border-radius: 0.5rem;
             background-image: url("/images/media/media-80.svg");
             background-size: cover;

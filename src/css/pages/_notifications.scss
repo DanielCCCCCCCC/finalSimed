@@ -25,7 +25,7 @@
   position: absolute;
   inset-block: 15px;
   width: 3px;
-  background: variables.$primary-02;
+  background: $primary-02;
   inset-inline-start: 20%;
   margin-inline-start: -1px;
 }
@@ -54,13 +54,13 @@
   line-height: 16px;
   font-size: 13px;
   margin-bottom: 4px;
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 
 .notification .notification-time .time {
   line-height: 24px;
   font-size: 21px;
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 
 .notification .notification-icon {
@@ -77,11 +77,11 @@
   height: 18px;
   display: inline-block;
   border-radius: 50%;
-  background: variables.$custom-white;
+  background: $custom-white;
   line-height: 10px;
-  color: variables.$white;
+  color: $white;
   font-size: 14px;
-  border: 3px solid variables.$primary;
+  border: 3px solid $primary;
   transition: border-color 0.2s linear;
 }
 
@@ -89,7 +89,7 @@
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.05);
   margin-inline-start: 24%;
   margin-inline-end: 18%;
-  background: variables.$custom-white;
+  background: $custom-white;
   position: relative;
   padding: 14px 20px;
   border-radius: 6px;
@@ -100,7 +100,7 @@
   display: block;
   position: absolute;
   border: 10px solid transparent;
-  border-inline-end-color: variables.$custom-white;
+  border-inline-end-color: $custom-white;
   inset-inline-start: -20px;
   top: 25px;
 }
@@ -132,7 +132,7 @@
 }
 
 .notification-time-date {
-  color: variables.$default-text-color;
+  color: $default-text-color;
   font-size: 16px;
   font-weight: 500;
 }
@@ -149,17 +149,17 @@
   }
 }
 .awn-popup-loading-dots {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 #awn-popup-wrapper .awn-popup-body.awn-popup-async-block {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 #awn-popup-wrapper .awn-buttons .awn-btn {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 [dir="rtl"] {
   .awn-popup-loading-dots {
-    color: variables.$default-text-color;
+    color: $default-text-color;
     margin-right: 24px !important;
     margin-left: inherit !important;
   }

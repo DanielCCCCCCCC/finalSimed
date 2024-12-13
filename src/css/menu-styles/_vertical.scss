@@ -20,7 +20,7 @@
 .app-sidebar {
   width: 15rem;
   height: 100%;
-  background: variables.$menu-bg;
+  background: $menu-bg;
   position: fixed;
   inset-block-start: 0;
   inset-inline-start: 0;
@@ -31,13 +31,13 @@
     width: 15rem;
     position: fixed;
     display: flex;
-    background: variables.$menu-bg;
+    background: $menu-bg;
     z-index: 9;
     align-items: center;
     justify-content: center;
     padding: 0.813rem 1.25rem;
-    border-inline-end: 1px solid variables.$menu-border-color;
-    border-block-end: 1px solid variables.$menu-border-color;
+    border-inline-end: 1px solid $menu-border-color;
+    border-block-end: 1px solid $menu-border-color;
     transition: all 0.05s ease;
 
     .header-logo {
@@ -60,7 +60,7 @@
   }
 
   .slide__category {
-    color: variables.$menu-prime-color;
+    color: $menu-prime-color;
     font-size: 0.718rem;
     font-weight: 500;
     letter-spacing: 0.031rem;
@@ -83,22 +83,22 @@
     align-items: center;
     text-decoration: none;
     font-size: 0.78rem;
-    color: variables.$menu-prime-color;
+    color: $menu-prime-color;
     font-weight: 400;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
 
     &.active,
     &:hover {
-      color: variables.$menu-prime-color;
+      color: $menu-prime-color;
 
       .side-menu__label,
       .side-menu__angle {
-        color: variables.$menu-prime-color;
+        color: $menu-prime-color;
       }
 
       .side-menu__icon {
-        fill: variables.$menu-prime-color;
-        color: variables.$menu-prime-color;
+        fill: $menu-prime-color;
+        color: $menu-prime-color;
       }
     }
   }
@@ -145,7 +145,7 @@
         }
 
         &:hover {
-          color: variables.$menu-prime-color;
+          color: $menu-prime-color;
 
           &:before {
             opacity: 1;
@@ -154,7 +154,7 @@
 
         &.active {
           &:before {
-            // color: variables.$white;
+            // color: $white;
             opacity: 1;
           }
         }
@@ -170,7 +170,7 @@
 
   .side-menu__label {
     white-space: nowrap;
-    color: variables.$menu-prime-color;
+    color: $menu-prime-color;
     position: relative;
     font-size: 0.875rem;
     line-height: 1;
@@ -183,9 +183,9 @@
     height: 1.15rem;
     font-size: 1.063rem;
     text-align: center;
-    color: variables.$menu-prime-color;
-    fill: variables.$menu-prime-color;
-    border-radius: variables.$default-radius;
+    color: $menu-prime-color;
+    fill: $menu-prime-color;
+    border-radius: $default-radius;
   }
 
   .side-menu__angle {
@@ -193,7 +193,7 @@
     position: absolute;
     inset-inline-end: 0.75rem;
     font-size: 0.75rem;
-    color: variables.$menu-prime-color;
+    color: $menu-prime-color;
     transition: all 0.05s ease;
   }
 
@@ -376,10 +376,10 @@
             }
 
             &.active {
-              color: variables.$white;
+              color: $white;
 
               &:before {
-                color: variables.$white;
+                color: $white;
                 opacity: 1 !important;
               }
             }
@@ -455,7 +455,7 @@
         .slide {
           &.active {
             > .side-menu__item {
-              background-color: variables.$sidemenu-active-bgcolor;
+              background-color: $sidemenu-active-bgcolor;
               padding: 0.25rem;
               position: relative;
               z-index: 1;
@@ -488,7 +488,7 @@
                   border-start-end-radius: 0;
                   border-end-end-radius: 48px;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 &:after {
@@ -506,7 +506,7 @@
                   border-start-end-radius: 48px;
                   border-end-end-radius: 0;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 .shape1 {
@@ -515,7 +515,7 @@
                   width: 20px;
                   height: 60px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
 
                 .shape2 {
@@ -524,7 +524,7 @@
                   width: 20px;
                   height: 30px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
               }
             }
@@ -539,12 +539,12 @@
               text-align: center;
               border-radius: 50%;
               box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-              color: variables.$white;
-              background-color: variables.$primary;
+              color: $white;
+              background-color: $primary;
             }
 
             .side-menu__label {
-              color: variables.$primary;
+              color: $primary;
             }
           }
 
@@ -552,7 +552,7 @@
             > .side-menu__item {
               &.active {
                 .side-menu__angle {
-                  color: variables.$primary;
+                  color: $primary;
                   inset-block-start: 1rem;
                 }
 
@@ -571,7 +571,7 @@
                   border-start-end-radius: 0;
                   border-end-end-radius: 48px;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 &:after {
@@ -589,7 +589,7 @@
                   border-start-end-radius: 48px;
                   border-end-end-radius: 0;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 .shape1 {
@@ -598,7 +598,7 @@
                   width: 20px;
                   height: 60px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
 
                 .shape2 {
@@ -607,7 +607,7 @@
                   width: 20px;
                   height: 30px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
               }
             }
@@ -651,7 +651,7 @@
                     border-start-end-radius: 0;
                     border-end-end-radius: 48px;
                     border-end-start-radius: 0;
-                    border-inline-end: 0px solid variables.$menu-bg;
+                    border-inline-end: 0px solid $menu-bg;
                   }
 
                   &:after {
@@ -663,7 +663,7 @@
               .slide.has-sub.active {
                 > .side-menu__item.active {
                   .side-menu__angle {
-                    color: variables.$menu-prime-color;
+                    color: $menu-prime-color;
                   }
 
                   &:before {
@@ -689,7 +689,7 @@
                     border-start-end-radius: 0;
                     border-end-end-radius: 48px;
                     border-end-start-radius: 0;
-                    border-inline-end: 0px solid variables.$menu-bg;
+                    border-inline-end: 0px solid $menu-bg;
                   }
 
                   &:after {
@@ -730,7 +730,7 @@
                             border-start-end-radius: 0;
                             border-end-end-radius: 48px;
                             border-end-start-radius: 0;
-                            border-inline-end: 0px solid variables.$menu-bg;
+                            border-inline-end: 0px solid $menu-bg;
                           }
                         }
                       }
@@ -804,7 +804,7 @@
                     //   border-start-end-radius: 0;
                     //   border-end-end-radius: 48px;
                     //   border-end-start-radius: 0;
-                    //   border-inline-end: 0px solid variables.$menu-bg;
+                    //   border-inline-end: 0px solid $menu-bg;
                     // }
                     &::after {
                       display: none;
@@ -858,7 +858,7 @@
       &[data-toggled="double-menu-open"] {
         @media (min-width: 992px) {
           .app-sidebar {
-            border-inline-end: 1px solid variables.$menu-border-color;
+            border-inline-end: 1px solid $menu-border-color;
 
             .main-menu {
               .slide-menu {
@@ -894,12 +894,12 @@
                     text-align: center;
                     border-radius: 50%;
                     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-                    color: variables.$white;
-                    background-color: variables.$primary;
+                    color: $white;
+                    background-color: $primary;
                   }
 
                   .side-menu__label {
-                    color: variables.$primary;
+                    color: $primary;
                   }
 
                   .shape1,
@@ -922,7 +922,7 @@
                   > .side-menu__item {
                     &.active {
                       .side-menu__angle {
-                        color: variables.$primary;
+                        color: $primary;
                       }
 
                       &::after {
@@ -955,7 +955,7 @@
 [data-nav-layout="vertical"] {
   &[data-menu-styles="light"][data-vertical-style="doublemenu"][data-toggled="double-menu-open"] {
     .app-sidebar {
-      border-inline-end: 1px solid variables.$menu-border-color;
+      border-inline-end: 1px solid $menu-border-color;
 
       .main-menu .slide.has-sub > .slide-menu.child1 .side-menu__item {
         margin-inline-start: 10px;
@@ -1063,7 +1063,7 @@
         .slide {
           &.active {
             > .side-menu__item {
-              background-color: variables.$sidemenu-active-bgcolor;
+              background-color: $sidemenu-active-bgcolor;
               padding: 0.25rem;
               position: relative;
               z-index: 1;
@@ -1094,7 +1094,7 @@
                   border-start-end-radius: 0;
                   border-end-end-radius: 48px;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 &:after {
@@ -1112,7 +1112,7 @@
                   border-start-end-radius: 48px;
                   border-end-end-radius: 0;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 .shape1 {
@@ -1121,7 +1121,7 @@
                   width: 20px;
                   height: 60px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
 
                 .shape2 {
@@ -1130,7 +1130,7 @@
                   width: 20px;
                   height: 30px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
               }
             }
@@ -1145,12 +1145,12 @@
               text-align: center;
               border-radius: 50%;
               box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-              color: variables.$white;
-              background-color: variables.$primary;
+              color: $white;
+              background-color: $primary;
             }
 
             .side-menu__label {
-              color: variables.$primary;
+              color: $primary;
             }
           }
 
@@ -1158,7 +1158,7 @@
             > .side-menu__item {
               &.active {
                 .side-menu__angle {
-                  color: variables.$primary;
+                  color: $primary;
                   inset-block-start: 0.85rem;
                 }
 
@@ -1177,7 +1177,7 @@
                   border-start-end-radius: 0;
                   border-end-end-radius: 48px;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 &:after {
@@ -1195,7 +1195,7 @@
                   border-start-end-radius: 48px;
                   border-end-end-radius: 0;
                   border-end-start-radius: 0;
-                  border-inline-end: 20px solid variables.$menu-bg;
+                  border-inline-end: 20px solid $menu-bg;
                 }
 
                 .shape1 {
@@ -1204,7 +1204,7 @@
                   width: 20px;
                   height: 60px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
 
                 .shape2 {
@@ -1213,7 +1213,7 @@
                   width: 20px;
                   height: 30px;
                   inset-inline-end: 0px;
-                  background: variables.$sidemenu-active-bgcolor;
+                  background: $sidemenu-active-bgcolor;
                 }
               }
             }
@@ -1234,7 +1234,7 @@
 
               > .slide.active {
                 > .side-menu__item.active {
-                  color: variables.$primary;
+                  color: $primary;
 
                   &:before {
                     content: "\e048";
@@ -1245,7 +1245,7 @@
                     position: absolute;
                     font-size: 0.75rem;
                     inset-inline-start: 0.1rem;
-                    color: variables.$primary;
+                    color: $primary;
                     opacity: 1;
                     margin-inline-end: 1.375rem;
                     inset-block-start: inherit;
@@ -1260,7 +1260,7 @@
                     border-start-end-radius: 0;
                     border-end-end-radius: 48px;
                     border-end-start-radius: 0;
-                    border-inline-end: 0px solid variables.$menu-bg;
+                    border-inline-end: 0px solid $menu-bg;
                   }
 
                   &:after {
@@ -1272,7 +1272,7 @@
               .slide.has-sub.active {
                 > .side-menu__item.active {
                   .side-menu__angle {
-                    color: variables.$primary;
+                    color: $primary;
                   }
 
                   &:before {
@@ -1284,7 +1284,7 @@
                     position: absolute;
                     font-size: 0.75rem;
                     inset-inline-start: 0.1rem;
-                    color: variables.$primary;
+                    color: $primary;
                     margin-inline-end: 1.375rem;
                     inset-block-start: inherit;
                     z-index: inherit;
@@ -1298,7 +1298,7 @@
                     border-start-end-radius: 0;
                     border-end-end-radius: 48px;
                     border-end-start-radius: 0;
-                    border-inline-end: 0px solid variables.$menu-bg;
+                    border-inline-end: 0px solid $menu-bg;
                   }
 
                   &:after {
@@ -1325,7 +1325,7 @@
                             text-decoration: inherit;
                             position: absolute;
                             font-size: 0.75rem;
-                            color: variables.$primary;
+                            color: $primary;
                             inset-inline-start: 0.1rem;
                             margin-inline-end: 1.375rem;
                             inset-block-start: inherit;
@@ -1340,7 +1340,7 @@
                             border-start-end-radius: 0;
                             border-end-end-radius: 48px;
                             border-end-start-radius: 0;
-                            border-inline-end: 0px solid variables.$menu-bg;
+                            border-inline-end: 0px solid $menu-bg;
                           }
                         }
                       }
@@ -1415,7 +1415,7 @@
                   //   border-start-end-radius: 0;
                   //   border-end-end-radius: 48px;
                   //   border-end-start-radius: 0;
-                  //   border-inline-end: 0px solid variables.$menu-bg;
+                  //   border-inline-end: 0px solid $menu-bg;
                   // }
                   &::after {
                     display: none;
@@ -1503,12 +1503,12 @@
                   text-align: center;
                   border-radius: 50%;
                   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-                  color: variables.$white;
-                  background-color: variables.$primary;
+                  color: $white;
+                  background-color: $primary;
                 }
 
                 .side-menu__label {
-                  color: variables.$primary;
+                  color: $primary;
                 }
 
                 .shape1,
@@ -1525,7 +1525,7 @@
                 > .side-menu__item {
                   &.active {
                     .side-menu__angle {
-                      color: variables.$primary;
+                      color: $primary;
                     }
 
                     &::after {
@@ -1568,7 +1568,7 @@
         [data-bg-img="bgimg5"]
       ) {
       .app-sidebar {
-        border-inline-end: 0px solid variables.$menu-border-color;
+        border-inline-end: 0px solid $menu-border-color;
 
         .main-sidebar .slide.active > .side-menu__item {
           &.active {
@@ -1593,7 +1593,7 @@
   /** transparent menu **/
   &[data-menu-styles="transparent"] {
     .app-sidebar {
-      border-inline-end: 1px solid variables.$menu-border-color;
+      border-inline-end: 1px solid $menu-border-color;
     }
   }
 
@@ -1604,11 +1604,11 @@
         .slide {
           &.active {
             .side-menu__label {
-              color: variables.$white;
+              color: $white;
             }
 
             .side-menu__angle {
-              color: variables.$white !important;
+              color: $white !important;
             }
           }
         }
@@ -1630,12 +1630,12 @@
 [data-menu-styles="dark"][data-theme-mode="light"][data-nav-layout="vertical"] {
   &:not([data-vertical-style="doublemenu"]) {
     .app-sidebar .main-sidebar .slide.active.open > .side-menu__item {
-      background-color: variables.$default-background;
+      background-color: $default-background;
 
       &.active {
         .shape1,
         .shape2 {
-          background-color: variables.$default-background;
+          background-color: $default-background;
         }
       }
     }

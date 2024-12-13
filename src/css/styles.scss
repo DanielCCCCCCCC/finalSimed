@@ -79,83 +79,87 @@ vue-good-table-next
 
 /* FONT */
 /* Roboto */
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900");
 
-@use "variables";
-@use "switcher";
-@use "styles.css"; /* BOOTSTRAP */
-@use "bootstrap/accordion";
-@use "bootstrap/alerts";
-@use "bootstrap/badge";
-@use "bootstrap/breadcrumb";
-@use "bootstrap/buttons";
-@use "bootstrap/cards";
-@use "bootstrap/dropdown";
-@use "bootstrap/forms";
-@use "bootstrap/input_group";
-@use "bootstrap/list_group";
-@use "bootstrap/modals";
-@use "bootstrap/navbar";
-@use "bootstrap/navs_tabs";
-@use "bootstrap/pagination";
-@use "bootstrap/popovers";
-@use "bootstrap/progress";
-@use "bootstrap/tables";
-@use "bootstrap/toast";
-@use "bootstrap/tooltips";
+@import "variables";
+@import "switcher";
+
+/* BOOTSTRAP */
+@import "bootstrap/accordion";
+@import "bootstrap/alerts";
+@import "bootstrap/badge";
+@import "bootstrap/breadcrumb";
+@import "bootstrap/buttons";
+@import "bootstrap/cards";
+@import "bootstrap/dropdown";
+@import "bootstrap/forms";
+@import "bootstrap/input_group";
+@import "bootstrap/list_group";
+@import "bootstrap/modals";
+@import "bootstrap/navbar";
+@import "bootstrap/navs_tabs";
+@import "bootstrap/pagination";
+@import "bootstrap/popovers";
+@import "bootstrap/progress";
+@import "bootstrap/tables";
+@import "bootstrap/toast";
+@import "bootstrap/tooltips";
 
 /* CUSTOM */
-@use "custom/custom";
-@use "custom/dashboard_styles";
-@use "custom/error";
-@use "custom/header";
-@use "custom/image";
-@use "custom/plugins";
-@use "custom/pricing";
-@use "custom/tags";
-@use "custom/widgets";
+@import "custom/custom";
+@import "custom/dashboard_styles";
+@import "custom/error";
+@import "custom/header";
+@import "custom/image";
+@import "custom/plugins";
+@import "custom/pricing";
+@import "custom/tags";
+@import "custom/widgets";
 
 /* MENU-STYLES */
-@use "menu-styles/closed_menu";
-@use "menu-styles/detached_menu";
-@use "menu-styles/double_menu";
-@use "menu-styles/horizontal";
-@use "menu-styles/icon_click";
-@use "menu-styles/icon_hover";
-@use "menu-styles/icon_overlay";
-@use "menu-styles/icontext";
-@use "menu-styles/menu_click";
-@use "menu-styles/menu_hover";
-@use "menu-styles/vertical";
+@import "menu-styles/closed_menu";
+@import "menu-styles/detached_menu";
+@import "menu-styles/double_menu";
+@import "menu-styles/horizontal";
+@import "menu-styles/icon_click";
+@import "menu-styles/icon_hover";
+@import "menu-styles/icon_overlay";
+@import "menu-styles/icontext";
+@import "menu-styles/menu_click";
+@import "menu-styles/menu_hover";
+@import "menu-styles/vertical";
 
 /* PAGES */
-@use "pages/chat";
-@use "pages/cryptocurrency";
-@use "pages/ecommerce";
-@use "pages/file-manager";
-@use "pages/landing";
-@use "pages/mail";
-@use "pages/notifications";
-@use "pages/profile";
-@use "pages/task";
-@use "pages/timeline";
+@import "pages/chat";
+@import "pages/cryptocurrency";
+@import "pages/ecommerce";
+@import "pages/file-manager";
+@import "pages/landing";
+@import "pages/mail";
+@import "pages/notifications";
+@import "pages/profile";
+@import "pages/task";
+@import "pages/timeline";
 
 /* UTILITIES */
-@use "util/avatars";
-@use "util/background";
-@use "util/border";
-@use "util/height";
-@use "util/margin";
-@use "util/opacity";
-@use "util/padding";
-@use "util/typography";
-@use "util/width";
+@import "util/avatars";
+@import "util/background";
+@import "util/border";
+@import "util/height";
+@import "util/margin";
+@import "util/opacity";
+@import "util/padding";
+@import "util/typography";
+@import "util/width";
 
 /* Global */
-@use "global/vue3-form-wizard";
-@use "global/vue-multiselect";
-@use "global/vue3-datepicker";
-@use "global/vue3colorpicker";
-@use "global/vuepic_vue-datepicker";
-@use "global/vue3-easy-data-table";
-@use "global/vue-good-table-next";
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900");
+@import "global/vue3-form-wizard";
+@import "global/vue-multiselect";
+@import "global/vue3-datepicker";
+@import "global/vue3colorpicker";
+@import "global/vuepic_vue-datepicker";
+@import "global/vue3-easy-data-table";
+@import "global/vue-good-table-next";
+
+/* ICONS */
+@import "icons";

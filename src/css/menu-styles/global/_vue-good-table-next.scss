@@ -95,15 +95,15 @@ table.vgt-table,
 }
 
 .vgt-wrap__footer .footer__navigation__page-btn {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 .vgt-wrap__footer .footer__navigation__page-btn,
 .vgt-wrap__footer .footer__navigation__info,
 .vgt-wrap__footer .footer__navigation__page-info {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 .vgt-wrap__footer .footer__row-count::after {
-  border-top-color: variables.$text-muted !important;
+  border-top-color: $text-muted !important;
 }
 .vgt-wrap__footer .footer__navigation {
   text-wrap: wrap;
@@ -113,16 +113,16 @@ table.vgt-table {
   background-color: transparent !important;
 }
 .vgt-global-search__input .input__icon .magnifying-glass {
-  border-color: variables.$text-muted !important;
+  border-color: $text-muted !important;
   &:before {
-    background: variables.$text-muted !important;
+    background: $text-muted !important;
   }
 }
 .vgt-table th.sortable button:after {
-  border-bottom-color: variables.$text-muted !important;
+  border-bottom-color: $text-muted !important;
 }
 .vgt-table th.sortable button:before {
-  border-top-color: variables.$text-muted !important;
+  border-top-color: $text-muted !important;
 }
 
 .vgt-inner-wrap {

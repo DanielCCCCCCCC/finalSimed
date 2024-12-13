@@ -1,121 +1,182 @@
 <template>
-  <div class="registrar-organizacion">
-    <q-card class="form-card">
-      <q-card-section>
-        <h1>Registrar Nueva Organización</h1>
+  <div class="page main-signin-wrapper">
+    <div
+      class="d-flex"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#switcher-canvas"
+    >
+      <a class="nav-link icon" href="javascript:;">
+        <i class="fe text-dark"></i>
+      </a>
+    </div>
 
-        <q-form @submit.prevent="handleSubmit">
-          <!-- Campos de la organización -->
-          <div class="q-mb-md">
-            <q-input
-              v-model="nombre"
-              label="Nombre de la Organización"
-              outlined
-              dense
-              required
-            />
+    <div class="row signpages text-center">
+      <div class="col-md-12 my-auto">
+        <div class="card">
+          <div class="row row-sm">
+            <!-- Lado izquierdo del formulario -->
+            <div
+              class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary details"
+            >
+              <div class="mt-5 pt-5 p-2 position-absolute">
+                <router-link :to="url">
+                  <img
+                    src="../assets/icons/Imagen2.png"
+                    class="header-brand-img mb-4"
+                    alt="logo"
+                  />
+                </router-link>
+                <div class="clearfix"></div>
+                <img
+                  src="/images/svgs/user.svg"
+                  class="ht-100 mb-0"
+                  alt="user"
+                />
+                <h5 class="mt-4 text-fixed-white">Registrar Organización</h5>
+                <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
+                  Completa el formulario para registrar una nueva organización
+                </span>
+              </div>
+            </div>
+
+            <!-- Lado derecho del formulario -->
+            <div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form">
+              <div class="main-container container-fluid">
+                <div class="row row-sm">
+                  <div class="card-body mt-2 mb-2">
+                    <div class="clearfix"></div>
+                    <h5 class="text-start mb-2">Registrar Organización</h5>
+                    <p class="mb-4 text-muted fs-13 ms-0 text-start">
+                      Completa los campos para registrar una nueva organización.
+                    </p>
+
+                    <q-form @submit.prevent="handleSubmit">
+                      <!-- Campos de la organización -->
+                      <div class="form-group text-start">
+                        <label>Nombre de la Organización</label>
+                        <q-input
+                          v-model="nombre"
+                          placeholder="Ingrese el nombre de la organización"
+                          outlined
+                          dense
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label>Dirección</label>
+                        <q-input
+                          v-model="direccion"
+                          placeholder="Ingrese la dirección"
+                          outlined
+                          dense
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label>Email de Contacto</label>
+                        <q-input
+                          v-model="email_contacto"
+                          placeholder="Ingrese el email de contacto"
+                          type="email"
+                          outlined
+                          dense
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label>Número de Teléfono</label>
+                        <q-input
+                          v-model="numero_telefono"
+                          placeholder="Ingrese el número de teléfono"
+                          type="text"
+                          outlined
+                          dense
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label>Sitio Web</label>
+                        <q-input
+                          v-model="sitio_web"
+                          placeholder="Ingrese el sitio web"
+                          type="url"
+                          outlined
+                          dense
+                          class="form-control"
+                        />
+                      </div>
+
+                      <!-- Campos del administrador -->
+                      <h5 class="text-start mt-4">Datos del Administrador</h5>
+                      <div class="form-group text-start">
+                        <label>Email del Administrador</label>
+                        <q-input
+                          v-model="admin_email"
+                          placeholder="Ingrese el email del administrador"
+                          type="email"
+                          outlined
+                          dense
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                      <div class="form-group text-start">
+                        <label>Contraseña del Administrador</label>
+                        <q-input
+                          v-model="admin_password"
+                          placeholder="Ingrese la contraseña"
+                          type="password"
+                          outlined
+                          dense
+                          class="form-control"
+                          required
+                        />
+                      </div>
+
+                      <div class="d-grid mt-4">
+                        <q-btn
+                          type="submit"
+                          label="Registrar Organización"
+                          color="primary"
+                          unelevated
+                          rounded
+                          :loading="cargando"
+                          class="btn ripple btn-primary"
+                        />
+                      </div>
+                    </q-form>
+
+                    <div v-if="error" class="mt-4">
+                      <q-banner class="bg-negative text-white" dense>
+                        {{ error }}
+                      </q-banner>
+                    </div>
+
+                    <div v-if="mensajeExito" class="mt-4">
+                      <q-banner class="bg-positive text-white" dense>
+                        {{ mensajeExito }}
+                      </q-banner>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="direccion"
-              label="Dirección"
-              outlined
-              dense
-              required
-            />
-          </div>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="email_contacto"
-              label="Email de Contacto"
-              type="email"
-              outlined
-              dense
-              required
-            />
-          </div>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="numero_telefono"
-              label="Número de Teléfono"
-              type="text"
-              outlined
-              dense
-            />
-          </div>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="sitio_web"
-              label="Sitio Web"
-              type="url"
-              outlined
-              dense
-            />
-          </div>
-
-          <!-- Campos del administrador -->
-          <h2 class="q-mt-lg q-mb-md">Datos del Administrador</h2>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="admin_email"
-              label="Email del Administrador"
-              type="email"
-              outlined
-              dense
-              required
-            />
-          </div>
-
-          <div class="q-mb-md">
-            <q-input
-              v-model="admin_password"
-              label="Contraseña del Administrador"
-              type="password"
-              outlined
-              dense
-              required
-            />
-          </div>
-
-          <div class="flex justify-center q-mt-lg">
-            <q-btn
-              type="submit"
-              :label="cargando ? 'Registrando...' : 'Registrar Organización'"
-              color="primary"
-              :disable="cargando"
-              unelevated
-              rounded
-              class="btn-login"
-            />
-          </div>
-        </q-form>
-
-        <div v-if="error" class="error-message">
-          <q-banner class="bg-negative text-white" dense>
-            {{ error }}
-          </q-banner>
         </div>
-
-        <div v-if="mensajeExito" class="success-message">
-          <q-banner class="bg-positive text-white" dense>
-            {{ mensajeExito }}
-          </q-banner>
-        </div>
-      </q-card-section>
-    </q-card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useOrganizacionStore } from "../stores/organizacionStore";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+import { useOrganizacionStore } from "../stores/organizacionStore";
+import { useThemeStore } from "../stores/themeStore"; // Asegúrate de que la ruta es correcta
+const themeStore = useThemeStore();
 // Campos de la organización
 const nombre = ref("");
 const direccion = ref("");
@@ -165,73 +226,52 @@ const handleSubmit = async () => {
     cargando.value = false;
   }
 };
+
+onMounted(() => {
+  // Definir el tema light
+  themeStore.colorThemeFn("light");
+  themeStore.layoutStylesFn("icon-overlay");
+
+  // Establecer el color naranja para --primary-rgb
+  document.documentElement.style.setProperty("--primary-rgb", "223, 90, 90"); // RGB para naranja
+});
 </script>
 
 <style scoped>
-/* Fondo que cubre toda la página */
-body {
-  margin: 0;
-  overflow: hidden;
-}
-
-.registrar-organizacion {
-  position: relative;
+/* Mantiene las clases globales y agrega estilos específicos */
+.page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #3f51b5, #2196f3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
+/*
+.header-setting-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+} */
+
+.details {
+  position: relative;
+  padding: 20px;
 }
 
-.form-card {
-  width: 100%;
-  max-width: 600px;
+.login_form {
   padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-h1 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-  color: #3f51b5;
-}
-
-h2 {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #3f51b5;
-}
-
-.q-input {
-  width: 100%;
-}
-
-.q-btn {
-  width: 100%;
+.btn-primary {
   font-size: 1rem;
-  padding: 0.75rem;
+  width: 100%;
 }
 
-.error-message,
-.success-message {
-  margin-top: 20px;
+.bg-primary {
+  background: #3f51b5;
 }
 
-.error-message .q-banner,
-.success-message .q-banner {
-  padding: 12px;
-  border-radius: 8px;
+.text-fixed-white {
+  color: white;
 }
 
-.error-message {
-  color: #f44336;
-}
-
-.success-message {
-  color: #4caf50;
+.fs-13 {
+  font-size: 13px;
 }
 </style>

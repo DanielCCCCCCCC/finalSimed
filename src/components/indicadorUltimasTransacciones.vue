@@ -1,89 +1,119 @@
 <template>
-  <!-- <q-card flat bordered class="q-px-md q-py-md bg-grey-1"> -->
-  <q-card-section>
-    <div class="text-caption text-grey-8">CITAS PROGRAMADAS</div>
-    <div class="text-caption text-grey-6">
+  <div class="custom-card card-dashboard-calendar">
+    <label class="main-content-label mb-2 center title"
+      >CITAS PROGRAMADAS</label
+    >
+    <span class="fs-12 mt-1 text-muted title">
       Resumen de citas agendadas y su estatus
+    </span>
+    <div>
+      <table class="table m-b-0 transcations mt-2">
+        <tbody>
+          <tr v-for="(appointment, index) in appointments" :key="index">
+            <td class="wd-5p">
+              <div class="main-img-user avatar-md">
+                <q-avatar
+                  rounded
+                  :color="appointment.avatarColor"
+                  class="rounded-circle me-3"
+                  text-color="white"
+                >
+                  <q-icon :name="appointment.icon" />
+                </q-avatar>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-middle ms-3">
+                <div class="d-inline-block">
+                  <h6 class="mb-1">{{ appointment.title }}</h6>
+                  <p class="mb-0 fs-13 text-muted">
+                    {{ appointment.description }}
+                  </p>
+                </div>
+              </div>
+            </td>
+            <td class="text-end">
+              <div class="d-inline-block">
+                <h6
+                  class="mb-2 fs-15 fw-semibold"
+                  :class="{
+                    'text-success': appointment.status === 'positive',
+                    'text-danger': appointment.status === 'negative',
+                  }"
+                >
+                  {{ appointment.value }}
+                  <i
+                    :class="[
+                      appointment.statusIcon,
+                      'ms-2',
+                      appointment.status === 'positive'
+                        ? 'text-success'
+                        : 'text-danger',
+                      'm-l-10',
+                    ]"
+                  ></i>
+                </h6>
+                <p class="mb-0 text-muted">{{ appointment.date }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </q-card-section>
-  <q-list>
-    <!-- Ejemplo de cita programada -->
-    <q-item clickable class="q-py-xs">
-      <q-item-section avatar>
-        <q-avatar rounded color="primary" text-color="white">
-          <q-icon name="event" />
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Cita con el Dr. Pérez</q-item-label>
-        <q-item-label caption>Consulta de seguimiento</q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <div class="text-positive">$50.00</div>
-        <div class="text-caption text-grey-6">12 Dic 2023</div>
-      </q-item-section>
-    </q-item>
-
-    <!-- Otra cita programada -->
-    <q-item clickable class="q-py-xs">
-      <q-item-section avatar>
-        <q-avatar rounded color="secondary" text-color="white">
-          <q-icon name="event_busy" />
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Cita cancelada</q-item-label>
-        <q-item-label caption>Paciente: Juan García</q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <div class="text-negative">Cancelada</div>
-        <div class="text-caption text-grey-6">10 Dic 2023</div>
-      </q-item-section>
-    </q-item>
-
-    <!-- Más citas -->
-    <q-item clickable class="q-py-xs">
-      <q-item-section avatar>
-        <q-avatar rounded color="accent" text-color="white">
-          <q-icon name="local_hospital" />
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Cita de urgencias</q-item-label>
-        <q-item-label caption>Paciente: María López</q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <div class="text-primary">$75.00</div>
-        <div class="text-caption text-grey-6">09 Dic 2023</div>
-      </q-item-section>
-    </q-item>
-  </q-list>
-  <!-- </q-card> -->
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import {
-  QCard,
-  QCardSection,
-  QList,
-  QItem,
-  QItemSection,
-  QItemLabel,
-  QAvatar,
-  QIcon,
-} from "quasar";
-</script>
+import { QAvatar, QIcon } from "quasar";
 
+const appointments = ref([
+  {
+    title: "Cita con el Dr. Pérez",
+    description: "Consulta de seguimiento",
+    avatarColor: "primary",
+    icon: "event",
+    value: "$50.00",
+    status: "positive",
+    statusIcon: "fas fa-level-up-alt",
+    date: "12 Dic 2023",
+  },
+  {
+    title: "Cita cancelada",
+    description: "Paciente: Juan García",
+    avatarColor: "secondary",
+    icon: "event_busy",
+    value: "Cancelada",
+    status: "negative",
+    statusIcon: "fas fa-level-down-alt",
+    date: "10 Dic 2023",
+  },
+  {
+    title: "Cita de urgencias",
+    description: "Paciente: María López",
+    avatarColor: "accent",
+    icon: "local_hospital",
+    value: "$75.00",
+    status: "positive",
+    statusIcon: "fas fa-level-up-alt",
+    date: "09 Dic 2023",
+  },
+]);
+</script>
 <style scoped>
-.q-card {
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.card {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  position: relative;
+  top: 10px;
+  border: none;
 }
-.q-item {
-  border-bottom: 1px solid #f1f1f1;
-}
-.q-item:last-child {
-  border-bottom: none;
+.title {
+  position: relative;
+  top: 10px;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
 }
 </style>

@@ -17,35 +17,35 @@
 .breadcrumb {
   .breadcrumb-item {
     a {
-      color: variables.$primary;
+      color: $primary;
     }
 
     &.active {
-      color: variables.$default-text-color;
+      color: $default-text-color;
       // font-weight: 600;
     }
   }
 }
 .breadcrumb-item + .breadcrumb-item::before {
-  color: variables.$text-muted;
+  color: $text-muted;
 }
 .breadcrumb-example1 {
   .breadcrumb-item + .breadcrumb-item::before {
-    color: variables.$text-muted;
+    color: $text-muted;
     content: var(--bs-breadcrumb-divider, "/");
     font-family: "tabler-icons" !important;
   }
 }
 .breadcrumb-style1 {
   .breadcrumb-item + .breadcrumb-item::before {
-    color: variables.$text-muted;
+    color: $text-muted;
     content: var(--bs-breadcrumb-divider, "\ea1c");
     font-family: "tabler-icons" !important;
   }
 }
 .breadcrumb-style2 {
   .breadcrumb-item + .breadcrumb-item::before {
-    color: variables.$text-muted;
+    color: $text-muted;
     content: var(--bs-breadcrumb-divider, "\ea61");
     font-family: "tabler-icons" !important;
   }

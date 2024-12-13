@@ -125,26 +125,26 @@
 
 /* Start::text colors */
 .text-default {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 .text-muted {
-  color: variables.$text-muted !important;
+  color: $text-muted !important;
 }
 .text-primary {
-  color: variables.$primary !important;
+  color: $primary !important;
   opacity: 1;
   &.text-opacity-75 {
-    color: variables.$primary-08 !important;
+    color: $primary-08 !important;
   }
   &.text-opacity-25 {
-    color: variables.$primary-03 !important;
+    color: $primary-03 !important;
   }
   &.text-opacity-50 {
-    color: variables.$primary-05 !important;
+    color: $primary-05 !important;
   }
 }
 .text-secondary {
-  color: variables.$secondary !important;
+  color: $secondary !important;
   opacity: 1;
   &.text-opacity-75 {
     color: rgba(var(--secondary-rgb), 0.75) !important;
@@ -157,7 +157,7 @@
   }
 }
 .text-info {
-  color: variables.$info !important;
+  color: $info !important;
   opacity: 1;
   &.text-opacity-75 {
     color: rgba(var(--info-rgb), 0.75) !important;
@@ -170,7 +170,7 @@
   }
 }
 .text-success {
-  color: variables.$success !important;
+  color: $success !important;
   opacity: 1;
   &.text-opacity-75 {
     color: rgba(var(--success-rgb), 0.75) !important;
@@ -183,7 +183,7 @@
   }
 }
 .text-warning {
-  color: variables.$warning !important;
+  color: $warning !important;
   opacity: 1;
   &.text-opacity-75 {
     color: rgba(var(--warning-rgb), 0.75) !important;
@@ -196,7 +196,7 @@
   }
 }
 .text-danger {
-  color: variables.$danger !important;
+  color: $danger !important;
   opacity: 1;
   &.text-opacity-75 {
     color: rgba(var(--danger-rgb), 0.75) !important;
@@ -209,78 +209,78 @@
   }
 }
 .text-blue {
-  color: variables.$blue !important;
+  color: $blue !important;
 }
 .text-green {
-  color: variables.$green !important;
+  color: $green !important;
 }
 .text-pink {
-  color: variables.$pink !important;
+  color: $pink !important;
 }
 .text-teal {
-  color: variables.$teal !important;
+  color: $teal !important;
 }
 .text-orange {
-  color: variables.$orange !important;
+  color: $orange !important;
 }
 .text-indigo {
-  color: variables.$indigo !important;
+  color: $indigo !important;
 }
 .text-purple {
-  color: variables.$purple !important;
+  color: $purple !important;
 }
 .text-dark {
-  color: variables.$dark !important;
+  color: $dark !important;
 }
 .text-light {
-  color: variables.$light !important;
+  color: $light !important;
 }
 .text-gray {
-  color: variables.$gray-5 !important;
+  color: $gray-5 !important;
 }
 .text-black {
-  color: variables.$custom-black !important;
+  color: $custom-black !important;
 }
 .text-white {
-  color: variables.$custom-white !important;
+  color: $custom-white !important;
 }
 .tx-white-7 {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 .text-fixed-white {
-  color: variables.$white !important;
+  color: $white !important;
 }
 .text-fixed-black {
-  color: variables.$black !important;
+  color: $black !important;
 }
 
 //gray set starts
 .text-gray-1 {
-  color: variables.$gray-1;
+  color: $gray-1;
 }
 .text-gray-2 {
-  color: variables.$gray-2;
+  color: $gray-2;
 }
 .text-gray-3 {
-  color: variables.$gray-3;
+  color: $gray-3;
 }
 .text-gray-4 {
-  color: variables.$gray-4;
+  color: $gray-4;
 }
 .text-gray-5 {
-  color: variables.$gray-5;
+  color: $gray-5;
 }
 .text-gray-6 {
-  color: variables.$gray-6;
+  color: $gray-6;
 }
 .text-gray-7 {
-  color: variables.$gray-7;
+  color: $gray-7;
 }
 .text-gray-8 {
-  color: variables.$gray-8;
+  color: $gray-8;
 }
 .text-gray-9 {
-  color: variables.$gray-9;
+  color: $gray-9;
 }
 //gray set ends
 /* End::text colors */
@@ -288,79 +288,79 @@
 /* Start::links */
 a {
   text-decoration: none;
-  color: variables.$primary;
+  color: $primary;
 
   &:hover {
     --bs-text-opacity: 1;
     opacity: 1;
-    color: variables.$primary;
+    color: $primary;
   }
 }
 /* End::links */
 
 /* Start::Colored Links */
 .link-primary {
-  color: variables.$primary !important;
+  color: $primary !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$primary !important;
+    color: $primary !important;
   }
 }
 .link-secondary {
-  color: variables.$secondary !important;
+  color: $secondary !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$secondary !important;
+    color: $secondary !important;
   }
 }
 .link-success {
-  color: variables.$success !important;
+  color: $success !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$success !important;
+    color: $success !important;
   }
 }
 .link-danger {
-  color: variables.$danger !important;
+  color: $danger !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$danger !important;
+    color: $danger !important;
   }
 }
 .link-warning {
-  color: variables.$warning !important;
+  color: $warning !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$warning !important;
+    color: $warning !important;
   }
 }
 .link-info {
-  color: variables.$info !important;
+  color: $info !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$info !important;
+    color: $info !important;
   }
 }
 .link-light {
-  color: variables.$light !important;
+  color: $light !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$light !important;
+    color: $light !important;
   }
 }
 .link-dark {
-  color: variables.$dark !important;
+  color: $dark !important;
   &:hover,
   &:focus,
   &:active {
-    color: variables.$dark !important;
+    color: $dark !important;
   }
 }
 /* End::Colored Links */
@@ -368,9 +368,9 @@ a {
 /* Start::Blockquote */
 .blockquote-container {
   padding: 1.25rem;
-  border: 1px solid variables.$default-border;
-  border-block-start: 4px solid variables.$default-border;
-  border-radius: variables.$default-radius;
+  border: 1px solid $default-border;
+  border-block-start: 4px solid $default-border;
+  border-radius: $default-radius;
   position: relative;
   &:before {
     position: absolute;
@@ -380,8 +380,8 @@ a {
     height: 1.5rem;
     font-size: 0.813rem;
     font-weight: 600;
-    border: 1px solid variables.$default-border;
-    background-color: variables.$custom-white;
+    border: 1px solid $default-border;
+    background-color: $custom-white;
     top: -0.875rem;
     align-items: center;
     display: flex;
@@ -396,7 +396,7 @@ a {
   font-size: 0.85rem;
   font-weight: 600;
   padding: 1rem;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
   position: relative;
   &:before {
     content: "\f6b0";
@@ -417,29 +417,29 @@ a {
     position: absolute;
     inset-block-start: -1rem;
     inset-inline-end: -1rem;
-    background-color: variables.$custom-white;
+    background-color: $custom-white;
     i {
       font-size: 1.75rem;
       font-weight: 500;
     }
   }
   &.primary {
-    background-color: variables.$primary-01;
-    border-inline-start: 2px solid variables.$primary;
-    border-block-start: 2px solid variables.$primary;
+    background-color: $primary-01;
+    border-inline-start: 2px solid $primary;
+    border-block-start: 2px solid $primary;
     .quote-icon i {
-      color: variables.$primary;
+      color: $primary;
     }
     &:before {
-      color: variables.$primary-01;
+      color: $primary-01;
     }
   }
   &.secondary {
     background-color: rgba(var(--secondary-rgb), 0.1);
-    border-inline-start: 2px solid variables.$secondary;
-    border-block-start: 2px solid variables.$secondary;
+    border-inline-start: 2px solid $secondary;
+    border-block-start: 2px solid $secondary;
     .quote-icon i {
-      color: variables.$secondary;
+      color: $secondary;
     }
     &:before {
       color: rgba(var(--secondary-rgb), 0.1);
@@ -447,10 +447,10 @@ a {
   }
   &.info {
     background-color: rgba(var(--info-rgb), 0.1);
-    border-inline-start: 2px solid variables.$info;
-    border-block-start: 2px solid variables.$info;
+    border-inline-start: 2px solid $info;
+    border-block-start: 2px solid $info;
     .quote-icon i {
-      color: variables.$info;
+      color: $info;
     }
     &:before {
       color: rgba(var(--info-rgb), 0.1);
@@ -458,10 +458,10 @@ a {
   }
   &.warning {
     background-color: rgba(var(--warning-rgb), 0.1);
-    border-inline-start: 2px solid variables.$warning;
-    border-block-start: 2px solid variables.$warning;
+    border-inline-start: 2px solid $warning;
+    border-block-start: 2px solid $warning;
     .quote-icon i {
-      color: variables.$warning;
+      color: $warning;
     }
     &:before {
       color: rgba(var(--warning-rgb), 0.1);
@@ -469,10 +469,10 @@ a {
   }
   &.success {
     background-color: rgba(var(--success-rgb), 0.1);
-    border-inline-start: 2px solid variables.$success;
-    border-block-start: 2px solid variables.$success;
+    border-inline-start: 2px solid $success;
+    border-block-start: 2px solid $success;
     .quote-icon i {
-      color: variables.$success;
+      color: $success;
     }
     &:before {
       color: rgba(var(--success-rgb), 0.1);
@@ -480,10 +480,10 @@ a {
   }
   &.danger {
     background-color: rgba(var(--danger-rgb), 0.1);
-    border-inline-start: 2px solid variables.$danger;
-    border-block-start: 2px solid variables.$danger;
+    border-inline-start: 2px solid $danger;
+    border-block-start: 2px solid $danger;
     .quote-icon i {
-      color: variables.$danger;
+      color: $danger;
     }
     &:before {
       color: rgba(var(--danger-rgb), 0.1);

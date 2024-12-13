@@ -34,12 +34,12 @@
   > {
     img {
       max-width: 120px;
-      border: 5px solid variables.$white;
+      border: 5px solid $white;
       border-radius: 50%;
     }
 
     .h3 {
-      color: variables.$default-text-color;
+      color: $default-text-color;
       font-size: 20px;
       line-height: 30px;
     }
@@ -74,13 +74,13 @@
     margin-block-start: 13px;
     margin-block-end: 13px;
     font-size: 14px;
-    color: variables.$default-text-color;
+    color: $default-text-color;
     font-weight: 500;
 
     &:not(:first-child) {
       margin-inline-start: 30px;
       padding-inline-start: 30px;
-      border-inline-start: 1px solid variables.$default-border;
+      border-inline-start: 1px solid $default-border;
     }
   }
 
@@ -178,7 +178,7 @@
 .main-content-left-profile {
   padding-inline: 0;
   display: block;
-  border-bottom: 1px solid variables.$default-border;
+  border-bottom: 1px solid $default-border;
   padding-bottom: 25px;
   width: auto;
 }
@@ -188,7 +188,7 @@
     width: 270px;
     padding-inline-end: 20px;
     padding-bottom: 0;
-    border-right: 1px solid variables.$default-border;
+    border-right: 1px solid $default-border;
     border-bottom: 0;
   }
 }
@@ -268,14 +268,14 @@
   .nav {
     flex-direction: column;
     padding: 20px;
-    border-bottom: 1px solid variables.$default-border;
+    border-bottom: 1px solid $default-border;
   }
 
   .main-nav-line .nav-link {
     text-transform: uppercase;
     font-size: 13px;
     font-weight: 500;
-    // color: variables.$dark;
+    // color: $dark;
 
     &.active {
       font-weight: 500;
@@ -403,7 +403,7 @@
 
     > span {
       &:first-child {
-        color: variables.$default-text-color;
+        color: $default-text-color;
         font-size: 14px;
       }
 
@@ -563,7 +563,7 @@
   align-items: center;
   justify-content: center;
   line-height: 0;
-  color: variables.$white;
+  color: $white;
   font-size: 18px;
   position: relative;
   inset-block-start: 2px;
@@ -571,7 +571,7 @@
 }
 .profile-tab.tab-menu-heading {
   .profile-nav-line {
-    background-color: variables.$default-background;
+    background-color: $default-background;
     border-radius: 4px;
   }
   .nav-link.active {

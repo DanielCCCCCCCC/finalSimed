@@ -28,7 +28,7 @@
         margin-top: 0.75rem;
     }
     .kanban-task-description {
-        color: variables.$text-muted;
+        color: $text-muted;
         font-size: 0.82rem;
     }
     .kanban-tasks-type {
@@ -80,7 +80,7 @@
             right: 0;
             top: 0;
             bottom: 0;
-            background-color: variables.$custom-white;
+            background-color: $custom-white;
             border-radius: 0.5rem;
             background-image: url("/images/media/media-80.svg");
             background-size: cover;
@@ -108,7 +108,7 @@
     inset-inline-start: -1rem;
     top: 0.5rem;
     border-radius: 50%;
-    background-color: variables.$secondary;
+    background-color: $secondary;
   }
 }
 .task-details-key-tasks {
@@ -116,7 +116,7 @@
   li {
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
-    color: variables.$text-muted;
+    color: $text-muted;
     &:last-child {
       margin-bottom: 0;
     }

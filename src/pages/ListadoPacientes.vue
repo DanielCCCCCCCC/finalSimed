@@ -1,24 +1,25 @@
 <!-- ListadoPacientes.vue -->
 <template>
-  <div class="view-wrapper list-page view-wrapper-paciente-list">
-    <!-- Vista de tarjetas para dispositivos móviles -->
-    <div v-if="isMobileView" class="card-container">
-      <div
-        v-for="paciente in pacientesConDetalles"
-        :key="paciente.id"
-        class="paciente-card"
-        @click="openPanel(paciente)"
-      >
-        <h5>{{ paciente.nombres }} {{ paciente.apellidos }}</h5>
-        <p><strong>Código:</strong> {{ paciente.codigo }}</p>
-        <p><strong>Médico:</strong> {{ paciente.medicoNombre }}</p>
-        <p><strong>Tipo:</strong> {{ paciente.tipoDescripcion }}</p>
-        <p><strong>DNI:</strong> {{ paciente.dni }}</p>
+  <div class="row justify-center q-py-md">
+    <div id="app-container" class="q-mb-xl q-px-xl q-pa-xs">
+      <!-- Contenedor del título y botón -->
+      <div class="q-pb-md">
+        <div class="row items-center">
+          <div class="header-container">
+            <h4 class="header-title">Pacientes Existentes</h4>
+            <p class="parrafo">Catálogo de pacientes del centro médico</p>
+          </div>
+          <div>
+            <q-btn
+              label="Nuevo paciente"
+              flat
+              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              @click="handleNuevoContacto"
+            />
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- DataGrid para pantallas grandes -->
-    <div v-else>
       <DxDataGrid
         ref="dataGrid"
         :data-source="pacientesConDetalles"
@@ -28,7 +29,6 @@
         :focused-row-key="focusedRowKey"
         :key-expr="'id'"
         :show-borders="true"
-        height="100%"
         class="grid theme-dependent"
         @row-click="rowClick"
       >
@@ -135,14 +135,6 @@
         </DxColumn>
       </DxDataGrid>
     </div>
-
-    <!-- Panel de Paciente al lado derecho -->
-    <transition name="slide-fade">
-      <div v-if="isPanelOpened" class="paciente-info-panel">
-        <button class="close-button" @click="onClose">&times;</button>
-        <PacientePanel :paciente="panelData" @close="onClose" />
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -337,55 +329,37 @@ const onCheckboxChange = async (data) => {
 </script>
 
 <style scoped>
-.view-wrapper-paciente-list {
-  /* Estilos personalizados */
+#app-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin: 0 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* position: relative;
+  margin-left: 100px;
+  margin-right: 100px; */
+  width: 93%;
 }
 
-.paciente-card {
-  border: 1px solid #ddd;
-  padding: 16px;
-  border-radius: 8px;
+.form-card {
+  max-width: 800px;
+  width: 100%;
+  margin: auto;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 12px;
-  cursor: pointer;
+  border-radius: 20px 0px 0px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.fsButton {
+  font-size: 16px;
+}
+.btnCerrarModal {
+  font-size: 16px;
+}
+.no-arrow .q-select__dropdown-icon {
+  display: none;
 }
 
-.card-container {
-  padding: 16px;
-}
-
-.paciente-info-panel {
-  position: fixed;
-  top: 5px;
-  right: 0;
-  width: 320px;
-  height: 100%;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.5s;
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
+.right-content {
+  justify-self: end;
 }
 </style>

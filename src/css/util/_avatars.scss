@@ -8,16 +8,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  // border-radius: variables.$default-radius;
-  color: variables.$white;
+  // border-radius: $default-radius;
+  color: $white;
   font-weight: 500;
   a.badge:hover {
-    color: variables.$white;
+    color: $white;
   }
   img {
     width: 100%;
     height: 100%;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
   &.avatar-rounded {
     border-radius: 50%;
@@ -54,14 +54,14 @@
       border-radius: 50%;
       inset-inline-end: 0;
       inset-block-end: 0;
-      border: 2px solid variables.$custom-white;
+      border: 2px solid $custom-white;
     }
   }
   &.online:before {
     background-color: rgb(var(--success-rgb));
   }
   &.offline:before {
-    background-color: variables.$gray-5;
+    background-color: $gray-5;
   }
   &.avatar-xs {
     width: 1.5rem;

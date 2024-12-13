@@ -2,11 +2,11 @@
 
 /* Start::body */
 body {
-  font-size: variables.$default-font-size;
-  font-family: variables.$default-font-family;
-  font-weight: variables.$default-font-weight;
-  background-color: variables.$default-body-color;
-  color: variables.$default-text-color;
+  font-size: $default-font-size;
+  font-family: $default-font-family;
+  font-weight: $default-font-weight;
+  background-color: $default-body-color;
+  color: $default-text-color;
   line-height: 1.5;
   text-align: start;
   overflow-x: clip;
@@ -29,7 +29,7 @@ body {
 }
 
 *:hover::-webkit-scrollbar-thumb {
-  background: variables.$light;
+  background: $light;
 }
 
 a,
@@ -93,8 +93,8 @@ button {
 }
 
 .simple-list-example-scrollspy .active {
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
 }
 
 .scrollspy-example-4 {
@@ -111,7 +111,7 @@ button {
 }
 
 .carousel-caption {
-  color: variables.$white;
+  color: $white;
 }
 
 /* End::Carousel */
@@ -138,10 +138,10 @@ button {
 .bd-example-ratios .ratio {
   display: inline-block;
   width: 10rem;
-  color: variables.$text-muted;
-  background-color: variables.$primary-01;
-  border: variables.$default-border;
-  border-radius: variables.$default-radius;
+  color: $text-muted;
+  background-color: $primary-01;
+  border: $default-border;
+  border-radius: $default-radius;
 }
 
 @media (min-width: 768px) {
@@ -162,7 +162,7 @@ button {
   padding-block-start: 0.75rem;
   padding-block-end: 0.75rem;
   background-color: rgba(var(--light-rgb), 0.75);
-  border: 1px solid variables.$default-border;
+  border: 1px solid $default-border;
 }
 
 .bd-example-cssgrid .grid > * {
@@ -216,8 +216,8 @@ button {
   padding: 1.25rem;
   margin-block-start: 1.25rem;
   margin-block-end: 1.25rem;
-  background-color: variables.$light;
-  border-inline-start: 0.25rem solid variables.$default-border;
+  background-color: $light;
+  border-inline-start: 0.25rem solid $default-border;
 }
 
 .callout-info {
@@ -240,8 +240,8 @@ button {
   border: 0;
 
   > div {
-    background-color: variables.$light;
-    border: 1px solid variables.$custom-white;
+    background-color: $light;
+    border: 1px solid $custom-white;
   }
 }
 
@@ -251,13 +251,13 @@ button {
 
   .position-relative {
     height: 12.5rem;
-    background-color: variables.$default-background;
+    background-color: $default-background;
   }
 
   .position-absolute {
     width: 2rem;
     height: 2rem;
-    background-color: variables.$primary-01;
+    background-color: $primary-01;
     border-radius: 0.375rem;
   }
 }
@@ -270,7 +270,7 @@ button {
 }
 
 .figure-caption {
-  color: variables.$text-muted;
+  color: $text-muted;
 }
 
 /* End:: Images & Figures */
@@ -287,15 +287,15 @@ button {
 }
 
 .footer {
-  box-shadow: 0 0.25rem 1rem variables.$black-1;
+  box-shadow: 0 0.25rem 1rem $black-1;
 }
 
 /*  End::Footer*/
 
 /* Start::OffCanvas */
 .offcanvas {
-  background-color: variables.$custom-white;
-  color: variables.$default-text-color;
+  background-color: $custom-white;
+  color: $default-text-color;
 }
 
 .offcanvas-body {
@@ -333,17 +333,17 @@ button {
     position: absolute;
     inset-block-end: 0;
     width: 100%;
-    background-color: variables.$custom-white;
-    border-block-start: 1px dashed variables.$default-border;
+    background-color: $custom-white;
+    border-block-start: 1px dashed $default-border;
   }
 
   #switcher-main-tab button.nav-link {
     border-radius: 0;
-    color: variables.$default-text-color;
+    color: $default-text-color;
     font-weight: 600;
 
     &.active {
-      color: variables.$primary;
+      color: $primary;
       background-color: rgba(var(--primary-rgb), 0.2);
       border-color: transparent;
     }
@@ -385,12 +385,12 @@ button {
   .bgimage-input {
     width: 3.5rem;
     height: 5.625rem;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
     border: 0;
 
     &.form-check-input:focus {
       border-color: transparent;
-      box-shadow: 0 0 0 0.25rem variables.$black-1;
+      box-shadow: 0 0 0 0.25rem $black-1;
     }
 
     &.bg-img1 {
@@ -462,15 +462,15 @@ button {
       border-radius: 50px;
 
       &.form-check-input:checked {
-        border: 1px solid variables.$input-border;
+        border: 1px solid $input-border;
         position: relative;
-        box-shadow: variables.$box-shadow;
+        box-shadow: $box-shadow;
 
         &:before {
           position: absolute;
           content: "\ea5e";
           font-family: tabler-icons !important;
-          color: variables.$success;
+          color: $success;
           width: 100%;
           height: 100%;
           display: flex;
@@ -482,15 +482,15 @@ button {
       }
 
       &.color-white {
-        background-color: variables.$white;
+        background-color: $white;
       }
 
       &.color-dark {
-        background-color: variables.$black;
+        background-color: $black;
       }
 
       &.color-primary {
-        background-color: variables.$primary;
+        background-color: $primary;
       }
 
       &.color-primary-1 {
@@ -516,7 +516,7 @@ button {
       &.color-gradient {
         background-image: linear-gradient(
           to right top,
-          variables.$primary,
+          $primary,
           #6e72a8
         );
       }
@@ -564,17 +564,17 @@ button {
   font-size: 0.8rem;
   font-weight: 600;
   margin-block-end: 0;
-  background: variables.$default-background;
+  background: $default-background;
   padding: 0.313rem 0.625rem;
-  color: variables.$default-text-color;
+  color: $default-text-color;
 
   .switcher-style-description {
     float: right;
     font-size: 0.625rem;
     background-color: rgba(var(--secondary-rgb), 0.2);
-    color: variables.$secondary;
+    color: $secondary;
     padding: 0.125rem 0.313rem;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 }
 
@@ -597,7 +597,7 @@ button {
     height: 2rem;
     overflow: hidden;
     border-radius: 50%;
-    border: 1px solid variables.$input-border;
+    border: 1px solid $input-border;
 
     &:focus {
       box-shadow: none;
@@ -606,7 +606,7 @@ button {
     &::after {
       content: "\EFC5";
       font-family: remixicon !important;
-      color: rgba(variables.$white, 0.7);
+      color: rgba($white, 0.7);
       line-height: 1.5;
       font-size: 1.25rem;
     }
@@ -617,13 +617,13 @@ button {
 
 /* Start::Bootstrap Styles */
 .card {
-  background-color: variables.$custom-white;
-  border: 1px solid variables.$bootstrap-card-border;
+  background-color: $custom-white;
+  border: 1px solid $bootstrap-card-border;
 }
 
 .img-thumbnail {
-  background-color: variables.$custom-white;
-  border: 1px solid variables.$default-border;
+  background-color: $custom-white;
+  border: 1px solid $default-border;
 }
 
 /* End::Bootstrap Styles */
@@ -688,13 +688,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
     margin: 0.25rem;
     border-radius: 0.25rem;
 
     i {
       font-size: 1.05rem;
-      color: variables.$default-text-color;
+      color: $default-text-color;
     }
   }
 }
@@ -753,7 +753,7 @@ button {
 }
 
 .placeholder {
-  background-color: variables.$gray-7;
+  background-color: $gray-7;
 }
 
 /* End:::placeholders */
@@ -761,9 +761,9 @@ button {
 /* Start::scrollspy */
 .scrollspy-example-2 {
   height: 21.875rem;
-  border: 1px solid variables.$default-border;
+  border: 1px solid $default-border;
   padding: 0.75rem;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 /* End::scrollspy */
@@ -790,7 +790,7 @@ button {
 
 .choices-control {
   .choices__inner {
-    background-color: variables.$light !important;
+    background-color: $light !important;
     border: 0 !important;
   }
 }
@@ -799,7 +799,7 @@ button {
   width: 2.5rem;
   height: 2.5rem;
   padding: 0.625rem;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -891,8 +891,8 @@ button {
     position: absolute;
     width: 5.438rem;
     height: 3.75rem;
-    background-color: variables.$primary;
-    color: variables.$white;
+    background-color: $primary;
+    color: $white;
     font-size: 0.75rem;
     transform: rotate(45deg);
     display: flex;
@@ -942,7 +942,7 @@ button {
 
     .team-member-stats {
       div {
-        border-inline-end: 1px dashed variables.$default-border;
+        border-inline-end: 1px dashed $default-border;
 
         &:last-child {
           border-inline-end: 0;
@@ -954,7 +954,7 @@ button {
   @media (max-width: 575.98px) {
     .team-member-stats {
       div {
-        border-block-end: 1px dashed variables.$default-border;
+        border-block-end: 1px dashed $default-border;
 
         &:last-child {
           border-block-end: 0;
@@ -982,7 +982,7 @@ button {
       width: 100%;
       height: 100%;
       position: absolute;
-      background-color: variables.$primary-03;
+      background-color: $primary-03;
       inset-inline-start: 0;
       inset-inline-end: 0;
       inset-block-start: 0;
@@ -995,7 +995,7 @@ button {
       padding: 0.375rem;
       inset-inline-end: 0.75rem;
       background-color: rgba(0, 0, 0, 0.1);
-      border-radius: variables.$default-radius;
+      border-radius: $default-radius;
       width: 2rem;
       height: 2rem;
       display: flex;
@@ -1016,13 +1016,13 @@ button {
     position: absolute;
     width: 0;
     height: 100%;
-    background-color: variables.$primary-07;
+    background-color: $primary-07;
     inset-inline-start: 0;
     inset-inline-end: 0;
     inset-block-start: 0;
     inset-block-end: 0;
     z-index: 1;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 
   &:hover {
@@ -1084,7 +1084,7 @@ button {
 /* Start:: Notifications */
 .notification-container {
   li .un-read {
-    border-inline-start: 0.25rem solid variables.$primary-03;
+    border-inline-start: 0.25rem solid $primary-03;
   }
 }
 
@@ -1098,11 +1098,11 @@ button {
   font-weight: 500;
 
   &:hover a {
-    color: variables.$primary;
+    color: $primary;
   }
 
   &.active div {
-    color: variables.$primary;
+    color: $primary;
   }
 }
 
@@ -1132,7 +1132,7 @@ button {
   }
 
   &:hover {
-    box-shadow: 0 0.25rem 1rem variables.$black-1;
+    box-shadow: 0 0.25rem 1rem $black-1;
   }
 }
 
@@ -1160,12 +1160,12 @@ button {
     height: 0.25rem;
     background: linear-gradient(
       to right,
-      variables.$primary,
-      variables.$primary-01
+      $primary,
+      $primary-01
     );
     inset-inline-start: 25%;
     inset-block-end: -0.65rem;
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 }
 
@@ -1191,7 +1191,7 @@ button {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: variables.$primary-08;
+    background-color: $primary-08;
     inset-inline-start: 0;
     inset-block-start: 0;
     inset-inline-end: 0;
@@ -1237,9 +1237,9 @@ button {
       align-items: center;
       border-radius: 3.125rem;
       justify-content: center;
-      color: variables.$white;
-      background-color: variables.$primary;
-      box-shadow: 0 0 0.5rem variables.$primary-05;
+      color: $white;
+      background-color: $primary;
+      box-shadow: 0 0 0.5rem $primary-05;
       inset-inline-end: 1.125rem;
       inset-block-start: -1.125rem;
     }
@@ -1267,7 +1267,7 @@ button {
     inset-block-start: 4.625rem;
     inset-block-end: -3rem;
     width: 1px;
-    border: 1px dashed variables.$primary-02;
+    border: 1px dashed $primary-02;
     inset-inline-start: 20%;
     margin-inline-start: -1.5px;
   }
@@ -1296,13 +1296,13 @@ button {
   line-height: 1rem;
   font-size: 0.6rem;
   margin-block-end: 0;
-  color: variables.$text-muted;
+  color: $text-muted;
 }
 
 .timeline .timeline-time .time {
   line-height: 1.5rem;
   font-size: 1.125rem;
-  color: variables.$text-muted;
+  color: $text-muted;
 }
 
 .timeline .timeline-icon {
@@ -1318,11 +1318,11 @@ button {
   height: 0.625rem;
   display: inline-block;
   border-radius: 50%;
-  background: variables.$light;
-  color: variables.$primary;
+  background: $light;
+  color: $primary;
   line-height: 0.625rem;
   font-size: 0.875rem;
-  border: 0.188rem solid variables.$primary-05;
+  border: 0.188rem solid $primary-05;
 }
 
 .timeline .timeline-body {
@@ -1330,10 +1330,10 @@ button {
   margin-inline-start: 22%;
   margin-inline-end: 18%;
   inset-block-start: 2.5rem;
-  background: variables.$custom-white;
+  background: $custom-white;
   position: relative;
   padding: 0.875rem 1.25rem 0.875rem 1.25rem;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 .timeline .timeline-body > div + div {
@@ -1404,7 +1404,7 @@ button {
     font-size: 0.688rem;
     margin-inline-start: 0.313rem;
     margin-inline-end: 0.625rem;
-    color: variables.$text-muted;
+    color: $text-muted;
   }
 }
 
@@ -1445,13 +1445,13 @@ button {
   }
 
   .filepond--panel-root {
-    border-color: variables.$input-border !important;
-    border-radius: variables.$default-radius;
+    border-color: $input-border !important;
+    border-radius: $default-radius;
   }
 
   .filepond--root .filepond--drop-label {
     label {
-      color: variables.$text-muted;
+      color: $text-muted;
     }
   }
 }
@@ -1488,7 +1488,7 @@ button {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: variables.$primary-08;
+    background-color: $primary-08;
     inset-inline-start: 0;
     inset-inline-end: 0;
     inset-block-start: 0;
@@ -1545,7 +1545,7 @@ button {
     img {
       width: 4rem;
       height: 3rem;
-      border-radius: variables.$default-radius;
+      border-radius: $default-radius;
       margin: 0.25rem;
     }
   }
@@ -1573,8 +1573,8 @@ button {
 
 /* Start:: Aboutus */
 .about-container {
-  background-color: variables.$custom-white;
-  border-radius: variables.$default-radius;
+  background-color: $custom-white;
+  border-radius: $default-radius;
   overflow: hidden;
   padding: 1.25rem;
 }
@@ -1589,10 +1589,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  border-radius: variables.$default-radius variables.$default-radius 0 0;
+  border-radius: $default-radius $default-radius 0 0;
   z-index: 9;
   margin-block-end: 3rem;
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 
   &:before {
     content: "";
@@ -1610,14 +1610,14 @@ button {
   .aboutus-banner-content {
     z-index: 10;
     text-align: center;
-    color: variables.$white;
+    color: $white;
   }
 }
 
 @media (max-width: 575.98px) {
   .about-company-stats {
     .about-company-stats-border {
-      border-block-end: 1px dashed variables.$black-1;
+      border-block-end: 1px dashed $black-1;
     }
   }
 }
@@ -1631,7 +1631,7 @@ button {
     inset-inline-end: 0;
 
     .about-company-stats-border {
-      border-inline-end: 1px dashed variables.$black-1;
+      border-inline-end: 1px dashed $black-1;
     }
   }
 
@@ -1652,7 +1652,7 @@ button {
     border-radius: 3.125rem;
     background-image: linear-gradient(
       to right,
-      variables.$white,
+      $white,
       rgba(255, 255, 255, 0.2)
     );
     bottom: -0.625rem;
@@ -1725,7 +1725,7 @@ button {
     border-radius: 3.125rem;
     background-image: linear-gradient(
       to right,
-      variables.$success,
+      $success,
       rgba(var(--success-rgb), 0.2)
     );
     inset-block-end: -0.625rem;
@@ -1762,9 +1762,9 @@ button {
       content: "";
       width: 0.75rem;
       height: 0.75rem;
-      border: 0.125rem solid variables.$primary-03;
+      border: 0.125rem solid $primary-03;
       border-radius: 3.125rem;
-      background-color: variables.$custom-white;
+      background-color: $custom-white;
       inset-inline-start: 0.25rem;
       inset-block-start: 0.563rem;
     }
@@ -1774,7 +1774,7 @@ button {
       content: "";
       height: 100%;
       background-color: transparent;
-      border-inline-end: 2px dashed variables.$primary-01;
+      border-inline-end: 2px dashed $primary-01;
       inset-inline-start: 0.563rem;
       inset-block-start: 1.25rem;
     }
@@ -1783,7 +1783,7 @@ button {
       margin-block-end: 0;
 
       &::after {
-        border-inline-end: 0px dashed variables.$default-border;
+        border-inline-end: 0px dashed $default-border;
       }
     }
   }
@@ -1808,8 +1808,8 @@ button {
 
 /* Start:: Back to Top */
 .scrollToTop {
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
   position: fixed;
   bottom: 20px;
   inset-inline-end: 20px;
@@ -1820,7 +1820,7 @@ button {
   display: none;
   z-index: 10000;
   padding: 0.125rem;
-  border: 1px solid variables.$primary;
+  border: 1px solid $primary;
   height: 2rem;
   width: 2rem;
   cursor: pointer;
@@ -1870,8 +1870,8 @@ button {
 .swiper-related-jobs {
   .swiper-button-next,
   .swiper-button-prev {
-    background-color: variables.$light;
-    color: variables.$default-text-color !important;
+    background-color: $light;
+    color: $default-text-color !important;
   }
 }
 
@@ -1901,7 +1901,7 @@ button {
     padding-inline-end: 1rem;
 
     &:hover {
-      background-color: variables.$default-background !important;
+      background-color: $default-background !important;
     }
   }
 }
@@ -1912,7 +1912,7 @@ button {
 .list-bullets li {
   position: relative;
   margin-block-end: -1px;
-  border: 1px solid variables.$default-border;
+  border: 1px solid $default-border;
   list-style-type: circle;
   list-style-position: inside;
   padding: 0.75rem 1.25rem;
@@ -1952,38 +1952,38 @@ button {
 }
 
 .lead-discovered:before {
-  background-color: variables.$primary;
+  background-color: $primary;
 }
 
 .lead-qualified:before {
-  background-color: variables.$warning;
+  background-color: $warning;
 }
 
 .contact-initiated:before {
-  background-color: variables.$success;
+  background-color: $success;
 }
 
 .need-identified:before {
-  background-color: variables.$info;
+  background-color: $info;
 }
 
 .negotiation:before {
-  background-color: variables.$danger;
+  background-color: $danger;
 }
 
 .deal-finalized:before {
-  background-color: variables.$secondary;
+  background-color: $secondary;
 }
 
 #leads-discovered .card.custom-card {
   border-inline-start: 0.4rem solid rgba(var(--primary-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$primary;
+    color: $primary;
   }
 
   .avatar {
-    background-color: variables.$primary;
+    background-color: $primary;
   }
 }
 
@@ -1991,11 +1991,11 @@ button {
   border-inline-start: 0.4rem solid rgba(var(--warning-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$warning;
+    color: $warning;
   }
 
   .avatar {
-    background-color: variables.$warning;
+    background-color: $warning;
   }
 }
 
@@ -2003,11 +2003,11 @@ button {
   border-inline-start: 0.4rem solid rgba(var(--success-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$success;
+    color: $success;
   }
 
   .avatar {
-    background-color: variables.$success;
+    background-color: $success;
   }
 }
 
@@ -2015,11 +2015,11 @@ button {
   border-inline-start: 0.4rem solid rgba(var(--info-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$info;
+    color: $info;
   }
 
   .avatar {
-    background-color: variables.$info;
+    background-color: $info;
   }
 }
 
@@ -2027,11 +2027,11 @@ button {
   border-inline-start: 0.4rem solid rgba(var(--danger-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$danger;
+    color: $danger;
   }
 
   .avatar {
-    background-color: variables.$danger;
+    background-color: $danger;
   }
 }
 
@@ -2039,11 +2039,11 @@ button {
   border-inline-start: 0.4rem solid rgba(var(--secondary-rgb), 0.4) !important;
 
   .company-name {
-    color: variables.$secondary;
+    color: $secondary;
   }
 
   .avatar {
-    background-color: variables.$secondary;
+    background-color: $secondary;
   }
 }
 
@@ -2075,7 +2075,7 @@ button {
 /* Start:: Create NFT*/
 .create-nft-item {
   .filepond--root[data-style-panel-layout~="circle"] {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
     width: 100%;
   }
 
@@ -2084,11 +2084,11 @@ button {
   }
 
   .filepond--drop-label {
-    color: variables.$text-muted !important;
+    color: $text-muted !important;
   }
 
   .filepond--panel-root {
-    border: 0.125rem dashed variables.$input-border !important;
+    border: 0.125rem dashed $input-border !important;
   }
 
   .filepond--root[data-style-panel-layout~="circle"]
@@ -2126,7 +2126,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: variables.$white;
+  color: $white;
   top: 3.125rem;
   font-weight: 500;
   inset-inline-end: -8.4375rem;
@@ -2146,22 +2146,22 @@ button {
 .nft-tag.nft-tag-primary {
   &:hover,
   &.active {
-    color: variables.$primary;
+    color: $primary;
 
     .nft-tag-icon {
-      background-color: variables.$primary-01;
+      background-color: $primary-01;
     }
   }
 
   .nft-tag-icon {
-    color: variables.$primary;
+    color: $primary;
   }
 }
 
 .nft-tag.nft-tag-secondary {
   &:hover,
   &.active {
-    color: variables.$secondary;
+    color: $secondary;
 
     .nft-tag-icon {
       background-color: rgba(var(--secondary-rgb), 0.1);
@@ -2169,14 +2169,14 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$secondary;
+    color: $secondary;
   }
 }
 
 .nft-tag.nft-tag-warning {
   &:hover,
   &.active {
-    color: variables.$warning;
+    color: $warning;
 
     .nft-tag-icon {
       background-color: rgba(var(--warning-rgb), 0.1);
@@ -2184,14 +2184,14 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$warning;
+    color: $warning;
   }
 }
 
 .nft-tag.nft-tag-info {
   &:hover,
   &.active {
-    color: variables.$info;
+    color: $info;
 
     .nft-tag-icon {
       background-color: rgba(var(--info-rgb), 0.1);
@@ -2199,14 +2199,14 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$info;
+    color: $info;
   }
 }
 
 .nft-tag.nft-tag-success {
   &:hover,
   &.active {
-    color: variables.$success;
+    color: $success;
 
     .nft-tag-icon {
       background-color: rgba(var(--success-rgb), 0.1);
@@ -2214,14 +2214,14 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$success;
+    color: $success;
   }
 }
 
 .nft-tag.nft-tag-danger {
   &:hover,
   &.active {
-    color: variables.$danger;
+    color: $danger;
 
     .nft-tag-icon {
       background-color: rgba(var(--danger-rgb), 0.1);
@@ -2229,14 +2229,14 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$danger;
+    color: $danger;
   }
 }
 
 .nft-tag.nft-tag-dark {
   &:hover,
   &.active {
-    color: variables.$dark;
+    color: $dark;
 
     .nft-tag-icon {
       background-color: rgba(var(--dark-rgb), 0.1);
@@ -2244,7 +2244,7 @@ button {
   }
 
   .nft-tag-icon {
-    color: variables.$dark;
+    color: $dark;
   }
 }
 
@@ -2261,17 +2261,17 @@ button {
   display: inline-block;
   padding: 0.75rem 1rem;
   border-radius: 50%;
-  background-color: variables.$light;
+  background-color: $light;
 }
 
 .nft-tag {
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid variables.$custom-white;
+  border: 1px solid $custom-white;
   border-radius: 50rem;
-  background-color: variables.$custom-white;
-  color: variables.$default-text-color;
+  background-color: $custom-white;
+  color: $default-text-color;
 }
 
 .nft-timer-container {
@@ -2285,7 +2285,7 @@ button {
   border-start-end-radius: 50rem;
   border-end-end-radius: 50rem;
   border-end-start-radius: 0rem;
-  color: variables.$white;
+  color: $white;
   font-weight: 500;
   background: rgba(255, 255, 255, 0.1);
 }
@@ -2299,7 +2299,7 @@ button {
   padding: 5px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.1);
-  color: variables.$white;
+  color: $white;
   font-size: 1rem;
   display: inline-flex;
   align-items: center;
@@ -2308,8 +2308,8 @@ button {
   z-index: 1;
 
   &:hover {
-    background-color: variables.$custom-white;
-    color: variables.$primary;
+    background-color: $custom-white;
+    color: $primary;
   }
 }
 
@@ -2337,7 +2337,7 @@ button {
 // }
 .currency-exchange-card {
   position: relative;
-  background-color: variables.$primary !important;
+  background-color: $primary !important;
   box-shadow: none;
   min-height: 21.875rem;
   z-index: 10;
@@ -2400,14 +2400,14 @@ button {
   width: 300px;
 
   .offcanvas-header {
-    background-color: variables.$default-background;
+    background-color: $default-background;
   }
 
   .Overviews {
     padding: 13px 22px;
     font-size: 14px;
-    border-block-end: 1px solid variables.$default-border;
-    background: variables.$default-background;
+    border-block-end: 1px solid $default-border;
+    background: $default-background;
   }
 }
 
@@ -2570,7 +2570,7 @@ button {
   &:after {
     content: "";
     position: absolute;
-    background: variables.$default-background;
+    background: $default-background;
     height: 97%;
     width: 1px;
     inset-block-start: 0;
@@ -2609,17 +2609,17 @@ button {
 /** start width **/
 .main-table-reference {
   margin-block-start: 40px;
-  background-color: variables.$custom-white;
+  background-color: $custom-white;
 
   > {
     thead > tr > {
       th,
       td {
         padding: 8px 10px;
-        border: 1px solid variables.$default-border;
+        border: 1px solid $default-border;
         font-size: 13px;
-        background-color: variables.$default-background;
-        color: variables.$default-text-color;
+        background-color: $default-background;
+        color: $default-text-color;
         font-size: 11px;
         font-weight: 500;
         text-transform: uppercase;
@@ -2632,7 +2632,7 @@ button {
       th,
       td {
         padding: 8px 10px;
-        border: 1px solid variables.$default-border;
+        border: 1px solid $default-border;
         font-size: 13px;
       }
     }
@@ -2691,7 +2691,7 @@ button {
     inset-block-end: -1px;
     inset-inline: 0;
     inset-inline-end: 0;
-    border-block-end: 1px solid variables.$default-border;
+    border-block-end: 1px solid $default-border;
     z-index: 5;
   }
 }
@@ -2707,22 +2707,22 @@ button {
   + .main-contact-item {
     margin-block-start: -1px;
     border-block-start-color: transparent;
-    border-top: 1px solid variables.$default-border;
+    border-top: 1px solid $default-border;
   }
 
   &:hover,
   &:focus {
-    background-color: variables.$light;
-    border-block-start-color: variables.$default-background;
-    border-bottom-color: variables.$default-background;
+    background-color: $light;
+    border-block-start-color: $default-background;
+    border-bottom-color: $default-background;
   }
 
   &.selected {
     z-index: 0;
-    border-inline-start-color: variables.$default-background;
-    border-block-start-color: variables.$default-background;
-    border-block-end-color: variables.$default-background;
-    background-color: variables.$default-background;
+    border-inline-start-color: $default-background;
+    border-block-start-color: $default-background;
+    border-block-end-color: $default-background;
+    background-color: $default-background;
   }
 }
 
@@ -2737,7 +2737,7 @@ button {
   margin-inline-start: 15px;
 
   h6 {
-    color: variables.$default-text-color;
+    color: $default-text-color;
     font-weight: 500;
     margin-block-end: 2px;
   }
@@ -2758,7 +2758,7 @@ button {
   }
 
   &.active {
-    color: variables.$warning;
+    color: $warning;
   }
 }
 
@@ -2772,7 +2772,7 @@ button {
   padding-block-start: 40px;
   padding-inline-start: 20px;
   padding-block-end: 20px;
-  border-block-end: 1px solid variables.$default-border;
+  border-block-end: 1px solid $default-border;
   position: relative;
 
   .media {
@@ -2796,16 +2796,16 @@ button {
       justify-content: center;
       width: 32px;
       height: 32px;
-      background-color: variables.$light;
-      color: variables.$gray-5;
+      background-color: $light;
+      color: $gray-5;
       font-size: 18px;
       line-height: 0.9;
-      box-shadow: 0 0 0 2px variables.$default-background;
+      box-shadow: 0 0 0 2px $default-background;
       border-radius: 100%;
 
       &:hover,
       &:focus {
-        color: variables.$dark;
+        color: $dark;
         box-shadow: 0 0 0 2px 557ef6;
       }
     }
@@ -2815,7 +2815,7 @@ button {
     margin-block-start: 30px;
 
     h4 {
-      color: variables.$default-text-color;
+      color: $default-text-color;
       font-size: 21px;
       font-weight: 500;
       margin-block-end: 2px;
@@ -2824,7 +2824,7 @@ button {
 
     p {
       font-size: 13px;
-      color: variables.$text-muted;
+      color: $text-muted;
       margin-block-end: 15px;
     }
 
@@ -2943,7 +2943,7 @@ button {
     }
 
     label {
-      color: variables.$text-muted;
+      color: $text-muted;
       margin-block-end: 0;
       display: block;
       font-size: 13px;
@@ -2951,7 +2951,7 @@ button {
 
     span {
       display: block;
-      color: variables.$default-text-color;
+      color: $default-text-color;
       font-weight: 500;
     }
   }
@@ -3101,7 +3101,7 @@ button {
 
   img {
     margin-inline-end: 1rem;
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
   }
 }
 
@@ -3147,8 +3147,8 @@ label {
   height: 15px !important;
   width: 15px !important;
   line-height: 15px !important;
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
+  background-color: $primary !important;
+  color: $white !important;
 }
 
 .main-chart-wrapper .chat-info .tab-pane {
@@ -3176,11 +3176,11 @@ label {
     position: absolute;
     inset-block-start: 2px;
     inset-inline-end: 1px;
-    color: variables.$primary;
+    color: $primary;
   }
 
   input {
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
   }
 }
 
@@ -3209,7 +3209,7 @@ label {
 /*** dark styles ***/
 [data-theme-mode="dark"] {
   .main-content-title {
-    color: variables.$white;
+    color: $white;
   }
 
   .crypto-card {
@@ -3229,7 +3229,7 @@ label {
 
 hr {
   margin: 0.5rem 0;
-  border-top: 1px solid variables.$input-border;
+  border-top: 1px solid $input-border;
   opacity: 1;
 }
 
@@ -3293,7 +3293,7 @@ hr {
 [data-theme-mode="dark"] {
   .tree-leaf .tree-expando {
     color: #fff !important;
-    background-color: variables.$black-2;
+    background-color: $black-2;
   }
 }
 
@@ -3317,8 +3317,8 @@ hr {
 }
 
 #awn-popup-wrapper .awn-popup-body {
-  background: variables.$custom-white !important;
-  color: variables.$default-text-color;
+  background: $custom-white !important;
+  color: $default-text-color;
 }
 
 /** treeview styles **/
@@ -3339,16 +3339,16 @@ hr {
 
 .example {
   padding: 1rem;
-  border: 1px solid variables.$default-border;
+  border: 1px solid $default-border;
   font-size: 0.9375rem;
 }
 
 .apexcharts-selection-rect {
-  stroke: variables.$info !important;
+  stroke: $info !important;
 }
 
 .svg_select_points {
-  stroke: variables.$info !important;
+  stroke: $info !important;
 }
 
 .dlist-align {
@@ -3441,7 +3441,7 @@ hr {
 // CUSTOM STYLES //
 
 .card-body + .card-body {
-  border-top: 1px solid variables.$default-border;
+  border-top: 1px solid $default-border;
 }
 
 .crypto-icon {
@@ -3468,7 +3468,7 @@ hr {
 .itemside .title {
   font-size: 0.9rem;
   font-weight: 500;
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 
 .wishlist-qty-cell {
@@ -3505,7 +3505,7 @@ hr {
 }
 
 #stepline-chart svg text {
-  fill: variables.$default-text-color;
+  fill: $default-text-color;
 }
 
 @media (max-width: 991.98px) {
@@ -3546,12 +3546,12 @@ hr {
 
 #users-map {
   .jvm-marker.jvm-element {
-    fill: variables.$primary;
+    fill: $primary;
   }
 }
 
 .tree-leaf .tree-leaf-text:hover {
-  color: variables.$primary !important;
+  color: $primary !important;
 }
 
 // carousel start
@@ -3585,12 +3585,12 @@ hr {
   border-radius: 0.5rem;
   background: transparent;
   margin-block-start: 10px;
-  border: 1px solid variables.$default-border;
+  border: 1px solid $default-border;
 }
 
 .swiper-button-next,
 .swiper-button-prev {
-  background-color: variables.$black-1 !important;
+  background-color: $black-1 !important;
 }
 
 // swiper js end
@@ -3627,41 +3627,41 @@ a.glightbox.card {
 //range slider
 #secondary-colored-slider {
   .vue-slider-process {
-    background-color: variables.$secondary;
+    background-color: $secondary;
   }
 }
 
 #warning-colored-slider {
   .vue-slider-process {
-    background-color: variables.$warning;
+    background-color: $warning;
   }
 }
 
 #info-colored-slider {
   .vue-slider-process {
-    background-color: variables.$info;
+    background-color: $info;
   }
 }
 
 #success-colored-slider {
   .vue-slider-process {
-    background-color: variables.$success;
+    background-color: $success;
   }
 }
 
 #danger-colored-slider {
   .vue-slider-process {
-    background-color: variables.$danger;
+    background-color: $danger;
   }
 }
 .vue-slider-rail {
-  background-color: variables.$default-background !important;
+  background-color: $default-background !important;
 }
 
 //swicher
 .switch-select {
   .vc-color-wrap .current-color {
-    background: variables.$primary !important;
+    background: $primary !important;
   }
 }
 [data-menu-styles="color"],
@@ -3765,8 +3765,8 @@ a.glightbox.card {
     }
   }
   select {
-    background: variables.$custom-white !important;
-    color: variables.$default-text-color !important;
+    background: $custom-white !important;
+    color: $default-text-color !important;
   }
   select:focus-visible {
     outline: 0 !important;
@@ -3790,7 +3790,7 @@ a.glightbox.card {
 //file-details
 .owl-carousel-icons2 {
   .carousel__icon {
-    fill: variables.$white;
+    fill: $white;
   }
 }
 
@@ -3804,25 +3804,25 @@ a.glightbox.card {
 //toast
 .Toastify__toast-theme--light.Toastify__toast--success {
   background: rgba(var(--success-rgb), 0.1) !important;
-  color: variables.$success !important;
+  color: $success !important;
   backdrop-filter: blur(20px);
 }
 
 .Toastify__toast-theme--light.Toastify__toast--warning {
   background: rgba(var(--warning-rgb), 0.1) !important;
-  color: variables.$warning !important;
+  color: $warning !important;
   backdrop-filter: blur(20px);
 }
 
 .Toastify__toast-theme--light.Toastify__toast--info {
   background: rgba(var(--info-rgb), 0.1) !important;
-  color: variables.$info !important;
+  color: $info !important;
   backdrop-filter: blur(20px);
 }
 
 .Toastify__toast-theme--light.Toastify__toast--error {
   background: rgba(var(--danger-rgb), 0.1) !important;
-  color: variables.$danger !important;
+  color: $danger !important;
   backdrop-filter: blur(20px);
 }
 
@@ -3835,18 +3835,18 @@ a.glightbox.card {
 
 .Toastify__toast-theme--colored.Toastify__toast--default,
 .Toastify__toast-theme--light {
-  background: variables.$custom-white !important;
-  color: variables.$default-text-color !important;
+  background: $custom-white !important;
+  color: $default-text-color !important;
 }
 
 .Toastify__close-button--light {
-  color: variables.$custom-black !important;
+  color: $custom-black !important;
 }
 
 [data-theme-mode="dark"] {
   .Toastify__toast-theme--colored.Toastify__toast--default,
   .Toastify__toast-theme--light {
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
   }
 }
 .Toastify__toast-container {
@@ -3860,7 +3860,7 @@ a.glightbox.card {
 //carousel
 #basicSlider {
   .carousel__icon {
-    fill: variables.$white;
+    fill: $white;
   }
 }
 
@@ -3923,14 +3923,14 @@ a.glightbox.card {
       .side-menu__item {
         &:hover,
         &.active {
-          color: variables.$primary;
+          color: $primary;
         }
       }
     }
   }
 }
 .multiselect-clear:hover .multiselect-clear-icon {
-  background-color: variables.$default-text-color !important;
+  background-color: $default-text-color !important;
   opacity: 0.5;
 }
 //checkout
@@ -3947,11 +3947,11 @@ a.glightbox.card {
 //tables
 .previous-page__click-button .arrow[data-v-c9da5286],
 .next-page__click-button .arrow[data-v-c9da5286] {
-  border-color: variables.$custom-black !important;
+  border-color: $custom-black !important;
 }
 .previous-page__click-button.first-page .arrow[data-v-c9da5286],
 .next-page__click-button.last-page .arrow[data-v-c9da5286] {
-  border-color: variables.$custom-black !important;
+  border-color: $custom-black !important;
   opacity: 0.4;
 }
 [dir="rtl"] {
@@ -3969,7 +3969,7 @@ a.glightbox.card {
   .owl-theme:before {
     background: linear-gradient(
       to left,
-      variables.$default-background 0%,
+      $default-background 0%,
       transparent 100%
     );
   }
@@ -3977,7 +3977,7 @@ a.glightbox.card {
   .owl-theme:after {
     background: linear-gradient(
       to right,
-      variables.$default-background 0%,
+      $default-background 0%,
       transparent 100%
     );
   }
@@ -3991,11 +3991,11 @@ a.glightbox.card {
 }
 .navbar-brand:focus,
 .navbar-brand:hover {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 //dropdowns
 .btn.btn-danger-light.show {
-  color: variables.$danger !important;
+  color: $danger !important;
   &:hover,
   &:focus,
   &:active {
@@ -4003,7 +4003,7 @@ a.glightbox.card {
   }
 }
 .btn.btn-success-light.show {
-  color: variables.$success !important;
+  color: $success !important;
   &:hover,
   &:focus,
   &:active {
@@ -4012,10 +4012,10 @@ a.glightbox.card {
 }
 //forms
 .v3dp__elements[data-v-65eb861b] button.selected span {
-  background-color: variables.$primary !important;
+  background-color: $primary !important;
 }
 .v3dp__elements[data-v-65eb861b] button.current span {
-  outline: 1px solid variables.$primary !important;
+  outline: 1px solid $primary !important;
 }
 [dir="rtl"] {
   .dp__arrow_bottom {
@@ -4075,7 +4075,7 @@ a.glightbox.card {
   &[data-nav-layout="vertical"][data-menu-styles="light"][data-nav-style="icon-hover"][data-toggled="icon-hover-closed"] {
     .app-sidebar {
       .slide.has-sub .slide-menu {
-        background-color: variables.$white;
+        background-color: $white;
       }
     }
   }

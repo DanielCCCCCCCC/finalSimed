@@ -1,26 +1,26 @@
 /* Start:vue3-easy-data-table */
 @use "../variables";
 :root {
-  --easy-table-loading-mask-background-color: #{variables.$form-control-bg} !important;
-  --easy-table-footer-background-color: #{variables.$form-control-bg} !important;
-  --easy-table-body-even-row-background-color: #{variables.$form-control-bg} !important;
-  --easy-table-body-row-hover-background-color: #{variables.$default-background} !important;
-  --easy-table-body-row-background-color: #{variables.$form-control-bg} !important;
-  --easy-table-header-background-color: #{variables.$form-control-bg} !important;
-  --easy-table-message-font-color: #{variables.$default-text-color} !important;
-  --easy-table-header-font-color: #{variables.$default-text-color} !important;
-  --easy-table-body-row-font-color: #{variables.$default-text-color} !important;
-  --easy-table-body-row-hover-font-color: #{variables.$default-text-color} !important;
-  --easy-table-body-even-row-font-color: #{variables.$default-text-color} !important;
-  --easy-table-footer-font-color: #{variables.$default-text-color} !important;
-  --easy-table-buttons-pagination-border: 0.1px solid #{variables.$input-border} !important;
-  --easy-table-row-border: 0.1px solid #{variables.$input-border} !important;
-  --easy-table-border: 0.1px solid #{variables.$input-border} !important;
+  --easy-table-loading-mask-background-color: #{$form-control-bg} !important;
+  --easy-table-footer-background-color: #{$form-control-bg} !important;
+  --easy-table-body-even-row-background-color: #{$form-control-bg} !important;
+  --easy-table-body-row-hover-background-color: #{$default-background} !important;
+  --easy-table-body-row-background-color: #{$form-control-bg} !important;
+  --easy-table-header-background-color: #{$form-control-bg} !important;
+  --easy-table-message-font-color: #{$default-text-color} !important;
+  --easy-table-header-font-color: #{$default-text-color} !important;
+  --easy-table-body-row-font-color: #{$default-text-color} !important;
+  --easy-table-body-row-hover-font-color: #{$default-text-color} !important;
+  --easy-table-body-even-row-font-color: #{$default-text-color} !important;
+  --easy-table-footer-font-color: #{$default-text-color} !important;
+  --easy-table-buttons-pagination-border: 0.1px solid #{$input-border} !important;
+  --easy-table-row-border: 0.1px solid #{$input-border} !important;
+  --easy-table-border: 0.1px solid #{$input-border} !important;
   --easy-table-rows-per-page-selector-z-index: 5 !important;
   --easy-table-footer-height: auto !important;
-  --easy-table-scrollbar-thumb-color: #{variables.$form-control-bg} !important;
-  --easy-table-scrollbar-color: #{variables.$form-control-bg} !important;
-  --easy-table-scrollbar-corner-color: #{variables.$form-control-bg} !important;
+  --easy-table-scrollbar-thumb-color: #{$form-control-bg} !important;
+  --easy-table-scrollbar-color: #{$form-control-bg} !important;
+  --easy-table-scrollbar-corner-color: #{$form-control-bg} !important;
   --easy-table-scrollbar-track-color: var(--scrollthumb) !important;
 }
 

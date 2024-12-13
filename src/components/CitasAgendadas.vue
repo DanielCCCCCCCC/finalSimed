@@ -1,33 +1,37 @@
 <template>
-  <!-- <div class="card-container"> -->
-  <ApexCharts
-    v-if="appointmentsTrend.length > 0"
-    type="area"
-    :options="chartOptions"
-    :series="series"
-    width="500"
-    height="280"
-  />
-  <!-- </div> -->
+  <div>
+    <h3 class="main-content-label mb-2 center title">Tendencia de Citas</h3>
+    <span class="d-block fs-12 mt-1 text-muted"
+      >Citas por Semana (Mes Actual)</span
+    >
+  </div>
+  <div class="card-body p-4 card">
+    <ApexCharts
+      v-if="appointmentsTrend.length > 0"
+      type="area"
+      :options="chartOptions"
+      :series="series"
+      class="apex-chart"
+      width="710"
+      height="280"
+    />
+  </div>
 </template>
 
 <script setup>
 import { onMounted, computed } from "vue";
-import { useAppointmentsStore } from "../stores/AppointmentsStore"; // Asegúrate de que la ruta es correcta
+import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import ApexCharts from "vue3-apexcharts";
+import { projectOptions } from "../dahboardData";
 
-// Instancia del store
 const store = useAppointmentsStore();
 
-// Cargar las citas al montar el componente
 onMounted(async () => {
   await store.fetchAppointments();
 });
 
-// Definir appointmentsTrend correctamente
 const appointmentsTrend = computed(() => store.appointmentsTrend);
 
-// Series del gráfico (los valores que se grafican)
 const series = computed(() => [
   {
     name: "Citas",
@@ -35,23 +39,32 @@ const series = computed(() => [
   },
 ]);
 
-// Opciones del gráfico ApexCharts
 const chartOptions = computed(() => ({
   chart: {
-    type: "bar",
+    type: "area",
     toolbar: {
       show: false,
+    },
+    zoom: {
+      enabled: false,
+    },
+    animations: {
+      enabled: true,
+      easing: "easeinout",
+      speed: 800,
     },
   },
   xaxis: {
     categories: appointmentsTrend.value.map((item) => item.period),
-    labels: {
-      rotate: -45,
-    },
     title: {
       text: "Semana",
       style: {
         fontWeight: "bold",
+      },
+    },
+    labels: {
+      style: {
+        fontSize: "12px",
       },
     },
   },
@@ -62,57 +75,54 @@ const chartOptions = computed(() => ({
         fontWeight: "bold",
       },
     },
+    labels: {
+      style: {
+        fontSize: "12px",
+      },
+    },
   },
   dataLabels: {
     enabled: true,
     formatter: (val) => `${val} citas`,
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 4,
-      horizontal: false,
+    style: {
+      fontSize: "12px",
     },
   },
+  colors: projectOptions.colors,
   title: {
-    text: "Tendencia de Citas por Semana (Mes Actual)",
+    // text: "Tendencia de Citas por Semana (Mes Actual)",
     align: "left",
     style: {
       fontWeight: "bold",
       fontSize: "16px",
     },
   },
+  tooltip: {
+    x: {
+      format: "dd/MM/yy",
+    },
+  },
 }));
 </script>
 
 <style scoped>
-.card-container {
-  width: 530px;
-  height: auto;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
+.apex-chart {
+  width: 100%;
+  height: 280px;
+}
+.card {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 0px;
-  margin-bottom: 0px;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  position: relative;
+  top: 10px;
+  border: none;
 }
-
-.info {
-  text-align: center;
-  margin-top: 8px;
-}
-
-.amount {
-  margin-top: -14px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-}
-
-.label {
-  font-size: 12px;
-  color: #888;
+.title {
+  position: relative;
+  top: 10px;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
 }
 </style>

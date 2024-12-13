@@ -24,8 +24,8 @@
 .card-item {
   .card-item-icon {
     &.card-icon {
-      background: variables.$primary-01;
-      fill: variables.$primary;
+      background: $primary-01;
+      fill: $primary;
     }
 
     width: 45px;
@@ -92,7 +92,7 @@
 .main-content-label,
 .card-table-two .card-title,
 .card-dashboard-eight .card-title {
-  color: variables.$default-text-color;
+  color: $default-text-color;
   font-weight: 800;
   text-transform: uppercase;
   line-height: 1;
@@ -157,7 +157,7 @@
 }
 
 .list-card {
-  background-color: variables.$primary-005;
+  background-color: $primary-005;
   padding: 14px 18px;
   border-radius: 11px;
   margin-block-end: 20px;
@@ -166,7 +166,7 @@
 
 .avatar-list-stacked {
   .avatar {
-    border: 2px solid variables.$custom-white !important;
+    border: 2px solid $custom-white !important;
   }
 }
 
@@ -184,7 +184,7 @@
 }
 
 .forth.circle .chart-circle-value.circle-style {
-  border-color: variables.$primary-07;
+  border-color: $primary-07;
 }
 
 .forth.circle .chart-circle-value.circle-style {

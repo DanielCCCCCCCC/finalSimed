@@ -2,24 +2,24 @@
 /* Start:vuepic_vue-datepicker*/
 .dp__theme_light,
 .dp__theme_dark {
-  --dp-background-color: #{variables.$form-control-bg} !important;
-  --dp-text-color: #{variables.$default-text-color} !important;
-  --dp-hover-color: #{variables.$default-background} !important;
-  --dp-hover-text-color: #{variables.$default-text-color} !important;
-  --dp-primary-color: #{variables.$primary} !important;
-  --dp-primary-disabled-color: #{variables.$primary-02} !important;
+  --dp-background-color: #{$form-control-bg} !important;
+  --dp-text-color: #{$default-text-color} !important;
+  --dp-hover-color: #{$default-background} !important;
+  --dp-hover-text-color: #{$default-text-color} !important;
+  --dp-primary-color: #{$primary} !important;
+  --dp-primary-disabled-color: #{$primary-02} !important;
   --dp-primary-text-color: #fff !important;
-  --dp-border-color: #{variables.$input-border} !important;
-  --dp-menu-border-color: #{variables.$input-border} !important;
-  --dp-border-color-hover: #{variables.$input-border} !important;
-  --dp-scroll-bar-background: #{variables.$form-control-bg} !important;
+  --dp-border-color: #{$input-border} !important;
+  --dp-menu-border-color: #{$input-border} !important;
+  --dp-border-color-hover: #{$input-border} !important;
+  --dp-scroll-bar-background: #{$form-control-bg} !important;
   --dp-range-between-dates-text-color: var(
     --dp-hover-text-color,
-    #{variables.$default-text-color}
+    #{$default-text-color}
   ) !important;
   --dp-range-between-border-color: var(
     --dp-hover-color,
-    #{variables.$default-text-color}
+    #{$default-text-color}
   ) !important;
   --dp-time-inc-dec-button-size: 12px !important;
   --dp-hover-color: transparent !important;
@@ -40,7 +40,7 @@
 
 .dp__input_wrap {
   border: 1px solid var(--default-border);
-  border-radius: variables.$default-radius;
+  border-radius: $default-radius;
 }
 
 .dp__input_icon .input-group-text {
@@ -60,7 +60,7 @@
 }
 
 .dp__today {
-  background-color: variables.$primary;
+  background-color: $primary;
 }
 
 .dp__overlay.dp--overlay-relative {

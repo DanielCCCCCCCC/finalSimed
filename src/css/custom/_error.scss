@@ -11,12 +11,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: variables.$white-5;
+  background-color: $white-5;
 }
 
 @media (min-width: 480px) {
   .main-card-signin {
-    border: 1px solid variables.$default-border;
+    border: 1px solid $default-border;
     width: 360px;
     padding: 30px 35px;
   }
@@ -129,7 +129,7 @@
 }
 
 .main-column-signup {
-  background-color: variables.$white;
+  background-color: $white;
   padding: 30px;
   display: flex;
   flex-direction: column;
@@ -145,7 +145,7 @@
 
 @media (min-width: 992px) {
   .main-column-signup {
-    border-left: 1px solid variables.$default-border;
+    border-left: 1px solid $default-border;
   }
 }
 
@@ -177,10 +177,10 @@
     color: #8f9cc0;
     font-weight: 500;
     border-width: 2px;
-    border-color: variables.$default-background;
+    border-color: $default-background;
 
     &:focus {
-      border-color: variables.$default-border;
+      border-color: $default-border;
       box-shadow: none;
     }
 
@@ -222,40 +222,40 @@
 .main-signup-header .row > div:first-child {
   .btn,
   .sp-container button {
-    background-color: variables.$primary;
-    color: variables.$white;
+    background-color: $primary;
+    color: $white;
   }
 }
 
 .sp-container .main-signup-header .row > div:first-child button {
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
 }
 
 .main-signup-header .row > div:first-child {
   .btn:hover,
   .sp-container button:hover {
-    background-color: variables.$primary;
-    color: variables.$white;
+    background-color: $primary;
+    color: $white;
   }
 }
 
 .sp-container .main-signup-header .row > div:first-child button:hover {
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
 }
 
 .main-signup-header .row > div:first-child {
   .btn:focus,
   .sp-container button:focus {
-    background-color: variables.$primary;
-    color: variables.$white;
+    background-color: $primary;
+    color: $white;
   }
 }
 
 .sp-container .main-signup-header .row > div:first-child button:focus {
-  background-color: variables.$primary;
-  color: variables.$white;
+  background-color: $primary;
+  color: $white;
 }
 
 .main-signup-footer {
@@ -288,7 +288,7 @@
 
   h2 {
     font-weight: 500;
-    color: variables.$dark;
+    color: $dark;
     letter-spacing: -0.5px;
     margin-bottom: 15px;
   }
@@ -366,7 +366,7 @@
     content: "";
     height: 100%;
     width: 100%;
-    background: variables.$primary;
+    background: $primary;
     position: absolute;
     left: 0;
     z-index: -1;
@@ -379,7 +379,7 @@
     content: "";
     height: 100%;
     width: 100%;
-    background: variables.$primary;
+    background: $primary;
     position: absolute;
     left: 0;
     z-index: 0;
@@ -391,7 +391,7 @@
   }
 
   .login_form {
-    background-color: variables.$custom-white;
+    background-color: $custom-white;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
   }
@@ -451,7 +451,7 @@
 .error-1 {
   .header-link.switcher-icon {
     font-size: 20px;
-    color: variables.$default-text-color;
+    color: $default-text-color;
     cursor: pointer;
     line-height: 0.9;
     padding: 0.6rem 0.6rem;
@@ -486,7 +486,7 @@
 .error-1 {
   .bg-primary {
     .header-link.switcher-icon {
-      color: variables.$white;
+      color: $white;
     }
   }
 }

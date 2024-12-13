@@ -8,6 +8,8 @@ import "../src/css/styles.css";
 import { loadMessages, locale } from "devextreme/localization";
 import esMessages from "devextreme/localization/messages/es.json";
 import VueApexCharts from "vue3-apexcharts";
+import "font-awesome/css/font-awesome.min.css";
+import "feather-icons/dist/feather.min.js";
 
 loadMessages(esMessages);
 locale("es");

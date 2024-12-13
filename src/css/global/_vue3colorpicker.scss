@@ -2,8 +2,8 @@
 @use "../variables";
 .vc-colorpicker,
 .vc-colorpicker--tabs__bg {
-  background-color: variables.$form-control-bg !important;
-  color: variables.$default-text-color !important;
+  background-color: $form-control-bg !important;
+  color: $default-text-color !important;
 }
 .vc-gradient-picker .vc-gradient__types .vc-gradient__type,
 .vc-gradient-picker__body .vc-degree-input__control,
@@ -11,11 +11,11 @@
 .vc-gradient-picker__body .vc-degree-input__control input,
 .vc-display .vc-alpha-input > input,
 .vc-display .vc-color-input input {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
 }
 .vc-colorpicker--tabs,
 .vc-colorpicker--tabs__inner {
-  background: variables.$default-background !important;
+  background: $default-background !important;
   padding: 0.25rem;
 }
 .vc-color-wrap.transparent {

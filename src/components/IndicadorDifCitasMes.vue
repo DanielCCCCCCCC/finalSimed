@@ -1,68 +1,101 @@
 <template>
-  <q-card flat bordered class="q-px-md q-py-md bg-grey-1">
-    <div class="row items-center">
-      <div class="col">
-        <div class="text-caption text-grey">TOTAL CITAS AGENDADAS</div>
-        <div class="text-caption text-grey">Mes anterior vs mes actual</div>
-        <div class="text-h5 text-bold text-black q-mt-sm">{{ totalCitas }}</div>
-        <div
-          :class="{
-            'text-positive': porcentajeCambio >= 0,
-            'text-negative': porcentajeCambio < 0,
-          }"
-        >
-          {{ porcentajeCambio | formatPorcentaje }}
-          {{ porcentajeCambio >= 0 ? "Mayor" : "Menor" }}
-        </div>
-      </div>
-      <div class="col-auto">
-        <q-icon
-          name="event_note"
-          size="36px"
-          class="bg-red-1 text-red text-center rounded-circle q-pa-sm"
-        />
-      </div>
+  <div class="card custom-card">
+    <!-- Mostrar mensaje de carga si está cargando -->
+    <div v-if="cargando" class="card-body">
+      <p class="text-center">Cargando...</p>
     </div>
-  </q-card>
+
+    <!-- Contenido principal de la tarjeta cuando ya no está cargando -->
+    <div
+      v-else
+      class="card-body d-flex align-items-center justify-content-between"
+    >
+      <!-- Sección de texto -->
+      <div class="title">
+        <label class="main-content-label mb-1 pt-1"
+          >TOTAL CITAS AGENDADAS</label
+        >
+        <span class="d-block fs-12 mb-2 text-muted"
+          >Mes anterior vs mes actual</span
+        >
+
+        <p class="mb-0 fs-24 mt-2">
+          <b
+            :class="{
+              'text-primary': diffPercentage >= 0,
+              'text-danger': diffPercentage < 0,
+            }"
+          >
+            {{ currentMonthCount }}
+          </b>
+        </p>
+
+        <a
+          href="#"
+          :class="{
+            'text-success': diffPercentage >= 0,
+            'text-danger': diffPercentage < 0,
+          }"
+          class="d-block fs-14 fw-semibold"
+        >
+          {{ formatPorcentaje(diffPercentage) }}
+          {{ diffPercentage >= 0 ? "Mayor" : "Menor" }}
+        </a>
+
+        <span class="fs-12 text-muted">Actualmente</span>
+      </div>
+
+      <!-- Sección del icono -->
+      <q-icon
+        name="event_note"
+        size="36px"
+        class="rounded-circle bg-light text-danger d-inline-block title"
+      />
+    </div>
+  </div>
 </template>
-
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useAppointmentsStore } from "../stores/AppointmentsStore";
 
-// Datos iniciales (estos deben venir de tu lógica de negocio o API)
-const totalMesAnterior = ref(50); // Número de citas del mes pasado
-const totalMesActual = ref(75); // Número de citas del mes actual
+const store = useAppointmentsStore();
+const cargando = ref(true);
 
-// Cálculo de total y cambio porcentual
-const totalCitas = totalMesActual.value;
-const porcentajeCambio =
-  ((totalMesActual.value - totalMesAnterior.value) / totalMesAnterior.value) *
-  100;
+onMounted(async () => {
+  await store.fetchAppointments();
+  cargando.value = false;
+});
 
-// Filtro para formatear porcentaje
+const monthlyStats = computed(() => store.calculateMonthlyStats());
+
+watch(monthlyStats, (newVal) => {
+  console.log("Monthly stats changed:", newVal);
+});
+
+const currentMonthCount = computed(() => monthlyStats.value.currentMonthCount);
+const prevMonthCount = computed(() => monthlyStats.value.prevMonthCount);
+const diffPercentage = computed(() => monthlyStats.value.diffPercentage);
+
 const formatPorcentaje = (value) => {
   return `${Math.abs(value).toFixed(1)}%`;
 };
 </script>
-
 <style scoped>
-.q-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.card {
+  border: none; /* Elimina todos los bordes */
+  height: 50%; /* Mantiene la altura al 50% */
+  border-bottom: 10px solid #000; /* Solo el borde inferior, con un ancho de 10px y color negro */
 }
 
-.text-caption {
-  font-size: 0.9rem;
-  margin-bottom: 0.2rem;
+.title {
+  position: relative;
+  top: -30px;
 }
 
-.text-h5 {
-  font-size: 1.5rem;
-}
-
+/* Opcional: Ajustes adicionales para el icono */
 .q-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Asegura que el icono mantenga el tamaño y estilo deseado */
+  width: 36px;
+  height: 36px;
 }
 </style>

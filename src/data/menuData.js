@@ -1,14 +1,20 @@
 export let menuData = [
   // Título principal
-  {
-    headTitle: "Dashboard",
-  },
+
   {
     path: "/dashboard", // Ruta directa a Dashboard
     title: "Dashboard",
     type: "link",
     icon: "ti-home",
     active: true,
+    defaultActive: false,
+  },
+  {
+    path: "/fichapacientes", // Ruta directa a Dashboard
+    title: "Ficha de Pacientes",
+    type: "link",
+    icon: "ti-home",
+    active: false,
     defaultActive: false,
   },
   // Sección de utilidades
@@ -37,13 +43,6 @@ export let menuData = [
     defaultActive: false,
     children: [
       {
-        path: "/contactos",
-        title: "Formulario Contactos",
-        type: "link",
-        active: false,
-        defaultActive: false,
-      },
-      {
         path: "/listadoContactos",
         title: "Listado Contactos",
         type: "link",
@@ -60,13 +59,6 @@ export let menuData = [
     active: false,
     defaultActive: false,
     children: [
-      {
-        path: "/medicos",
-        title: "Formulario Médicos",
-        type: "link",
-        active: false,
-        defaultActive: false,
-      },
       {
         path: "/listamedicos",
         title: "Listado Médicos",
@@ -136,8 +128,8 @@ export let menuData = [
     defaultActive: false,
     children: [
       {
-        path: "/directoriopacientes",
-        title: "Directorio de Pacientes",
+        path: "/listadopacientes",
+        title: "Listado de Pacientes",
         type: "link",
         active: false,
         defaultActive: false,

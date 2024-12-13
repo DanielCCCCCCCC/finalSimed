@@ -26,8 +26,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     const groupedData = [];
 
     // Obtiene el primer día del mes actual
-    const startOfMonth = new Date(currentYear, currentMonth, 1);
-
     for (let i = 0; i < 5; i++) {
       const startOfWeek = new Date(currentYear, currentMonth, 1 + i * 7);
       const endOfWeek = new Date(currentYear, currentMonth, 1 + i * 7 + 6);
@@ -58,7 +56,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     // Ahora, en lugar de 'period' como string, puedes crear un texto a partir de las fechas
     appointmentsTrend.value = groupedData.map((week) => ({
-      period: `${week.start.toLocaleDateString()} - ${week.end.toLocaleDateString()}`, // Comillas invertidas corregidas
+      period: `${week.start.toLocaleDateString()} - ${week.end.toLocaleDateString()}`,
       count: week.count,
     }));
 
@@ -130,15 +128,12 @@ export const useAppointmentsStore = defineStore("appointments", () => {
    * @returns {Object} - La cita agregada.
    */
   const addAppointment = async (appointment) => {
-    // const userId = authStore.userId;
     const tenantId = authStore.tenantId;
     const userId = authStore.userId;
 
-    // console.log("UserId LN136: ", authStore.userId);
-    // console.log("Fetching appointments for userId:", userId);
     console.log("Estado de autenticación actualizado:", {
       tenantId: tenantId.value,
-      role: role.value,
+      role: role.value, // Asegúrate de que 'role' esté definido en tu auth store
       userId: userId,
     });
 
@@ -150,11 +145,8 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       return;
     }
 
-    // Asociar la cita con el usuario y el tenant
     const appointmentWithUser = {
       ...appointment,
-      // userId: userId, // Asegurarse de que el campo es 'userId' en Supabase
-      // tenantId: tenantId, // Asegurarse de que el campo es 'tenantId' en Supabase
     };
 
     console.log("Adding appointment:", appointmentWithUser);
@@ -166,7 +158,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       const { data, error: insertError } = await supabase
         .from("appointments")
         .insert([appointmentWithUser])
-        .select(); // Incluir .select() para obtener los datos insertados
+        .select();
 
       console.log("Inserted appointment data:", data);
 
@@ -177,7 +169,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       }
 
       if (data && data.length > 0) {
-        // Cita agregada exitosamente
         appointments.value.push(data[0]);
         calculateAppointmentsTrend();
         console.log("Appointment added:", data[0]);
@@ -224,7 +215,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         .from("appointments")
         .update(updates)
         .eq("id", id)
-        .eq("userId", userId); // Asegurar que la cita pertenece al usuario
+        .eq("userId", userId);
 
       console.log("Updated appointment data:", data);
 
@@ -232,7 +223,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         console.error("Error al actualizar la cita en Supabase:", updateError);
         error.value = updateError.message;
       } else if (data && data.length > 0) {
-        // Actualiza los datos localmente en el estado
         const index = appointments.value.findIndex((app) => app.id === id);
         if (index !== -1) {
           appointments.value[index] = {
@@ -279,7 +269,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         .from("appointments")
         .delete()
         .eq("id", id)
-        .eq("userId", userId); // Asegurar que la cita pertenece al usuario
+        .eq("userId", userId);
 
       if (deleteError) {
         console.error("Error al eliminar la cita en Supabase:", deleteError);
@@ -297,6 +287,54 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
   };
 
+  /**
+   * Calcula la cantidad de citas del mes actual hasta la fecha actual,
+   * la cantidad de citas del mes anterior y la diferencia porcentual.
+   */
+  const calculateMonthlyStats = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Inicio de mes actual
+    const startCurrentMonth = new Date(currentYear, currentMonth, 1);
+
+    // Citas del mes actual hasta hoy
+    const currentMonthAppointments = appointments.value.filter((appt) => {
+      const apptDate = new Date(appt.startDate);
+      return apptDate >= startCurrentMonth && apptDate <= now;
+    });
+    const currentMonthCount = currentMonthAppointments.length;
+
+    // Mes anterior
+    let prevMonth = currentMonth - 1;
+    let prevYear = currentYear;
+    if (prevMonth < 0) {
+      prevMonth = 11;
+      prevYear = currentYear - 1;
+    }
+    const startPrevMonth = new Date(prevYear, prevMonth, 1);
+    const endPrevMonth = new Date(prevYear, prevMonth + 1, 0); // último día del mes anterior
+
+    // Citas del mes anterior completo
+    const prevMonthAppointments = appointments.value.filter((appt) => {
+      const apptDate = new Date(appt.startDate);
+      return apptDate >= startPrevMonth && apptDate <= endPrevMonth;
+    });
+    const prevMonthCount = prevMonthAppointments.length;
+
+    // Diferencia porcentual
+    let diffPercentage = 0;
+    if (prevMonthCount > 0) {
+      diffPercentage =
+        ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
+    }
+    console.log("% MES ANTERIOR: ", prevMonthCount);
+    console.log("% MES ACTUAL: ", currentMonthCount);
+    console.log("% de diferencia ", diffPercentage);
+    return { currentMonthCount, prevMonthCount, diffPercentage };
+  };
+
   return {
     appointments,
     appointmentsTrend,
@@ -307,5 +345,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     updateAppointment,
     deleteAppointment,
     calculateAppointmentsTrend,
+    calculateMonthlyStats, // Exportamos la nueva función
   };
 });

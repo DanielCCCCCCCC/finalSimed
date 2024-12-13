@@ -1,38 +1,29 @@
 <template>
   <div class="grafico-container">
-    <!-- Botón "Ir" en la esquina superior derecha -->
-    <div>
-      <button class="go-button" @click="goToScheduler">Ir</button>
-    </div>
-
-    <!-- Gráfico de área con ApexCharts -->
+    <!-- Gráfico de barras con ApexCharts -->
+    <h3 class="main-content-label mb-2 title">Registro de pacientes</h3>
     <ApexCharts
+      v-if="registrosPorDia.length > 0"
       type="bar"
       :options="chartOptions"
       :series="series"
-      height="230"
+      height="300px"
+      width="350px"
+      class="apex-chart"
     ></ApexCharts>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
 import ApexCharts from "vue3-apexcharts";
+import { projectOptions } from "../dahboardData"; // Importa colores desde dashboardData
 
 // Instancia de la tienda
 const fichaIdentificacionStore = useFichaIdentificacionStore();
 const { registrosPorDia } = storeToRefs(fichaIdentificacionStore);
-
-// Acceder al router de Vue
-const router = useRouter();
-
-// Función para redirigir al scheduler
-const goToScheduler = () => {
-  router.push("/directoriopacientes");
-};
 
 // Configuración de las series del gráfico (reactivo)
 const series = computed(() => [
@@ -45,43 +36,53 @@ const series = computed(() => [
 // Configuración de las opciones del gráfico (reactivo)
 const chartOptions = ref({
   chart: {
-    type: "area",
+    type: "bar",
     toolbar: {
       show: false,
     },
     animations: {
       enabled: true,
+      easing: "easeinout",
+      speed: 800,
+      animateGradually: {
+        enabled: true,
+        delay: 150,
+      },
+      dynamicAnimation: {
+        enabled: true,
+        speed: 350,
+      },
     },
     zoom: {
       enabled: false,
     },
   },
-  colors: ["#229954"],
+  colors: projectOptions.colors, // Colores dinámicos desde dashboardData
   fill: {
-    type: "gradient",
+    type: "bar",
     gradient: {
+      shade: "light",
+      type: "vertical",
       shadeIntensity: 1,
-      opacityFrom: 0.9,
-      opacityTo: 0.5,
-      stops: [0, 90, 100],
+      gradientToColors: projectOptions.colors.map((color) =>
+        color.replace("rgba(", "rgba(").replace(")", ", 0.7)")
+      ), // Aplica un degradado transparente dinámico
+      inverseColors: false,
+      opacityFrom: 1,
+      opacityTo: 0.7,
+      stops: [0, 100],
     },
   },
-  stroke: {
-    curve: "smooth",
-    width: 2,
-  },
-  markers: {
-    size: 5,
-    colors: ["##a569bd"],
-    strokeColors: "#fff",
-    strokeWidth: 2,
-    hover: {
-      size: 7,
+  plotOptions: {
+    bar: {
+      borderRadius: 6,
+      horizontal: false,
+      columnWidth: "90%",
     },
   },
   dataLabels: {
     enabled: true,
-    formatter: (val) => val,
+    formatter: (val) => `${val}`,
     style: {
       fontSize: "12px",
       colors: ["#333"],
@@ -93,7 +94,7 @@ const chartOptions = ref({
     labels: {
       style: {
         colors: "#333",
-        fontSize: "12px",
+        fontSize: "14px",
       },
     },
     axisBorder: {
@@ -104,16 +105,25 @@ const chartOptions = ref({
     },
     title: {
       text: "Días de la Semana",
+      style: {
+        fontWeight: "bold",
+        fontSize: "14px",
+      },
     },
   },
   yaxis: {
-    show: true,
     title: {
       text: "Cantidad de Registros",
+      style: {
+        fontWeight: "bold",
+        fontSize: "14px",
+      },
     },
-  },
-  legend: {
-    show: false, // Cambia a true si tienes múltiples series y quieres mostrar la leyenda
+    labels: {
+      style: {
+        fontSize: "12px",
+      },
+    },
   },
   tooltip: {
     enabled: true,
@@ -122,32 +132,14 @@ const chartOptions = ref({
       formatter: (val) => `${val} registros`,
     },
   },
-  // Opcional: Añadir anotaciones
-  annotations: {
-    points: [
-      // Ejemplo de anotación
-      // {
-      //   x: 'jueves',
-      //   y: 40,
-      //   marker: {
-      //     size: 8,
-      //     fillColor: "#fff",
-      //     strokeColor: "#FF4560",
-      //     radius: 2,
-      //   },
-      //   label: {
-      //     borderColor: "#FF4560",
-      //     offsetY: 0,
-      //     style: {
-      //       color: "#fff",
-      //       background: "#FF4560",
-      //     },
-      //     text: "Evento Importante",
-      //   },
-      // },
-    ],
+  title: {
+    // text: "Registros por Día (Semana Actual)",
+    align: "left",
+    style: {
+      fontWeight: "bold",
+      fontSize: "16px",
+    },
   },
-  // Opcional: Añadir configuración responsiva
   responsive: [
     {
       breakpoint: 600,
@@ -158,6 +150,12 @@ const chartOptions = ref({
         xaxis: {
           labels: {
             fontSize: "10px",
+          },
+          title: {
+            text: "Días",
+            style: {
+              fontSize: "10px",
+            },
           },
         },
         yaxis: {
@@ -173,55 +171,28 @@ const chartOptions = ref({
   ],
 });
 
+// Actualizar las opciones del gráfico cuando los datos cambien
 watch(
   registrosPorDia,
   (newVal) => {
-    chartOptions.value.xaxis.categories = newVal.map((item) => item.day);
-    series.value = [
-      {
-        name: "Registros",
-        data: newVal.map((item) => item.registros),
-      },
-    ];
+    if (newVal.length > 0) {
+      chartOptions.value.xaxis.categories = newVal.map((item) => item.day);
+      series.value = [
+        {
+          name: "Registros",
+          data: newVal.map((item) => item.registros),
+        },
+      ];
+    }
   },
   { deep: true }
 );
 </script>
-
 <style scoped>
-.grafico-container {
-  position: relative; /* Para posicionar el botón de forma absoluta dentro del contenedor */
-  width: 100%;
-  max-width: 600px; /* Ajusta según tus necesidades */
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #fff;
-  margin: 0 auto; /* Centrar el contenedor si es necesario */
-}
-
-.go-button {
-  position: absolute;
-  top: -60px;
-  right: 16px;
-  background-color: rgba(0, 0, 0, 0.05); /* Casi transparente */
-  border: none;
-  color: #333;
-  padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.go-button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #000;
-}
-
-/* Ajusta el tamaño del gráfico */
-.apexcharts-canvas {
-  margin-top: 20px;
-  margin-left: auto;
-  margin-right: auto;
+.title {
+  position: relative;
+  top: 10px;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
 }
 </style>

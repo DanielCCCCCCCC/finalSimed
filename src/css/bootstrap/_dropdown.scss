@@ -6,27 +6,27 @@
   }
 }
 .dropdown-menu {
-  border-color: variables.$default-border;
+  border-color: $default-border;
   box-shadow: -8px 12px 18px 0 rgba(21, 21, 62, 0.3);
   font-size: 0.875rem;
-  color: variables.$default-text-color;
-  background-color: variables.$custom-white;
+  color: $default-text-color;
+  background-color: $custom-white;
   border-radius: 0.375rem;
   padding: 0;
   z-index: 10;
 }
 .dropdown-divider {
-  border-color: variables.$default-border;
+  border-color: $default-border;
 }
 
 .dropdown-item-text {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 .dropdown-header {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 .dropdown-item {
-  color: variables.$default-text-color;
+  color: $default-text-color;
   white-space: unset;
   padding: 0.5rem 0.9375rem;
   font-size: 0.8125rem;
@@ -36,15 +36,15 @@
     &:hover,
     &:focus,
     &:active {
-      color: variables.$primary;
-      background-color: variables.$primary-005;
+      color: $primary;
+      background-color: $primary-005;
     }
   }
   &.active {
-    background-color: variables.$primary !important;
+    background-color: $primary !important;
   }
   &:is(.disabled, :disabled) {
-    color: variables.$text-muted !important;
+    color: $text-muted !important;
   }
 }
 .dropdown-toggle::after {
@@ -91,10 +91,10 @@
   opacity: 0.85;
 }
 .dropdown-menu-dark {
-  background-color: variables.$dark;
+  background-color: $dark;
   border-color: rgba(255, 255, 255, 0.1);
   li a {
-    color: variables.$custom-white;
+    color: $custom-white;
   }
 }
 .btn-list a.dropdown-item {
@@ -112,27 +112,27 @@
       &:focus,
       &:active,
       &.active {
-        color: variables.$white;
+        color: $white;
       }
     }
   }
   &.dropdown-menu-primary {
-    @include dropdown-menu-color(variables.$primary);
+    @include dropdown-menu-color($primary);
   }
   &.dropdown-menu-secondary {
-    @include dropdown-menu-color(variables.$secondary);
+    @include dropdown-menu-color($secondary);
   }
   &.dropdown-menu-warning {
-    @include dropdown-menu-color(variables.$warning);
+    @include dropdown-menu-color($warning);
   }
   &.dropdown-menu-info {
-    @include dropdown-menu-color(variables.$info);
+    @include dropdown-menu-color($info);
   }
   &.dropdown-menu-success {
-    @include dropdown-menu-color(variables.$success);
+    @include dropdown-menu-color($success);
   }
   &.dropdown-menu-danger {
-    @include dropdown-menu-color(variables.$danger);
+    @include dropdown-menu-color($danger);
   }
 }
 .dropdown-menu {
@@ -142,8 +142,8 @@
       &:focus,
       &:active,
       &.active {
-        background-color: variables.$primary-01 !important;
-        color: variables.$primary;
+        background-color: $primary-01 !important;
+        color: $primary;
       }
     }
   }
@@ -154,7 +154,7 @@
       &:active,
       &.active {
         background-color: rgba(var(--secondary-rgb), 0.1) !important;
-        color: variables.$secondary;
+        color: $secondary;
       }
     }
   }
@@ -165,7 +165,7 @@
       &:active,
       &.active {
         background-color: rgba(var(--warning-rgb), 0.1) !important;
-        color: variables.$warning;
+        color: $warning;
       }
     }
   }
@@ -176,7 +176,7 @@
       &:active,
       &.active {
         background-color: rgba(var(--info-rgb), 0.1) !important;
-        color: variables.$info;
+        color: $info;
       }
     }
   }
@@ -187,7 +187,7 @@
       &:active,
       &.active {
         background-color: rgba(var(--success-rgb), 0.1) !important;
-        color: variables.$success;
+        color: $success;
       }
     }
   }
@@ -198,7 +198,7 @@
       &:active,
       &.active {
         background-color: rgba(var(--danger-rgb), 0.1) !important;
-        color: variables.$danger;
+        color: $danger;
       }
     }
   }
@@ -211,34 +211,34 @@
       &:focus,
       &:active,
       &.active {
-        color: variables.$white;
+        color: $white;
         background-color: $color !important;
       }
     }
   }
   &.dropmenu-light-primary {
-    background-color: variables.$primary-01;
-    @include dropmenu-light-color(variables.$primary);
+    background-color: $primary-01;
+    @include dropmenu-light-color($primary);
   }
   &.dropmenu-light-secondary {
     background-color: rgba(var(--secondary-rgb), 0.1);
-    @include dropmenu-light-color(variables.$secondary);
+    @include dropmenu-light-color($secondary);
   }
   &.dropmenu-light-info {
     background-color: rgba(var(--info-rgb), 0.1);
-    @include dropmenu-light-color(variables.$info);
+    @include dropmenu-light-color($info);
   }
   &.dropmenu-light-warning {
     background-color: rgba(var(--warning-rgb), 0.1);
-    @include dropmenu-light-color(variables.$warning);
+    @include dropmenu-light-color($warning);
   }
   &.dropmenu-light-success {
     background-color: rgba(var(--success-rgb), 0.1);
-    @include dropmenu-light-color(variables.$success);
+    @include dropmenu-light-color($success);
   }
   &.dropmenu-light-danger {
     background-color: rgba(var(--danger-rgb), 0.1);
-    @include dropmenu-light-color(variables.$danger);
+    @include dropmenu-light-color($danger);
   }
 }
 /* End:: Custom Dropdown Menu */

@@ -7,8 +7,8 @@
       :time-zone="'America/Tegucigalpa'"
       :height="800"
       :cell-duration="30"
-      :start-day-hour="0"
-      :end-day-hour="24"
+      :start-day-hour="8"
+      :end-day-hour="18"
       :views="views"
       :first-day-of-week="1"
       :onAppointmentAdded="onAppointmentAdded"
@@ -800,6 +800,8 @@ onMounted(async () => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  top: -80px;
 }
 
 .dx-scheduler .dx-scheduler-header-panel-cell {

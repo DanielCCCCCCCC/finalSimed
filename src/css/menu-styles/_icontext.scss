@@ -6,7 +6,7 @@
       .app-sidebar {
         position: absolute;
         width: 9rem;
-        border-inline-end: 1px solid variables.$menu-border-color;
+        border-inline-end: 1px solid $menu-border-color;
         .main-sidebar {
           overflow: visible;
         }

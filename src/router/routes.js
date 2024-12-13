@@ -1,22 +1,23 @@
 // src/router/routes.js
+
 import MainLayout from "../layouts/MainLayout.vue";
 import ErrorNotFound from "pages/ErrorNotFound.vue";
 
 import DashboardIndicadores from "../pages/DashboardIndicadores.vue";
 import SchedulerControlCitaCopy from "../pages/SchedulerControlCitacopy.vue";
-import FormContactos from "../pages/FormContactos.vue";
 import ListadoContactos from "../pages/ListadoContactos.vue";
-import FormMedicos from "../pages/FormMedicos.vue";
 import ListadoMedicos from "../pages/ListadoMedicos.vue";
 import FormDirectorios from "../pages/FormDirectorios.vue";
 import FormDiagnosticos from "../pages/FormDiagnosticos.vue";
 import FormConfiMedicas from "../pages/FormConfiMedicas.vue";
-import FormDirectorioPacientes from "../pages/FormDirectorioPacientes.vue";
 import FormDatosGenerales from "../pages/FormDatosGenerales.vue";
-
-import Login from "../pages/loginOrganizaciones.vue"; // Importar el componente de login
-import RegistrarOrganizacion from "../pages/RegistrarOrganizacion.vue"; // Importar el componente de registro
-
+import Login from "../pages/loginOrganizaciones.vue";
+import RegistrarOrganizacion from "../pages/RegistrarOrganizacion.vue";
+import AdminPanel from "../pages/AdminPanel.vue";
+import NotAuthorized from "../pages/NotAuthorized.vue";
+import ForgotPassword from "../pages/ForgotPassword.vue";
+import FormFichaPaciente from "../pages/FormFichaPaciente.vue";
+import ListadoPacientes from "../pages/ListadoPacientes.vue";
 const routes = [
   {
     path: "/",
@@ -27,67 +28,82 @@ const routes = [
         path: "dashboard",
         name: "dashboard",
         component: DashboardIndicadores,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin", "medico"] },
+      },
+
+      {
+        path: "fichapacientes",
+        name: "fichapacientes",
+        component: FormFichaPaciente,
+        meta: { requiresAuth: true, roles: ["admin", "medico"] },
       },
       {
         path: "controlCitasv2",
         name: "controlCitasv2",
         component: SchedulerControlCitaCopy,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin", "medico"] },
       },
-      {
-        path: "contactos",
-        name: "contactos",
-        component: FormContactos,
-        meta: { requiresAuth: true },
-      },
+
       {
         path: "listadoContactos",
         name: "listadoContactos",
         component: ListadoContactos,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin", "medico"] },
       },
-      {
-        path: "medicos",
-        name: "medicos",
-        component: FormMedicos,
-        meta: { requiresAuth: true },
-      },
+
       {
         path: "listamedicos",
         name: "listamedicos",
         component: ListadoMedicos,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin"] },
       },
       {
         path: "directorios",
         name: "directorios",
         component: FormDirectorios,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin"] },
       },
       {
         path: "diagnosticos",
         name: "diagnosticos",
         component: FormDiagnosticos,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin"] },
       },
       {
         path: "configuracionesMedicas",
         name: "configuracionesMedicas",
         component: FormConfiMedicas,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin"] },
       },
       {
-        path: "directoriopacientes",
-        name: "directoriopacientes",
-        component: FormDirectorioPacientes,
-        meta: { requiresAuth: true },
+        path: "listadopacientes",
+        name: "listadopacientes",
+        component: ListadoPacientes,
+        meta: { requiresAuth: true, roles: ["admin", "medico"] },
       },
+
       {
         path: "datosGenerales",
         name: "datosGenerales",
         component: FormDatosGenerales,
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, roles: ["admin"] },
+      },
+      {
+        path: "admin",
+        name: "AdminPanel",
+        component: AdminPanel,
+        meta: { requiresAuth: true, roles: ["admin"] },
+      },
+      {
+        path: "not-authorized",
+        name: "NotAuthorized",
+        component: NotAuthorized,
+      },
+      {
+        path: "forgotpassword",
+        name: "forgotPassword",
+        component: ForgotPassword,
+        meta: { requiresAuth: false },
       },
     ],
   },

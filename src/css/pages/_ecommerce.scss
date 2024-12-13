@@ -10,7 +10,7 @@
   font-size: 13px;
   line-height: 20px;
   font-weight: 600;
-  color: variables.$white;
+  color: $white;
   border-start-start-radius: 15px;
   border-start-end-radius: 0;
   border-end-end-radius: 0;
@@ -32,11 +32,11 @@
       border-radius: 50%;
       position: absolute;
       inset-inline-start: 3px;
-      background-color: variables.$primary-03;
+      background-color: $primary-03;
       font-size: 20px;
       line-height: 37px;
       font-size: 17px;
-      color: variables.$primary;
+      color: $primary;
     }
   }
 }
@@ -52,7 +52,7 @@
       z-index: 0;
       content: "";
       position: absolute;
-      border-inline-start: 2px dotted variables.$primary-05;
+      border-inline-start: 2px dotted $primary-05;
     }
   }
 }
@@ -70,7 +70,7 @@
   border-inline-start-width: 0;
   border-inline-end-width: 0;
   border-style: dotted;
-  border-color: variables.$default-border;
+  border-color: $default-border;
   background-color: transparent;
   display: flex;
   flex-direction: row;
@@ -186,13 +186,13 @@
 
 .ecommerce.wizard {
   margin: 20px auto;
-  background: variables.$custom-white;
+  background: $custom-white;
 
   .nav-tabs {
     position: relative;
     margin: 40px auto;
     margin-block-end: 0;
-    border-block-end-color: variables.$default-border;
+    border-block-end-color: $default-border;
   }
 
   > div.ecommerce.wizard-inner {
@@ -202,7 +202,7 @@
 
 .connecting-line {
   height: 2px;
-  background: variables.$default-border;
+  background: $default-border;
   position: absolute;
   width: 80%;
   margin: 0 auto;
@@ -215,7 +215,7 @@
 @media (min-width: 768px) {
   #checkoutsteps {
     > .steps .number {
-      background-color: variables.$default-background;
+      background-color: $default-background;
       color: #9197ab;
       font-size: 20px;
       font-weight: 600;
@@ -236,7 +236,7 @@
 
     .checkoutline {
       height: 3px;
-      background-color: variables.$default-background;
+      background-color: $default-background;
       -webkit-transform: translateY(1.7rem);
       transform: translateY(1.7rem);
       margin: 0 11%;
@@ -251,7 +251,7 @@
   #checkoutsteps {
     > .steps {
       .number {
-        background-color: variables.$default-background;
+        background-color: $default-background;
         color: #9197ab;
         font-size: 15px;
         font-weight: 600;
@@ -277,7 +277,7 @@
 
     .checkoutline {
       height: 3px;
-      background-color: variables.$default-background;
+      background-color: $default-background;
       -webkit-transform: translateY(1.7rem);
       transform: translateY(1.7rem);
       margin: 0 11%;
@@ -295,9 +295,9 @@
         display: block;
         padding: 9px 25px;
         line-height: 1.573;
-        color: variables.$white;
+        color: $white;
         border-radius: 4px;
-        background: variables.$primary;
+        background: $primary;
       }
 
       .disabled a {
@@ -363,8 +363,8 @@
   }
 
   > .steps .current a .number {
-    background: variables.$primary;
-    color: variables.$white;
+    background: $primary;
+    color: $white;
   }
 
   ul[role="menu"] li {
@@ -383,7 +383,7 @@
       height: 90px;
       justify-content: center;
       align-items: center;
-      border: 1px solid variables.$default-border;
+      border: 1px solid $default-border;
     }
 
     .purchase {
@@ -396,7 +396,7 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 30px;
-    border-block-end: 1px solid variables.$default-border;
+    border-block-end: 1px solid $default-border;
     margin-block-end: 30px;
 
     .price {
@@ -419,7 +419,7 @@
 
   .total {
     float: right;
-    color: variables.$primary;
+    color: $primary;
   }
 }
 
@@ -429,10 +429,10 @@
   overflow: hidden;
 
   &.nav {
-    background: variables.$default-background;
+    background: $default-background;
 
     li {
-      border-inline-end: 1px solid variables.$default-border;
+      border-inline-end: 1px solid $default-border;
 
       a {
         border-inline-end: 0;
@@ -450,8 +450,8 @@
       text-align: center;
 
       &.active {
-        background: variables.$primary;
-        color: variables.$white;
+        background: $primary;
+        color: $white;
       }
     }
   }
@@ -473,7 +473,7 @@
   li {
     width: 100%;
     display: block;
-    border-block-start: 1px solid variables.$default-border;
+    border-block-start: 1px solid $default-border;
   }
 
   .nav-item {
@@ -484,7 +484,7 @@
     padding: 0.75rem 1.25rem;
     font-weight: 400;
     font-size: 0.875rem;
-    color: variables.$default-text-color;
+    color: $default-text-color;
 
     i {
       font-size: 17px;
@@ -493,16 +493,16 @@
   }
 
   .nav-item a.active {
-    background-color: variables.$primary !important;
-    color: variables.$white !important;
+    background-color: $primary !important;
+    color: $white !important;
     border-radius: 0;
   }
 
   .nav-link {
     &:hover,
     &:focus {
-      background-color: variables.$primary;
-      color: variables.$white;
+      background-color: $primary;
+      color: $white;
       border-radius: 0;
     }
   }
@@ -510,7 +510,7 @@
 
 .track {
   position: relative;
-  background-color: variables.$default-background;
+  background-color: $default-background;
   height: 7px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -535,7 +535,7 @@
 
   .step.active .text {
     font-weight: 400;
-    color: variables.$custom-black;
+    color: $custom-black;
   }
 
   .icon {
@@ -545,7 +545,7 @@
     line-height: 40px;
     position: relative;
     border-radius: 100%;
-    background: variables.$default-background;
+    background: $default-background;
   }
 
   .step {
@@ -560,12 +560,12 @@
 
     &.active {
       &:before {
-        background: variables.$primary;
+        background: $primary;
       }
 
       .icon {
-        background: variables.$primary;
-        color: variables.$white;
+        background: $primary;
+        color: $white;
       }
     }
   }
@@ -634,7 +634,7 @@
   }
 
   .product-discount-label {
-    color: variables.$white;
+    color: $white;
     background-color: #16b36e;
     font-size: 12px;
     font-weight: 400;
@@ -647,14 +647,14 @@
   }
 
   .product-like-icon {
-    color: variables.$default-text-color;
-    background: variables.$custom-white;
+    color: $default-text-color;
+    background: $custom-white;
     font-size: 15px;
     line-height: 30px;
     width: 30px;
     height: 30px;
     border-radius: 50px;
-    border: 1px solid variables.$black-1;
+    border: 1px solid $black-1;
     position: absolute;
     inset-block-start: 10px;
     inset-inline-end: -50px;
@@ -662,7 +662,7 @@
     transition: all 0.3s ease;
 
     &:hover {
-      color: variables.$white;
+      color: $white;
       background: #232323;
     }
   }
@@ -686,7 +686,7 @@
   }
 
   .product-link a {
-    color: variables.$white;
+    color: $white;
     background: #232323;
     font-size: 12px;
     font-weight: 600;
@@ -705,8 +705,8 @@
     }
 
     &:hover {
-      color: variables.$default-text-color;
-      background-color: variables.$custom-white;
+      color: $default-text-color;
+      background-color: $custom-white;
     }
 
     i {
@@ -714,7 +714,7 @@
     }
 
     span {
-      color: variables.$default-text-color;
+      color: $default-text-color;
       display: block;
       font-size: 12px;
       font-weight: 500;
@@ -737,7 +737,7 @@
 }
 
 .product-content .rating {
-  color: variables.$warning;
+  color: $warning;
   text-align: center;
   padding-inline-start: 0;
   margin-block-end: 0;
@@ -762,11 +762,11 @@
     text-align: center;
     padding: 20px;
     font-size: 16px;
-    color: variables.$default-text-color;
+    color: $default-text-color;
   }
 
   .price {
-    color: variables.$default-text-color;
+    color: $default-text-color;
     font-size: 16px;
     display: inline-flex;
     font-weight: 600;
@@ -822,7 +822,7 @@
 @media (max-width: 567px) {
   .card-pay .tabs-menu li {
     width: 100%;
-    border-block-end: 1px solid variables.$default-border;
+    border-block-end: 1px solid $default-border;
   }
 }
 #wishlist {
@@ -863,7 +863,7 @@
   .nav-link {
     &:hover,
     &:focus {
-      background-color: variables.$primary;
+      background-color: $primary;
     }
   }
 }
@@ -888,7 +888,7 @@
   width: 1.75rem;
   height: 1.75rem;
   border: 1px solid transparent;
-  color: variables.$white;
+  color: $white;
   box-shadow: none;
 
   &:before {
@@ -924,7 +924,7 @@
     justify-content: space-between;
     align-items: center;
     padding-block-end: 30px;
-    border-block-end: 1px solid variables.$default-border;
+    border-block-end: 1px solid $default-border;
     margin-block-end: 30px;
     .thumb {
       display: inline-flex;
@@ -932,7 +932,7 @@
       height: 90px;
       justify-content: center;
       align-items: center;
-      border: 0px solid variables.$default-border;
+      border: 0px solid $default-border;
     }
     .left {
       display: flex;
@@ -955,7 +955,7 @@
   display: block;
 }
 .card-pay .tabs-menu li a.active {
-  background: variables.$primary;
+  background: $primary;
   color: #ffffff;
 }
 .card-pay .tabs-menu li a {

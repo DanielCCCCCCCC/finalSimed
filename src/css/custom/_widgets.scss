@@ -11,30 +11,30 @@
       height: 100%;
       width: 0.25rem;
       inset-inline-start: 0;
-      border-radius: variables.$default-radius;
+      border-radius: $default-radius;
     }
     &:nth-child(1)::before {
-      background-color: variables.$primary;
+      background-color: $primary;
       opacity: 0.3;
     }
     &:nth-child(2)::before {
-      background-color: variables.$secondary;
+      background-color: $secondary;
       opacity: 0.3;
     }
     &:nth-child(3)::before {
-      background-color: variables.$success;
+      background-color: $success;
       opacity: 0.3;
     }
     &:nth-child(4)::before {
-      background-color: variables.$danger;
+      background-color: $danger;
       opacity: 0.3;
     }
     &:nth-child(5)::before {
-      background-color: variables.$info;
+      background-color: $info;
       opacity: 0.3;
     }
     &:nth-child(5)::before {
-      background-color: variables.$warning;
+      background-color: $warning;
       opacity: 0.3;
     }
     &:last-child {
@@ -46,22 +46,22 @@
   border-top-width: 0.188rem !important;
   border-top-style: solid !important;
   &.border-top-primary {
-    border-top-color: variables.$primary;
+    border-top-color: $primary;
   }
   &.border-top-secondary {
-    border-top-color: variables.$secondary;
+    border-top-color: $secondary;
   }
   &.border-top-warning {
-    border-top-color: variables.$warning;
+    border-top-color: $warning;
   }
   &.border-top-info {
-    border-top-color: variables.$info;
+    border-top-color: $info;
   }
   &.border-top-success {
-    border-top-color: variables.$success;
+    border-top-color: $success;
   }
   &.border-top-danger {
-    border-top-color: variables.$danger;
+    border-top-color: $danger;
   }
 }
 #users-map {

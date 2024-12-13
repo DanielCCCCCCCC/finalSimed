@@ -1,85 +1,40 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <!-- Header -->
-    <q-header elevated>
-      <q-toolbar>
-        <!-- Botón para toggle del Drawer en dispositivos pequeños -->
-        <q-btn
-          flat
-          dense
-          icon="menu"
-          class="q-mr-sm"
-          @click="toggleDrawer"
-          v-if="$q.screen.lt.md"
-        />
-
-        <!-- Título de la Aplicación con Nombre de la Organización -->
-        <q-toolbar-title class="text-bold">
-          Centro Médico
-          <span v-if="organizaciones.length">
-            - {{ obtenerNombresOrganizaciones }}
-          </span>
-        </q-toolbar-title>
-
-        <!-- Spacer para empujar el botón de logout al final -->
-        <q-space />
-
-        <!-- Botón de Cerrar Sesión -->
-        <q-btn
-          flat
-          dense
-          icon="logout"
-          label="Cerrar Sesión"
-          color="negative"
-          @click="logout"
-        />
-      </q-toolbar>
-    </q-header>
-
-    <!-- Menú Lateral -->
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      :width="drawerWidth"
-      class="bg-grey-2"
-    >
+  <q-layout class="app-container" view="hHh lpR fFf">
+    <Header />
+    <div class="sb">
       <Sidebar />
-    </q-drawer>
+    </div>
 
-    <!-- Contenido Principal -->
-    <q-page-container class="bg-grey-1">
-      <router-view />
+    <q-page-container class="main-content">
+      <div>
+        <router-view />
+      </div>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import {
-  QLayout,
-  QDrawer,
-  QPageContainer,
-  QHeader,
-  QToolbar,
-  QToolbarTitle,
-  QBtn,
-  QSpace,
-} from "quasar";
+import { ref, computed, onMounted, watch } from "vue";
+import { QLayout, QDrawer, QPageContainer } from "quasar";
 import Sidebar from "../components/sidebar/sidebar.vue";
+import Header from "../components/sidebar/header.vue";
 import { useAuthStore } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
-import { useOrganizacionStore } from "../stores/organizacionStore"; // Asegúrate de que esta ruta es correcta
+import { useOrganizacionStore } from "../stores/organizacionStore";
+import { useThemeStore } from "../stores/themeStore"; // Importar el themeStore
 
-const leftDrawerOpen = ref(true);
-const drawerWidth = ref(240);
+// Referencias reactivas para el Drawer
+const leftDrawerOpen = ref(false);
+const drawerWidth = ref(2);
 
+// Instancias de los stores y router
 const authStore = useAuthStore();
-const organizacionStore = useOrganizacionStore(); // Importar la store de organizaciones
+const organizacionStore = useOrganizacionStore();
+const themeStore = useThemeStore(); // Obtener la instancia del themeStore
 const router = useRouter();
 
-// Computed property para acceder a las organizaciones desde el store
+// Computed properties para acceder a las organizaciones
 const organizaciones = computed(() => organizacionStore.organizaciones);
 
 // Computed property para obtener los nombres de las organizaciones
@@ -116,42 +71,60 @@ const logout = async () => {
   }
 };
 
-/**
- * Cargar la información de las organizaciones al montar el componente
- * Nota: Si el store ya está observando tenantId con `watch` y `{ immediate: true }`,
- * esta llamada puede ser redundante. Sin embargo, se incluye para asegurarse.
- */
 onMounted(async () => {
   try {
-    // Opcional: Puedes comentar esta línea si el store ya está cargando las organizaciones automáticamente
-    await organizacionStore.cargarOrganizaciones(); // Cargar las organizaciones
+    // Cargar las organizaciones
+    await organizacionStore.cargarOrganizaciones();
+
+    // Definir el tema light
+    themeStore.colorThemeFn("light");
+    themeStore.layoutStylesFn("icon-overlay");
+
+    // Establecer el color naranja para --primary-rgb
+    document.documentElement.style.setProperty("--primary-rgb", "223, 90, 90"); // RGB para naranja
   } catch (error) {
-    console.error("Error al obtener las organizaciones:", error);
+    console.error(
+      "Error al obtener las organizaciones o aplicar el tema:",
+      error
+    );
   }
 });
+
+/**
+ * (Opcional) Observar cambios en el tema y aplicar dinámicamente
+ */
+watch(
+  () => themeStore.colortheme,
+  (newTheme) => {
+    themeStore.colorThemeFn(newTheme);
+  }
+);
+
+watch(
+  () => themeStore.layoutStyles,
+  (newLayout) => {
+    themeStore.layoutStylesFn(newLayout);
+  }
+);
 </script>
 
 <style scoped>
-/* Estilos personalizados */
-
-/* Estilo para el header */
-.q-header {
-  background-color: #547ca3;
-  color: white;
+/* Puedes agregar estilos adicionales aquí si es necesario */
+.bg-dark {
+  background-color: #220404 !important;
 }
 
-/* Estilo para el título en el header */
-.q-toolbar-title {
-  font-size: 1.5rem;
-}
+.app-container {
+  /* padding: 20px; */
+  background-color: #eaedf7;
+  /* margin: 0 0px; */
+  /* border: none; */
 
-/* Estilo para el botón de logout */
-.q-btn[label="Cerrar Sesión"] {
-  font-weight: bold;
-}
-
-/* Estilo para el contenedor principal */
-.bg-grey-1 {
-  padding: 20px;
+  /* position: relative;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 1.2%;
+  width: 99%;
+  height: 100%; */
 }
 </style>

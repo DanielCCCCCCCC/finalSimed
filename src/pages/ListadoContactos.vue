@@ -9,111 +9,121 @@
             <h4 class="header-title">Contactos Existentes</h4>
             <p class="parrafo">Catálogo de contactos del centro médico</p>
           </div>
-          <q-btn
-            label="Nuevo contacto"
-            icon="add"
-            color="primary"
-            flat
-            class="q-ml-auto q-mt-xl bajarbtn"
-            @click="handleNuevoContacto"
-          />
+          <div>
+            <q-btn
+              label="Nuevo contacto"
+              flat
+              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              @click="handleNuevoContacto"
+            />
+          </div>
         </div>
       </div>
 
       <!-- DataGrid -->
       <DxDataGrid
+        ref="dataGrid"
         :data-source="contactosConDetalles"
         :allow-column-reordering="true"
-        :show-borders="true"
         :row-alternation-enabled="true"
-        key-expr="id"
+        :focused-row-enabled="true"
+        :focused-row-key="focusedRowKey"
+        :key-expr="'id'"
+        :show-borders="true"
+        class="grid theme-dependent"
         :width="responsiveWidth"
+        @row-click="rowClick"
       >
+        <DxEditing :allow-updating="true" :allow-deleting="true" mode="popup" />
+
+        <DxScrolling mode="virtual" />
+
+        <DxSorting mode="multiple" />
+        <DxHeaderFilter :visible="true" />
+        <DxColumnChooser :enabled="true" />
+        <DxLoadPanel :show-pane="true" />
+        <DxSelection
+          select-all-mode="allPages"
+          show-check-boxes-mode="always"
+          mode="multiple"
+        />
+        <DxSearchPanel
+          :width="300"
+          :visible="true"
+          placeholder="Buscar Contacto"
+        />
+        <!-- Columnas de datos -->
         <DxColumn
           data-field="nombreContacto"
           caption="Nombre"
           :allow-sorting="true"
+          :min-width="130"
         />
         <DxColumn
           data-field="direccionContacto"
           caption="Dirección"
           :allow-sorting="true"
+          :min-width="180"
         />
         <DxColumn
           data-field="organizacionContacto"
           caption="Organización"
           :allow-sorting="true"
+          :min-width="140"
         />
         <DxColumn
           data-field="grupoDescripcion"
           caption="Grupo de Contacto"
           :allow-sorting="true"
           :visible="true"
+          :min-width="120"
         />
         <DxColumn
           data-field="departamentoDescripcion"
           caption="Departamento"
           :allow-sorting="true"
           :visible="true"
-          width="140px"
+          :min-width="140"
         />
         <DxColumn
           data-field="municipioDescripcion"
           caption="Municipio"
           :allow-sorting="true"
           :visible="true"
-          width="140px"
+          :min-width="140"
         />
         <DxColumn
           data-field="emailContacto"
           caption="E-mail"
           :allow-sorting="true"
+          :min-width="180"
         />
         <DxColumn
           data-field="telefonoCasaContacto"
           caption="Teléfono Casa"
           :allow-sorting="true"
           :visible="false"
+          :min-width="100"
         />
         <DxColumn
           data-field="telefonoPersonalContacto"
           caption="Tel. Personal"
           :allow-sorting="true"
           :visible="true"
-          width="100px"
+          :min-width="100"
         />
         <DxColumn
           data-field="observacionContacto"
           caption="Observaciones"
           :allow-sorting="true"
           :visible="true"
+          :min-width="180"
         />
 
-        <DxEditing
-          mode="popup"
-          :allow-updating="true"
-          :allow-deleting="true"
-          :popup="{
-            title: 'Editar Información del Contacto',
-            showTitle: true,
-            width: 700,
-            height: 470,
-          }"
-        />
-        <DxPaging :enabled="true" :page-size="10" />
-        <DxFilterRow :visible="true" />
-        <DxHeaderFilter :visible="true" />
+        <!-- Botones de edición y eliminación -->
         <DxColumn type="buttons">
-          <DxButton
-            name="edit"
-            icon="edit"
-            @click="(event) => handleEdit(event.row.data)"
-          />
-          <DxButton
-            name="delete"
-            icon="trash"
-            @click="() => handleDelete(row.data.id)"
-          />
+          <DxButton name="edit" icon="edit" @click="onEditButtonClick" />
+          <DxButton name="delete" icon="trash" @click="onDeleteButtonClick" />
         </DxColumn>
       </DxDataGrid>
 
@@ -128,153 +138,155 @@
               <q-btn
                 label="Cerrar"
                 color="secondary"
-                icon="close"
                 flat
                 @click="closeDialog"
+                class="btnCerrarModal fe-log-out"
               />
             </div>
 
             <q-form @submit.prevent="guardarcontact">
-              <div class="row q-col-gutter-md">
-                <!-- Información Personal -->
-                <div class="col-12 col-md-6">
+              <!-- Información Personal -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Nombre</label>
                   <q-input
                     v-model="formData.nombreContacto"
-                    label="Nombre"
-                    outlined
+                    placeholder="Nombre"
                     dense
                     required
-                    class="q-mb-md"
+                    class="form-control"
                     :error="!!formErrors.nombreContacto"
                     :error-message="formErrors.nombreContacto"
                   />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Dirección</label>
                   <q-input
                     v-model="formData.direccionContacto"
-                    label="Dirección"
-                    outlined
+                    placeholder="Dirección"
                     dense
                     required
-                    class="q-mb-md"
+                    class="form-control"
                     :error="!!formErrors.direccionContacto"
                     :error-message="formErrors.direccionContacto"
                   />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Grupo</label>
                   <q-select
                     v-model="formData.grupoIdContacto"
                     :options="grupos"
-                    label="Grupo"
                     option-value="id"
                     option-label="descripcion"
-                    outlined
-                    dense
                     required
-                    class="q-mb-md"
+                    dense
+                    class="form-select no-arrow"
                     :error="!!formErrors.grupoIdContacto"
                     :error-message="formErrors.grupoIdContacto"
                   />
-                  <q-input
-                    v-model="formData.organizacionContacto"
-                    label="Organización"
-                    outlined
-                    dense
-                    class="q-mb-md"
-                  />
                 </div>
 
-                <!-- Información de Ubicación -->
-                <div class="col-12 col-md-6">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Departamento</label>
                   <q-select
                     v-model="formData.departamentoIdContacto"
                     :options="departamentos"
-                    label="Departamento"
                     option-value="id"
                     option-label="descripcion"
-                    outlined
+                    placeholder="Seleccione un departamento"
                     dense
-                    @update:model-value="onDepartamentoChange"
                     required
-                    class="q-mb-md"
+                    class="form-select"
+                    @update:model-value="onDepartamentoChange"
                     :error="!!formErrors.departamentoIdContacto"
                     :error-message="formErrors.departamentoIdContacto"
                   />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Municipio</label>
                   <q-select
                     v-model="formData.municipioIdContacto"
                     :options="filteredMunicipios"
-                    label="Municipio"
                     option-value="id"
                     option-label="descripcion"
-                    outlined
+                    placeholder="Seleccione un municipio"
                     dense
-                    :disable="!formData.departamentoIdContacto"
                     required
-                    class="q-mb-md"
+                    class="form-select"
+                    :disable="!formData.departamentoIdContacto"
                     :error="!!formErrors.municipioIdContacto"
                     :error-message="formErrors.municipioIdContacto"
                   />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Email</label>
                   <q-input
                     v-model="formData.emailContacto"
-                    label="Email"
                     type="email"
-                    outlined
+                    placeholder="Email"
                     dense
                     required
-                    class="q-mb-md"
+                    class="form-control"
                     :error="!!formErrors.emailContacto"
                     :error-message="formErrors.emailContacto"
                   />
                 </div>
-              </div>
 
-              <div class="row q-col-gutter-md">
-                <!-- Información de Contacto -->
-                <div class="col-12 col-md-6">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Teléfono Casa</label>
                   <q-input
                     v-model="formData.telefonoCasaContacto"
-                    label="Teléfono Casa"
-                    outlined
-                    mask="####-####"
+                    placeholder="Teléfono Casa"
                     dense
-                    class="q-mb-md"
+                    mask="####-####"
+                    class="form-control"
                     :error="!!formErrors.telefonoCasaContacto"
                     :error-message="formErrors.telefonoCasaContacto"
                   />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Teléfono Personal</label>
                   <q-input
                     v-model="formData.telefonoPersonalContacto"
-                    label="Teléfono Personal"
-                    outlined
-                    mask="####-####"
+                    placeholder="Teléfono Personal"
                     dense
-                    class="q-mb-md"
+                    mask="####-####"
+                    class="form-control"
                     :error="!!formErrors.telefonoPersonalContacto"
                     :error-message="formErrors.telefonoPersonalContacto"
                   />
                 </div>
 
-                <!-- Observaciones -->
-                <div class="col-12 col-md-6">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Observación</label>
                   <q-input
                     v-model="formData.observacionContacto"
-                    label="Observación"
-                    outlined
                     type="textarea"
+                    placeholder="Observación"
                     dense
-                    class="q-mb-md"
-                    counter
                     maxlength="500"
+                    counter
+                    class="form-control"
                   />
                 </div>
-              </div>
 
-              <div class="flex justify-center q-mt-lg">
-                <q-btn
-                  :label="
-                    isEditMode ? 'Actualizar Contacto' : 'Guardar Contacto'
-                  "
-                  color="primary"
-                  type="submit"
-                  class="full-width"
-                  unelevated
-                  rounded
-                />
+                <div class="col-md-12">
+                  <q-btn
+                    :label="
+                      isEditMode ? 'Actualizar Contacto' : 'Guardar Contacto'
+                    "
+                    color="primary"
+                    type="submit"
+                    unelevated
+                    rounded
+                    class="btn btn-primary d-grid"
+                  />
+                </div>
               </div>
             </q-form>
           </q-card-section>
@@ -291,8 +303,13 @@ import {
   DxPaging,
   DxFilterRow,
   DxHeaderFilter,
+  DxSorting,
+  DxLoadPanel,
+  DxColumnChooser,
   DxEditing,
+  DxSearchPanel,
   DxButton,
+  DxSelection,
 } from "devextreme-vue/data-grid";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -590,130 +607,37 @@ const filteredMunicipios = computed(() => {
 <style scoped>
 /* src/styles/sharedStyles.css */
 
-/* Contenedor principal */
 #app-container {
   padding: 20px;
   background-color: #f9f9f9;
   margin: 0 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* position: relative;
+  margin-left: 100px;
+  margin-right: 100px; */
+  width: 93%;
 }
 
-/* Formulario de contacto */
 .form-card {
-  max-width: 800px; /* Ancho máximo del formulario */
+  max-width: 800px;
   width: 100%;
-  margin: auto; /* Centra el card */
-  background-color: #ffffff; /* Fondo blanco */
-  border-radius: 20px; /* Bordes redondeados */
+  margin: auto;
+  background-color: #ffffff;
+  border-radius: 20px 0px 0px 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-.text-primary {
-  color: #1976d2 !important; /* Color primario de Quasar */
+.fsButton {
+  font-size: 16px;
+}
+.btnCerrarModal {
+  font-size: 16px;
+}
+.no-arrow .q-select__dropdown-icon {
+  display: none;
 }
 
-.form-card h2 {
-  font-weight: bold;
-}
-
-.q-btn.flat.round {
-  border-radius: 50%;
-}
-
-.q-card-section {
-  padding: 24px;
-}
-
-/* Responsividad */
-@media (max-width: 1024px) {
-  .form-card {
-    max-width: 700px;
-  }
-}
-
-@media (max-width: 768px) {
-  .form-card {
-    max-width: 100%;
-  }
-}
-
-/* Estilos adicionales */
-.header-container {
-  display: flex;
-  flex-direction: column;
-  margin-right: auto;
-}
-
-.parrafo {
-  font-size: 1rem;
-  color: #555;
-  margin: 5px 20px 25px 20px;
-}
-
-.header-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin: 20px 20px 0px;
-}
-
-.bajarbtn {
-  margin-bottom: -40px;
-}
-
-.card .q-input,
-.card .q-select {
-  margin-bottom: 1rem;
-}
-
-/* Botones */
-.btn-primary {
-  background-color: #1976d2;
-  color: #ffffff;
-}
-
-.btn-secondary {
-  background-color: #9e9e9e;
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background-color: #1565c0;
-}
-
-.btn-secondary:hover {
-  background-color: #757575;
-}
-
-/* Avatar */
-.form-avatar {
-  border: 2px solid #1976d2; /* Borde para el avatar */
-}
-
-/* Mejoras en el DataGrid */
-.dx-datagrid {
-  background-color: #ffffff;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.dx-datagrid-header-panel {
-  background-color: #1976d2;
-  color: #ffffff;
-}
-
-.dx-datagrid-row-alternation-enabled .dx-row {
-  background-color: #f1f1f1;
-}
-
-.dx-datagrid .dx-command-edit .dx-button {
-  background-color: transparent;
-  border: none;
-  color: #1976d2;
-}
-
-.dx-datagrid .dx-command-edit .dx-button:hover {
-  color: #1565c0;
+.right-content {
+  justify-self: end;
 }
 </style>

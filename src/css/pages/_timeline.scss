@@ -18,7 +18,7 @@
   text-align: center;
   inset-inline-start: 0;
   z-index: 1;
-  color: variables.$custom-white;
+  color: $custom-white;
   font-weight: 500;
   inset-inline-start: -38px;
 }
@@ -61,7 +61,7 @@
     position: absolute;
     content: " ";
     width: 3px;
-    background-color: variables.$default-background;
+    background-color: $default-background;
     inset-inline-start: 50%;
     margin-inline-start: -1.5px;
   }
@@ -88,7 +88,7 @@
       border-radius: 2px;
       padding: 20px;
       position: relative;
-      background: variables.$custom-white;
+      background: $custom-white;
       border-radius: 0px;
       box-shadow: 0 8px 16px 0 rgba(162, 169, 204, 0.24);
       width: 35%;
@@ -109,8 +109,8 @@
         inset-inline-end: -14px;
         display: inline-block;
         border-top: 14px solid transparent;
-        border-inline-start: 14px solid variables.$default-background;
-        border-inline-end: 0 solid variables.$default-background;
+        border-inline-start: 14px solid $default-background;
+        border-inline-end: 0 solid $default-background;
         border-bottom: 14px solid transparent;
         content: " ";
       }
@@ -147,10 +147,10 @@
       border-top-left-radius: 50%;
       border-bottom-right-radius: 50%;
       border-bottom-left-radius: 50%;
-      border: 2px solid variables.$custom-white;
+      border: 2px solid $custom-white;
 
       i {
-        color: variables.$custom-white;
+        color: $custom-white;
       }
     }
 
@@ -176,21 +176,21 @@
 .timeline-wrapper-secondary {
   .timeline-panel:before,
   .timeline-badge {
-    background: variables.$secondary;
+    background: $secondary;
   }
 }
 
 .timeline-wrapper-success {
   .timeline-panel:before,
   .timeline-badge {
-    background: variables.$success;
+    background: $success;
   }
 }
 
 .timeline-wrapper-info {
   .timeline-panel:before,
   .timeline-badge {
-    background: variables.$info;
+    background: $info;
   }
 }
 
@@ -211,7 +211,7 @@
 .timeline-wrapper-light {
   .timeline-panel:before,
   .timeline-badge {
-    background: variables.$light;
+    background: $light;
   }
 }
 
@@ -225,7 +225,7 @@
 .timeline-wrapper-primary {
   .timeline-panel:before,
   .timeline-badge {
-    background: variables.$primary;
+    background: $primary;
   }
 }
 
@@ -300,8 +300,8 @@
         margin-inline-start: 15% !important;
 
         &:after {
-          border-right: 14px solid variables.$default-border !important;
-          border-left: 0 solid variables.$default-border !important;
+          border-right: 14px solid $default-border !important;
+          border-left: 0 solid $default-border !important;
           left: -14px !important;
           right: auto !important;
         }
@@ -325,8 +325,8 @@
       }
       .timeline-wrapper {
         .timeline-panel:after {
-          border-right: 0 solid variables.$default-background !important;
-          border-left: 14px solid variables.$default-background !important;
+          border-right: 0 solid $default-background !important;
+          border-left: 14px solid $default-background !important;
           left: auto !important;
           right: -14px !important;
         }

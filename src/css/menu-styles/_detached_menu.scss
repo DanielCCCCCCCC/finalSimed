@@ -11,8 +11,8 @@
       inset-block-start: calc(64px + 1.5rem);
       inset-block-end: 1.5rem;
       inset-inline-start: inherit;
-      border-radius: variables.$default-radius;
-      border: 1px solid variables.$menu-border-color;
+      border-radius: $default-radius;
+      border: 1px solid $menu-border-color;
       height: auto;
       overflow: hidden;
       .main-sidebar-header {
@@ -29,7 +29,7 @@
     }
     &[data-page-style="classic"] {
       .app-sidebar {
-        border: 1px solid variables.$default-border;
+        border: 1px solid $default-border;
       }
     }
     &[data-theme-mode="light"] {
@@ -130,7 +130,7 @@
               width: 0.35rem;
               border-radius: 3.125rem;
               height: 0.35rem;
-              border: 1px solid variables.$menu-prime-color;
+              border: 1px solid $menu-prime-color;
               opacity: 1;
             }
           }

@@ -1,19 +1,19 @@
 @use "../variables";
 /* Start:vue3-datepicker */
 .v3dp__popout {
-  background-color: variables.$form-control-bg !important;
-  color: variables.$default-text-color !important;
-  border: 0.1px solid variables.$input-border !important;
+  background-color: $form-control-bg !important;
+  color: $default-text-color !important;
+  border: 0.1px solid $input-border !important;
 }
 
 .v3dp__divider {
-  border: 0.1px solid variables.$input-border !important;
+  border: 0.1px solid $input-border !important;
 }
 
 .v3dp__heading__button,
 .v3dp__heading__center {
-  background-color: variables.$form-control-bg !important;
-  color: variables.$default-text-color !important;
+  background-color: $form-control-bg !important;
+  color: $default-text-color !important;
 }
 
 [dir="rtl"] {

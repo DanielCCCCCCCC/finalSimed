@@ -11,12 +11,12 @@
 
 .form-wizard-vue .fw-list-wrapper-icon.fw-step-active,
 .form-wizard-vue .fw-body-list li .fw-list-wrapper-icon.fw-step-checked {
-  background: variables.$primary !important;
+  background: $primary !important;
   color: #fff !important;
   border: 0px !important;
 
   .fw-step-title {
-    color: variables.$primary !important;
+    color: $primary !important;
   }
 }
 
@@ -26,7 +26,7 @@
 }
 
 .fw-step-title {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   margin-block-start: 8px;
   font-size: 14px;
 }
@@ -58,22 +58,22 @@
 }
 
 .form-wizard-vue .fw-body-list li .fw-list-wrapper-icon {
-  background: variables.$light !important;
-  color: variables.$default-text-color !important;
+  background: $light !important;
+  color: $default-text-color !important;
 }
 
 .form-wizard-vue .fw-body-list .fw-list-progress {
   height: 0.1px !important;
-  background: variables.$input-border !important;
+  background: $input-border !important;
 }
 
 .form-wizard-vue .fw-body-list li .fw-list-wrapper-icon.fw-step-active {
-  background: variables.$primary !important;
-  color: variables.$white !important;
+  background: $primary !important;
+  color: $white !important;
 }
 
 .fw-step-title.active {
-  color: variables.$primary;
+  color: $primary;
 }
 
 [dir="rtl"] {
@@ -119,8 +119,8 @@
 }
 
 .vue-form-wizard .wizard-icon-circle {
-  border: 3px solid variables.$light !important;
-  background-color: variables.$light !important;
+  border: 3px solid $light !important;
+  background-color: $light !important;
 }
 .vue-form-wizard .wizard-nav-pills > li > a {
   color: var(--default-text-color) !important;

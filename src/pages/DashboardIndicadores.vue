@@ -1,157 +1,175 @@
+<!-- src/views/Dashboard.vue -->
 <template>
-  <!-- Utilizar .container o una de sus variantes para envolver el dashboard -->
-  <div class="container-fluid">
-    <!-- Cambia a .container, .container-sm, etc., según tus necesidades -->
+  <div :style="{ backgroundColor: backgroundColor }" class="container-fluid">
     <div class="dashboard">
-      <!-- Tarjeta de Citas Agendadas -->
-      <div class="card tCitasAgendadas">
-        <h3 class="card-title">Citas Agendadas</h3>
+      <div class="card citasAgendadas">
         <CitasAgendadas />
       </div>
 
       <!-- Tarjeta de Estado de Pacientes -->
-      <div class="card tPacienteActivoGraph">
-        <h3 class="card-title">Estado de Pacientes</h3>
+      <div class="card pacienteActivoGraph">
         <PacienteActivoGraph />
       </div>
 
-      <!-- Tarjeta de Registros Semanales -->
-      <div class="card tPacientesAggMensualmente">
-        <h3 class="card-title">Registros de Pacientes Semanales</h3>
-        <indicadorUltimasTransacciones />
+      <!-- Tarjeta de Indicador Últimas Transacciones -->
+      <div class="card ultimasTransacciones">
+        <IndicadorUltimasTransacciones />
       </div>
 
-      <!-- Tarjeta de Indicador de Diferencia de Citas del Mes -->
-      <div class="card tPacientesAggMensualmente">
+      <!-- Tarjeta de Pacientes Agregados Mensualmente -->
+      <div class="card aggMensualmente">
+        <PacientesAggMensualmente />
+      </div>
+
+      <!-- Tarjeta de Diferencia de Citas del Mes -->
+      <div class="card difCitasMes">
         <IndicadorDifCitasMes />
       </div>
 
-      <!-- Tarjeta de Indicador de Últimas Transacciones -->
-
-      <div class="card tPacientesAggMensualmente">
-        <h3 class="card-title">Registros de Pacientes Semanales</h3>
-        <PacientesAggMensualmente />
-      </div>
-      <!-- Tarjeta de Prueba de ApexCharts (Opcional) -->
-      <div class="card tPacientesAggMensualmente">
-        <!-- <TestApexChart /> -->
+      <!-- Tarjeta de Últimas Citas Agregadas -->
+      <div class="card ultimosCitasAgregadas">
+        <IndicadorUltimosCitasAgregadas />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed, watch, onMounted } from "vue";
+import { useThemeStore } from "../stores/themeStore";
+
 import CitasAgendadas from "src/components/CitasAgendadas.vue";
 import PacienteActivoGraph from "src/components/PacienteActivoGraph.vue";
 import PacientesAggMensualmente from "src/components/PacientesAggMensualmente.vue";
 import IndicadorDifCitasMes from "src/components/IndicadorDifCitasMes.vue";
-import indicadorUltimasTransacciones from "src/components/indicadorUltimasTransacciones.vue";
-import TestApexChart from "src/components/TestApexChart.vue"; // Asegúrate de descomentar si lo usas
+import IndicadorUltimasTransacciones from "src/components/IndicadorUltimasTransacciones.vue";
+import IndicadorUltimosCitasAgregadas from "../components/IndicadorUltimosCitasAgregadas.vue";
+import LineChart from "../components/LineChart.vue";
+
+const themeStore = useThemeStore();
+
+// Computed property para obtener el color de fondo desde el themeStore
+const backgroundColor = computed(() => themeStore.backgroundColor);
+
+// Opcional: Actualizar una variable CSS global si lo prefieres
+// watch(backgroundColor, (newColor) => {
+//   document.documentElement.style.setProperty(
+//     "--default-body-bg-color",
+//     newColor
+//   );
+// });
+
+onMounted(() => {
+  // Inicializar la variable CSS al montar el componente
+  document.documentElement.style.setProperty(
+    "--default-body-bg-color",
+    "223, 90, 90",
+    themeStore.backgroundColor
+  );
+});
 </script>
 
 <style scoped>
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(300px, 1fr)
-  ); /* Adaptable según el tamaño */
-  gap: 16px; /* Espaciado entre tarjetas */
+  gap: 16px;
   padding: 16px;
+
+  /* Usar la variable CSS para el fondo si prefieres */
+  background-color: var(--default-body-bg-color);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "citasAgendadas citasAgendadas pacienteActivo ultimosCitas"
+    "ultimasTransacciones difCitasMes aggMensualmente ultimosCitas";
 }
 
-/* Estilo base para las tarjetas */
+.citasAgendadas {
+  grid-area: citasAgendadas;
+}
+
+.pacienteActivoGraph {
+  grid-area: pacienteActivo;
+}
+
+.ultimasTransacciones {
+  grid-area: ultimasTransacciones;
+}
+
+.difCitasMes {
+  grid-area: difCitasMes;
+}
+
+.aggMensualmente {
+  grid-area: aggMensualmente;
+}
+
+.ultimosCitasAgregadas {
+  grid-area: ultimosCitas;
+}
+
 .card {
   display: flex;
-  flex-direction: column; /* Asegura que el título y gráfico estén en columna */
-  align-items: center; /* Centrar horizontalmente */
-  background: #fff;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  min-height: 10px; /* Altura mínima consistente */
-  transition: all 0.3s ease; /* Transición suave al cambiar tamaño */
+  transition: all 0.3s ease;
 }
 
-/* Estilo de los títulos de las tarjetas */
+.card-title {
+  margin: 0 auto;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.card-button {
+  font-size: 14px;
+  color: #007bff;
+  background-color: transparent;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 .card-title {
   margin: 0;
   font-size: 18px;
   font-weight: bold;
   color: #333;
-  text-align: center;
-  margin-bottom: 16px; /* Espaciado entre el título y el gráfico */
 }
 
-/* Centrar y tamaño de los gráficos */
-.apexcharts-canvas {
-  width: 100%; /* Ajusta el gráfico al ancho disponible */
-  max-width: 500px; /* Tamaño máximo para mantener consistencia */
-  height: auto; /* Ajusta automáticamente la altura */
-}
-
-/* Opcional: Estilos específicos para DevExtreme's DxChart si aún los usas */
+.apexcharts-canvas,
 .dx-chart,
 .dx-pie-chart {
-  width: 100%; /* Ajusta el gráfico al ancho disponible */
-  max-width: 400px; /* Tamaño máximo para mantener consistencia */
-  height: auto; /* Ajusta automáticamente la altura */
+  width: 100%;
+  max-width: 500px;
+  height: auto;
 }
 
-/* Centrar internamente el contenido gráfico */
-.dx-chart .dxc-series-group,
-.dx-pie-chart .dxc-series-group {
-  transform: translate(0, 0); /* Asegura que el gráfico esté centrado */
-}
-
-/* Asegura que la leyenda se alinee correctamente */
 .dx-chart .dxc-legend,
 .dx-pie-chart .dxc-legend {
   text-align: center;
-  margin-top: 16px; /* Espaciado entre la leyenda y el gráfico */
-}
-
-/* Media Queries para Ajustes Específicos (Opcional) */
-@media (max-width: 575.98px) {
-  .dashboard {
-    grid-template-columns: 1fr; /* Una columna en pantallas extra pequeñas */
-  }
-}
-
-@media (min-width: 576px) and (max-width: 767.98px) {
-  .dashboard {
-    grid-template-columns: repeat(
-      2,
-      1fr
-    ); /* Dos columnas en pantallas pequeñas */
-  }
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .dashboard {
-    grid-template-columns: repeat(
-      3,
-      1fr
-    ); /* Tres columnas en pantallas medianas */
-  }
-}
-
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  .dashboard {
-    grid-template-columns: repeat(
-      3,
-      1fr
-    ); /* Tres columnas en pantallas grandes */
-  }
-}
-
-@media (min-width: 1200px) {
-  .dashboard {
-    grid-template-columns: repeat(
-      4,
-      1fr
-    ); /* Cuatro columnas en pantallas extra grandes */
-  }
+  margin-top: 16px;
 }
 </style>

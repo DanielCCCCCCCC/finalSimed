@@ -2,84 +2,92 @@
   <!-- Start::app-sidebar -->
   <div id="responsive-overlay" @click="mainContentFn"></div>
   <aside
-    class="app-sidebar sticky"
+    class="app-sidebar sticky sb sidebar-offset"
     :class="{ 'sticky-pin': menuOverflowed }"
     id="sidebar"
   >
     <!-- Start::main-sidebar-header -->
-    <div class="main-sidebar-header">
-      <router-link :to="`${url}`"> </router-link>
+    <div class="header-logo-container">
+      <router-link :to="url" class="header-logo">
+        <img src="../../assets/icons/Imagen2.png" class="imgSize" alt="Logo" />
+      </router-link>
     </div>
     <!-- End::main-sidebar-header -->
 
     <!-- Start::main-sidebar -->
-    <SimpleBar
+    <simplebar
       data-simplebar-auto-hide="false"
       class="main-sidebar"
       id="sidebar-scroll"
     >
+      <!-- Start::nav -->
       <nav class="main-menu-container nav nav-pills flex-column sub-open">
         <div class="slide-left" id="slide-left" @click="leftArrowFn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="#7b8191"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
-            ></path>
-          </svg>
+          <!-- <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#7b8191"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
+              ></path>
+            </svg> -->
         </div>
         <ul class="main-menu">
           <li
             v-for="(mainmenuItem, index) in menuData"
             :key="index"
-            :class="`${mainmenuItem.headTitle ? 'slide__category' : ''} ${
-              mainmenuItem?.type == 'link' ? 'slide' : ''
-            } ${mainmenuItem?.type == 'empty' ? 'slide' : ''} ${
-              mainmenuItem?.type == 'sub' ? 'slide has-sub' : ''
-            } ${
-              mainmenuItem?.active && mainmenuItem?.type == 'sub' ? 'open' : ''
-            } ${mainmenuItem?.selected ? 'active' : ''}`"
+            :class="[
+              mainmenuItem.headTitle ? 'slide__category' : '',
+              mainmenuItem.type === 'link' ? 'slide' : '',
+              mainmenuItem.type === 'empty' ? 'slide' : '',
+              mainmenuItem.type === 'sub' ? 'slide has-sub' : '',
+              mainmenuItem.active && mainmenuItem.type === 'sub' ? 'open' : '',
+              mainmenuItem.selected ? 'active' : '',
+            ]"
           >
             <template v-if="mainmenuItem.headTitle">
               <span class="category-name">{{ mainmenuItem.headTitle }}</span>
             </template>
-            <template v-if="mainmenuItem?.type === 'link'">
+            <template v-if="mainmenuItem.type === 'link'">
               <router-link
                 :to="mainmenuItem.path"
                 class="side-menu__item"
-                :class="`${mainmenuItem.selected ? 'active' : ''}`"
-                ><span class="shape1"></span><span class="shape2"></span>
-                <i :class="`${mainmenuItem.icon} side-menu__icon`"></i>
-                <span class="side-menu__label"
-                  >{{ mainmenuItem.title
-                  }}<span
-                    v-if="mainmenuItem.badge"
-                    :class="`badge ${mainmenuItem.badgeColor} ms-1`"
-                    >{{ mainmenuItem.badge }}</span
-                  ></span
-                >
-              </router-link>
-            </template>
-            <template v-if="mainmenuItem?.type === 'empty'">
-              <router-link href="javascript:;" class="side-menu__item"
-                ><span class="shape1"></span>
+                :class="[mainmenuItem.selected ? 'active' : '']"
+              >
+                <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i :class="`${mainmenuItem.icon} side-menu__icon`"></i>
-                <span class="side-menu__label"
-                  >{{ mainmenuItem.title
-                  }}<span
+                <i :class="[mainmenuItem.icon, 'side-menu__icon']"></i>
+                <span class="side-menu__label">
+                  {{ mainmenuItem.title }}
+                  <span
                     v-if="mainmenuItem.badge"
-                    :class="`badge ${mainmenuItem.badgeColor} ms-1`"
-                    >{{ mainmenuItem.badge }}</span
-                  ></span
-                >
+                    :class="['badge', mainmenuItem.badgeColor, 'ms-1']"
+                  >
+                    {{ mainmenuItem.badge }}
+                  </span>
+                </span>
               </router-link>
             </template>
-            <template v-if="mainmenuItem?.type === 'sub'">
+            <template v-if="mainmenuItem.type === 'empty'">
+              <router-link to="javascript:;" class="side-menu__item">
+                <span class="shape1"></span>
+                <span class="shape2"></span>
+                <i :class="[mainmenuItem.icon, 'side-menu__icon']"></i>
+                <span class="side-menu__label">
+                  {{ mainmenuItem.title }}
+                  <span
+                    v-if="mainmenuItem.badge"
+                    :class="['badge', mainmenuItem.badgeColor, 'ms-1']"
+                  >
+                    {{ mainmenuItem.badge }}
+                  </span>
+                </span>
+              </router-link>
+            </template>
+            <template v-if="mainmenuItem.type === 'sub'">
               <RecursiveMenu
                 :menuData="mainmenuItem"
                 :toggleSubmenu="toggleSubmenu"
@@ -105,27 +113,21 @@
         </div>
       </nav>
       <!-- End::nav -->
-      <!-- </div>  -->
-      <!-- </div> -->
-    </SimpleBar>
+    </simplebar>
     <!-- End::main-sidebar -->
   </aside>
   <div ref="preventpagejump" class="prevent-page-jump"></div>
-
   <!-- End::app-sidebar -->
 </template>
+
 <script>
 import RecursiveMenu from "../../UI/recursiveMenu.vue";
 import { menuData } from "../../data/menuData";
 import { watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import simpleBar from "simplebar-vue";
-import "simplebar/dist/simplebar.min.css";
-
 export default {
   components: {
     RecursiveMenu,
-    simpleBar,
   },
   data() {
     return {
@@ -746,4 +748,32 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style>
+.sidebar-offset {
+  margin-top: 18px !important; /* Uso de !important si es necesario */
+}
+
+.header-logo-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100px; /* Ajusta según la altura de tu sidebar */
+  padding: 16px; /* Opcional: Añade padding si es necesario */
+}
+
+.header-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imgSize {
+  width: 80px;
+  height: 80px;
+  object-fit: contain; /* Asegura que la imagen mantenga su proporción */
+}
+.sb {
+  position: relative;
+  top: -10px;
+}
+</style>

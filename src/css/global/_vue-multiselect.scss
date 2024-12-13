@@ -1,9 +1,9 @@
 @use "../variables";
 /* Start:: vue - multiselect */
 :root {
-  --ms-dropdown-bg: #{variables.$form-control-bg};
-  --ms-dropdown-border-color: #{variables.$input-border} !important;
-  --ms-dropdown-radius: #{variables.$default-radius};
+  --ms-dropdown-bg: #{$form-control-bg};
+  --ms-dropdown-border-color: #{$input-border} !important;
+  --ms-dropdown-radius: #{$default-radius};
   --ms-option-bg-selected-pointed: var(--primary-color);
   --ms-option-bg-selected: var(--primary-color);
   --ms-option-bg-pointed: rgba(var(--light-rgb), 0.25);
@@ -14,7 +14,7 @@
 }
 .form-group {
   .multiselect {
-    color: variables.$text-muted !important;
+    color: $text-muted !important;
   }
 }
 
@@ -53,8 +53,8 @@
 
 .multiselect,
 .multiselect__content-wrapper {
-  background-color: variables.$form-control-bg !important;
-  border: 0.1px solid variables.$input-border !important;
+  background-color: $form-control-bg !important;
+  border: 0.1px solid $input-border !important;
   border-radius: 0.35rem !important;
 }
 
@@ -64,21 +64,21 @@
 }
 
 .multiselect {
-  color: variables.$default-text-color !important;
+  color: $default-text-color !important;
   line-height: 1.2rem !important;
-  border: 1px solid variables.$input-border !important;
+  border: 1px solid $input-border !important;
   border-radius: 0.35rem;
 }
 
 .multiselect__option--selected {
-  background-color: variables.$primary !important;
-  color: variables.$white !important;
+  background-color: $primary !important;
+  color: $white !important;
 }
 
 .multiselect__option--highlight,
 .multiselect__option--group {
-  background-color: variables.$default-background !important;
-  color: variables.$default-text-color !important;
+  background-color: $default-background !important;
+  color: $default-text-color !important;
 }
 
 .multiselect__tags,
@@ -88,8 +88,8 @@
 }
 .tags-multiselect {
   .multiselect__tags {
-    background: variables.$form-control-bg !important;
-    border: 1px solid variables.$input-border !important;
+    background: $form-control-bg !important;
+    border: 1px solid $input-border !important;
     display: inline-block;
     width: 100%;
   }
@@ -115,8 +115,8 @@
 .multiselect__input {
   height: 1.5rem;
   margin: 0 !important;
-  background-color: variables.$form-control-bg !important;
-  color: variables.$default-text-color !important;
+  background-color: $form-control-bg !important;
+  color: $default-text-color !important;
 }
 
 .multiselect__placeholder,

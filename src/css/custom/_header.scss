@@ -7,13 +7,13 @@
   position: fixed;
   inset-block-start: 0;
   inset-inline: 0;
-  background: variables.$header-bg;
-  border-block-end: 1px solid variables.$header-border-color;
+  background: $header-bg;
+  border-block-end: 1px solid $header-border-color;
   box-shadow: -7.829px 11.607px 20px 0px rgba(144, 143, 160, 0.09);
   transition: all 0.1s ease;
 
   #mainHeaderProfile {
-    color: variables.$header-prime-color;
+    color: $header-prime-color;
   }
 }
 
@@ -36,11 +36,11 @@
 
 .related-app {
   text-align: center;
-  border-radius: variables.$default-radius;
-  border: 1px dashed variables.$default-border;
+  border-radius: $default-radius;
+  border: 1px dashed $default-border;
 
   &:hover {
-    background-color: variables.$light;
+    background-color: $light;
   }
 }
 
@@ -80,8 +80,8 @@
     &:hover,
     &.show {
       .header-link-icon {
-        fill: variables.$header-prime-color;
-        color: variables.$header-prime-color;
+        fill: $header-prime-color;
+        color: $header-prime-color;
       }
     }
   }
@@ -90,8 +90,8 @@
     // width: 1.75rem;
     // height: 1.75rem;
     font-size: 1.25rem !important;
-    color: variables.$header-prime-color;
-    fill: variables.$header-prime-color;
+    color: $header-prime-color;
+    fill: $header-prime-color;
     transition: all ease 0.05s;
     position: relative;
     padding: 0.6rem;
@@ -99,13 +99,13 @@
     display: inline;
 
     &:hover {
-      background-color: variables.$light;
+      background-color: $light;
     }
   }
 
   .country-selector {
     svg:hover {
-      background-color: variables.$light;
+      background-color: $light;
     }
   }
 
@@ -125,17 +125,17 @@
     .dropdown-item {
       font-weight: 400;
       font-size: 0.813rem;
-      color: variables.$default-text-color;
+      color: $default-text-color;
       padding: 1.25rem 1rem;
       height: 2.375rem;
       display: flex;
       align-items: center;
 
       &:hover {
-        color: variables.$primary;
+        color: $primary;
 
         i {
-          color: variables.$primary;
+          color: $primary;
           opacity: 1;
         }
       }
@@ -152,7 +152,7 @@
     .dropdown-item {
       padding: 0.65rem;
       font-weight: 400;
-      border-block-end: 1px solid variables.$default-border;
+      border-block-end: 1px solid $default-border;
       &:last-child {
         border-block-end: 0;
       }
@@ -204,7 +204,7 @@
     list-style-type: none;
     font-size: 0.75rem;
     font-weight: 400;
-    color: variables.$text-muted;
+    color: $text-muted;
     padding-inline-end: 0.938rem;
   }
 
@@ -218,7 +218,7 @@
       width: 1px;
       inset-block-start: 0.25rem;
       height: 0.625rem;
-      background-color: variables.$text-muted;
+      background-color: $text-muted;
       opacity: 0.1;
     }
   }
@@ -230,7 +230,7 @@
     border-radius: 0.25rem;
     font-size: 0.85rem;
     margin-inline-start: 0.75rem;
-    color: variables.$danger;
+    color: $danger;
   }
 
   &:hover {
@@ -249,21 +249,21 @@
   }
 
   .input-group {
-    border: 2px solid variables.$primary;
+    border: 2px solid $primary;
     border-radius: 0.25rem;
 
     i {
-      color: variables.$text-muted;
+      color: $text-muted;
     }
   }
 }
 
 .search-tags {
   font-size: 0.75rem;
-  color: variables.$default-text-color;
-  border: 1px solid variables.$default-border;
+  color: $default-text-color;
+  border: 1px solid $default-border;
   border-radius: 0.25rem;
-  background-color: variables.$default-background;
+  background-color: $default-background;
   padding: 0.125rem 0.55rem;
   line-height: 1.2rem;
   display: inline-flex;
@@ -273,7 +273,7 @@
   margin: 0.25rem 0;
 
   .tag-addon:last-child {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
 
   a.tag-addon {
@@ -283,7 +283,7 @@
     padding: 0 0.5rem;
     color: inherit;
     text-decoration: none;
-    background: variables.$light;
+    background: $light;
     margin-inline-end: -0.4rem;
     margin-inline-start: 0.5rem;
     text-align: center;
@@ -461,7 +461,7 @@
   cursor: pointer;
   height: 0.125rem;
   width: 0.938rem;
-  background: variables.$header-prime-color;
+  background: $header-prime-color;
   position: absolute;
   display: block;
   content: "";
@@ -488,7 +488,7 @@
   cursor: pointer;
   height: 0.125rem;
   width: 1.25rem;
-  background: variables.$header-prime-color;
+  background: $header-prime-color;
   position: absolute;
   display: block;
   content: "";
@@ -545,8 +545,8 @@
 .input-group-btn.search-panel {
   width: 145px !important;
   .choices__inner {
-    background-color: variables.$header-bg !important;
-    border-color: variables.$header-border-color !important;
+    background-color: $header-bg !important;
+    border-color: $header-border-color !important;
     padding-block: 0.3rem !important;
     border-start-start-radius: 5px !important;
     border-start-end-radius: 0 !important;
@@ -565,8 +565,8 @@
     }
   }
   .multiselect {
-    background-color: variables.$header-bg !important;
-    border-color: variables.$header-border-color !important;
+    background-color: $header-bg !important;
+    border-color: $header-border-color !important;
     border-start-start-radius: 5px !important;
     border-start-end-radius: 0 !important;
     border-end-end-radius: 0 !important;
@@ -590,15 +590,15 @@
       white-space: nowrap;
       &:hover {
         background-color: rgba(var(--light-rgb), 0.25) !important;
-        color: variables.$primary !important;
+        color: $primary !important;
       }
     }
   }
 }
 .main-header-center .input-group {
   .form-control {
-    background-color: variables.$header-bg !important;
-    border-color: variables.$header-border-color !important;
+    background-color: $header-bg !important;
+    border-color: $header-border-color !important;
   }
 }
 @media (min-width: 1250px) {
@@ -657,14 +657,14 @@
   inset-block-start: 3px;
 }
 .search-app:hover a {
-  color: variables.$primary;
+  color: $primary;
 }
 .search-tags {
   font-size: 0.75rem;
-  color: variables.$default-text-color;
-  border: 1px solid variables.$default-border;
+  color: $default-text-color;
+  border: 1px solid $default-border;
   border-radius: 10rem;
-  background-color: variables.$default-background;
+  background-color: $default-background;
   padding: 0.125rem 0.55rem;
   line-height: 1.2rem;
   display: inline-flex;
@@ -672,7 +672,7 @@
   font-weight: 400;
   margin: 0.25rem 0;
   .tag-addon:last-child {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
   }
   a.tag-addon {
     text-decoration: none;
@@ -681,7 +681,7 @@
     padding: 0 0.5rem;
     color: inherit;
     text-decoration: none;
-    background: variables.$light;
+    background: $light;
     margin-inline-end: -0.4rem;
     margin-inline-start: 0.5rem;
     text-align: center;
@@ -725,7 +725,7 @@
 }
 .app-header .main-header-center {
   .choices__list--single .choices__item {
-    color: variables.$gray-3 !important;
+    color: $gray-3 !important;
   }
   .choices__list--dropdown,
   .choices__list[aria-expanded] {
