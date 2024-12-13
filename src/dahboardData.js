@@ -169,7 +169,7 @@ export let mobileappdesignSeries = [80],
     grid: {
       borderColor: "#f2f6f7",
     },
-    colors: ["rgba(var(--primary-rgb))", "rgba(var(--primary-rgb),0.3)"],
+    colors: ["rgba(var(--primary-rgb))", "rgba(var(--primary-rgb),0.2)"],
     yaxis: {
       title: {
         text: "",

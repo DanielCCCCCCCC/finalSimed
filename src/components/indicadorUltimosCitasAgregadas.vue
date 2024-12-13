@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="card"> -->
   <!-- Encabezado de la tarjeta -->
   <div class="card title custom-card">
     <label class="main-content-label mb-1 pt-1">CITAS PROGRAMADAS</label>
@@ -52,11 +51,10 @@
       </q-item>
     </q-list>
   </div>
-  <!-- </div> -->
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import { useMedicoStore } from "../stores/MedicoStores";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
@@ -64,16 +62,6 @@ import { useTiposCitasStore } from "../stores/ConfiMedicasStores";
 
 // Importa componentes de Quasar
 import { QAvatar, QIcon, QList, QItem, QItemSection, QItemLabel } from "quasar";
-
-// Registra los componentes de Quasar que se van a usar
-const components = {
-  QAvatar,
-  QIcon,
-  QList,
-  QItem,
-  QItemSection,
-  QItemLabel,
-};
 
 // Instancia de las tiendas
 const AppointmentsStore = useAppointmentsStore();
@@ -107,12 +95,23 @@ const getMedicoName = (id) => {
   return medico ? medico.nombre : "Desconocido";
 };
 
-// Computed para las citas mapeadas
+// Computed para las últimas 10 citas en orden ascendente
 const lastTenAppointments = computed(() => {
-  const sorted = [...AppointmentsStore.appointments].sort((a, b) => {
-    return new Date(b.startDate) - new Date(a.startDate); // Orden descendente
+  // Ordenar las citas en orden ascendente (de más antiguas a más recientes)
+  const sortedAsc = [...AppointmentsStore.appointments].sort((a, b) => {
+    const dateA = new Date(a.startDate);
+    const dateB = new Date(b.startDate);
+
+    // Manejar fechas inválidas
+    if (isNaN(dateA) && isNaN(dateB)) return 0;
+    if (isNaN(dateA)) return -1;
+    if (isNaN(dateB)) return 1;
+
+    return dateA - dateB; // Orden ascendente
   });
-  return sorted.slice(0, 5); // Últimas 10 citas
+
+  // Obtener hasta las últimas 10 citas
+  return sortedAsc.slice(sortedAsc.length > 10 ? -10 : 0);
 });
 
 const mappedAppointments = computed(() => {
@@ -127,8 +126,13 @@ const mappedAppointments = computed(() => {
 // Formatear fecha
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
+  if (isNaN(date)) return "Fecha Inválida";
   return date.toLocaleDateString(); // Ajusta el formato según tu necesidad
 };
+
+// Depuración: Verificar los datos ordenados y mapeados
+console.log("Sorted Ascending Appointments:", lastTenAppointments.value);
+console.log("Mapped Appointments:", mappedAppointments.value);
 </script>
 
 <style scoped>

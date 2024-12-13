@@ -5,15 +5,15 @@
       >Citas por Semana (Mes Actual)</span
     >
   </div>
-  <div class="card-body p-4 card">
+  <div class="card-body p-4">
     <ApexCharts
       v-if="appointmentsTrend.length > 0"
       type="area"
       :options="chartOptions"
       :series="series"
       class="apex-chart"
-      width="710"
-      height="280"
+      width="790"
+      height="270"
     />
   </div>
 </template>
@@ -107,6 +107,8 @@ const chartOptions = computed(() => ({
 
 <style scoped>
 .apex-chart {
+  position: relative;
+  left: 20px;
   width: 100%;
   height: 280px;
 }

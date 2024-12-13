@@ -44,7 +44,7 @@
           <!-- End::header-element -->
 
           <!-- Start::header-element -->
-          <div class="header-element">
+          <div class="header-element sb">
             <a
               @click="ToggleMenu"
               aria-label="Hide Sidebar"
@@ -352,3 +352,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.sb {
+  position: relative;
+  top: 10px;
+}
+</style>

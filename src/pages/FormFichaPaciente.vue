@@ -1,441 +1,445 @@
 <template>
-  <div class="row">
-    <!-- Lista de subpestañas vertical -->
-    <div class="col-12 col-md-3 q-mt-md">
-      <q-list bordered>
-        <q-item
-          clickable
-          v-ripple
-          @click="updateSubTab('infoTecnica')"
-          :active="subTabFichaIdentificacion === 'infoTecnica'"
-        >
-          <q-item-section>Información Técnica</q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          v-ripple
-          @click="updateSubTab('infoPersonal')"
-          :active="subTabFichaIdentificacion === 'infoPersonal'"
-        >
-          <q-item-section>Información Personal</q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          v-ripple
-          @click="updateSubTab('infoContacto')"
-          :active="subTabFichaIdentificacion === 'infoContacto'"
-        >
-          <q-item-section>Información de Contacto</q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          v-ripple
-          @click="updateSubTab('infoFamiliar')"
-          :active="subTabFichaIdentificacion === 'infoFamiliar'"
-        >
-          <q-item-section>Información Familiar</q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          v-ripple
-          @click="updateSubTab('masDatos')"
-          :active="subTabFichaIdentificacion === 'masDatos'"
-        >
-          <q-item-section>Más Datos</q-item-section>
-        </q-item>
-        <q-item class="contenedor-boton">
-          <q-btn
-            label="Guardar Paciente"
-            color="primary"
-            @click="guardarDatosFormulario"
-            class="boton-centrado"
-          />
-          <q-btn
-            label="Limpiar Formulario"
-            color="danger"
-            @click="limpiarFormulario"
-            class="boton-limpiar"
-          />
-          <q-item-section></q-item-section>
-        </q-item>
-      </q-list>
+  <div class="row row-sm cardFichaPaciente q-ml-xl">
+    <div class="col-md-1">
+      <!-- Lista de subpestañas vertical con clases copiadas del ejemplo -->
+      <ul class="nav nav-tabs flex-column vertical-tabs-2" role="tablist">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :class="{ active: subTabFichaIdentificacion === 'infoTecnica' }"
+            data-bs-toggle="tab"
+            role="tab"
+            href="#infoTecnica-tab"
+            aria-selected="subTabFichaIdentificacion === 'infoTecnica'"
+            @click="updateSubTab('infoTecnica')"
+          >
+            <p class="mb-1"><i class="ri-home-4-line"></i></p>
+            <p class="mb-0 text-break">Información Técnica</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :class="{ active: subTabFichaIdentificacion === 'infoPersonal' }"
+            data-bs-toggle="tab"
+            role="tab"
+            href="#infoPersonal-tab"
+            aria-selected="subTabFichaIdentificacion === 'infoPersonal'"
+            @click="updateSubTab('infoPersonal')"
+          >
+            <p class="mb-1"><i class="ri-phone-line"></i></p>
+            <p class="mb-0 text-break">Información Personal</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :class="{ active: subTabFichaIdentificacion === 'infoContacto' }"
+            data-bs-toggle="tab"
+            role="tab"
+            href="#infoContacto-tab"
+            aria-selected="subTabFichaIdentificacion === 'infoContacto'"
+            @click="updateSubTab('infoContacto')"
+          >
+            <p class="mb-1"><i class="ri-customer-service-line"></i></p>
+            <p class="mb-0 text-break">Información de Contacto</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :class="{ active: subTabFichaIdentificacion === 'infoFamiliar' }"
+            data-bs-toggle="tab"
+            role="tab"
+            href="#infoFamiliar-tab"
+            aria-selected="subTabFichaIdentificacion === 'infoFamiliar'"
+            @click="updateSubTab('infoFamiliar')"
+          >
+            <p class="mb-1"><i class="ri-customer-service-line"></i></p>
+            <p class="mb-0 text-break">Información Familiar</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            :class="{ active: subTabFichaIdentificacion === 'masDatos' }"
+            data-bs-toggle="tab"
+            role="tab"
+            href="#masDatos-tab"
+            aria-selected="subTabFichaIdentificacion === 'masDatos'"
+            @click="updateSubTab('masDatos')"
+          >
+            <p class="mb-1"><i class="ri-customer-service-line"></i></p>
+            <p class="mb-0 text-break">Más Datos</p>
+          </a>
+        </li>
+        <li class="nav-item contenedor-boton">
+          <div class="d-flex flex-column p-2">
+            <q-btn
+              label="Guardar Paciente"
+              color="dark"
+              @click="guardarDatosFormulario"
+              class="mb-2"
+            />
+            <q-btn
+              label="Limpiar Formulario"
+              color="danger"
+              @click="limiarFormulario"
+            />
+          </div>
+        </li>
+      </ul>
     </div>
 
     <!-- Contenido de subpestañas -->
-
-    <div class="col-12 col-md-9">
+    <div class="col-md-7">
       <q-tab-panels v-model="subTabFichaIdentificacion" animated>
+        <!-- Información Técnica -->
         <q-tab-panel name="infoTecnica">
-          <q-card
-            class="q-pa-sm q-mt-md bg-grey-1 rounded shadow-2xl formS q-pr-md q-pl-md q-pb-md"
-          >
-            <q-card-section class="text-h6 text-primary"
-              >Información Técnica</q-card-section
-            >
+          <q-card class="card card-body p-3">
+            <q-card-section>
+              <h6 class="text-primary mb-3">Información Técnica</h6>
+            </q-card-section>
+            <q-form class="row gx-3 gy-2">
+              <div class="col-md-6">
+                <label class="form-label">Código</label>
+                <q-input
+                  v-model="pacienteSeleccionado.codigo"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.codigo"
+                  error-message="El código es obligatorio"
+                />
+              </div>
 
-            <q-form class="q-gutter-md">
-              <label class="form-label">Codigo</label>
+              <div class="col-md-6">
+                <label class="form-label">Paciente activo?</label>
+                <div class="form-check">
+                  <q-checkbox v-model="pacienteSeleccionado.activo" dense />
+                </div>
+              </div>
+              <!-- label="Activo" -->
 
-              <q-input
-                v-model="pacienteSeleccionado.codigo"
-                label="Código"
-                dense
-                class="form-control"
-                :error="!validaciones.codigo"
-                error-message="El código es obligatorio"
-              />
-              <label class="form-label">Estado del Paciente</label>
+              <div class="col-md-6">
+                <label class="form-label">Tipo de Paciente</label>
+                <q-select
+                  v-model="pacienteSeleccionado.tipo"
+                  :options="tpacientes"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.tipo"
+                  error-message="Debe seleccionar un tipo de paciente"
+                />
+              </div>
 
-              <q-checkbox
-                v-model="pacienteSeleccionado.activo"
-                label="Activo"
-                dense
-                type="checkbox"
-                class="form-check-input"
-              />
-              <label class="form-label">Tipo de paciente</label>
+              <div class="col-md-6">
+                <label class="form-label">Médico</label>
+                <q-select
+                  v-model="pacienteSeleccionado.medico"
+                  :options="medicos"
+                  option-value="id"
+                  option-label="nombre"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.medico"
+                  error-message="Debe seleccionar un médico"
+                />
+              </div>
 
-              <q-select
-                v-model="pacienteSeleccionado.tipo"
-                :options="tpacientes"
-                label="Tipo"
-                option-value="id"
-                option-label="descripcion"
-                dense
-                class="form-select"
-                :error="!validaciones.tipo"
-                error-message="Debe seleccionar un tipo de paciente"
-              />
-              <label class="form-label">Medico</label>
+              <div class="col-md-6">
+                <label class="form-label">Médico de Cabecera</label>
+                <q-select
+                  v-model="pacienteSeleccionado.medicoCabecera"
+                  :options="medicos"
+                  option-value="id"
+                  option-label="nombre"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.medicoCabecera"
+                  error-message="Debe seleccionar un médico de cabecera"
+                />
+              </div>
 
-              <q-select
-                v-model="pacienteSeleccionado.medico"
-                :options="medicos"
-                label="Seleccione el medico"
-                option-value="id"
-                option-label="nombre"
-                dense
-                class="form-select"
-                :error="!validaciones.medico"
-                error-message="Debe seleccionar un médico"
-              />
-              <label class="form-label">Medico de cabecera</label>
-
-              <q-select
-                v-model="pacienteSeleccionado.medicoCabecera"
-                :options="medicos"
-                label="Médico de Cabecera"
-                option-value="id"
-                option-label="nombre"
-                dense
-                class="form-select"
-                :error="!validaciones.medicoCabecera"
-                error-message="Debe seleccionar un médico de cabecera"
-              />
-              <label class="form-label">Referido por "Medico"</label>
-
-              <q-select
-                v-model="pacienteSeleccionado.referidoPor"
-                :options="medicos"
-                label="Referido Por"
-                option-value="id"
-                option-label="nombre"
-                dense
-                class="form-select"
-              />
+              <div class="col-md-6">
+                <label class="form-label"
+                  >Referido por: <span class="text-muted"> Médico</span>
+                </label>
+                <q-select
+                  v-model="pacienteSeleccionado.referidoPor"
+                  :options="medicos"
+                  option-value="id"
+                  option-label="nombre"
+                  dense
+                  class="form-select"
+                />
+              </div>
             </q-form>
           </q-card>
         </q-tab-panel>
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
+
+        <!-- Información Personal -->
         <q-tab-panel name="infoPersonal">
-          <q-card
-            class="q-pa-sm q-mt-md bg-grey-1 rounded shadow-2xl formS q-pr-md q-pl-md q-pb-md"
-          >
-            <q-card-section class="text-h6 text-primary"
-              >Información Personal</q-card-section
-            >
-            <!-- Contenido de Información Personal -->
-            <q-form class="q-gutter-md">
-              <label class="form-label">DNI</label>
-              <q-input
-                v-model="pacienteSeleccionado.dni"
-                label="DNI"
-                dense
-                class="form-control"
-                :error="!validaciones.dni"
-                error-message="El DNI es obligatorios"
-              />
-
-              <label class="form-label">Nombres</label>
-              <q-input
-                v-model="pacienteSeleccionado.nombres"
-                label="Nombres"
-                dense
-                class="form-control"
-                :error="!validaciones.nombres"
-                error-message="Los nombres son obligatorios"
-              />
-
-              <label class="form-label">Apellidos</label>
-              <q-input
-                v-model="pacienteSeleccionado.apellidos"
-                label="Apellidos"
-                dense
-                class="form-control"
-                :error="!validaciones.apellidos"
-                error-message="Los apellidos son obligatorios"
-              />
-
-              <label class="form-label">Fecha de Nacimiento</label>
-              <q-input
-                v-model="pacienteSeleccionado.fechaNacimiento"
-                label="Fecha de Nacimiento"
-                dense
-                class="form-control"
-                type="date"
-                :error="!validaciones.fechaNacimiento"
-                error-message="Debe ingresar una fecha válida"
-              />
-
-              <label class="form-label">Sexo</label>
-              <q-input
-                v-model="pacienteSeleccionado.sexo"
-                label="Sexo"
-                dense
-                class="form-control"
-                :error="!validaciones.sexo"
-                error-message="Debe seleccionar un sexo"
-              />
-
-              <label class="form-label">Estado Civil</label>
-              <q-select
-                v-model="pacienteSeleccionado.estadoCivil"
-                :options="estadosCiviles"
-                option-value="id"
-                option-label="descripcion"
-                label="Estado Civil"
-                dense
-                class="form-select"
-                :error="!validaciones.estadoCivil"
-                error-message="Debe seleccionar un estado civil"
-              />
-
-              <label class="form-label">Observaciones</label>
-              <q-input
-                v-model="pacienteSeleccionado.observaciones"
-                label="Observaciones"
-                type="textarea"
-                dense
-                class="form-control"
-                :error="!validaciones.observaciones"
-                error-message="Debe ingresar una observaciones"
-              />
+          <q-card class="card card-body p-3">
+            <q-card-section>
+              <h6 class="text-primary mb-3">Información Personal</h6>
+            </q-card-section>
+            <q-form class="row gx-3 gy-2">
+              <div class="col-md-6">
+                <label class="form-label">DNI</label>
+                <q-input
+                  v-model="pacienteSeleccionado.dni"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.dni"
+                  error-message="El DNI es obligatorio"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nombres</label>
+                <q-input
+                  v-model="pacienteSeleccionado.nombres"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.nombres"
+                  error-message="Los nombres son obligatorios"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Apellidos</label>
+                <q-input
+                  v-model="pacienteSeleccionado.apellidos"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.apellidos"
+                  error-message="Los apellidos son obligatorios"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Fecha de Nacimiento</label>
+                <q-input
+                  v-model="pacienteSeleccionado.fechaNacimiento"
+                  type="date"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.fechaNacimiento"
+                  error-message="Debe ingresar una fecha válida"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Sexo</label>
+                <q-input
+                  v-model="pacienteSeleccionado.sexo"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.sexo"
+                  error-message="Debe seleccionar un sexo"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Estado Civil</label>
+                <q-select
+                  v-model="pacienteSeleccionado.estadoCivil"
+                  :options="estadosCiviles"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.estadoCivil"
+                  error-message="Debe seleccionar un estado civil"
+                />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Observaciones</label>
+                <q-input
+                  v-model="pacienteSeleccionado.observaciones"
+                  type="textarea"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.observaciones"
+                  error-message="Debe ingresar observaciones"
+                />
+              </div>
             </q-form>
           </q-card>
         </q-tab-panel>
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
+
+        <!-- Información de Contacto -->
         <q-tab-panel name="infoContacto">
-          <q-card
-            class="q-pa-sm q-mt-md bg-grey-1 rounded shadow-2xl formS q-pr-md q-pl-md q-pb-md"
-          >
-            <q-card-section class="text-h6 text-primary"
-              >Información de Contacto</q-card-section
-            >
-            <!-- Contenido de Información de Contacto -->
-            <q-form class="q-gutter-md">
-              <label class="form-label">Direccion</label>
-              <q-input
-                v-model="pacienteSeleccionado.direccion"
-                label="Dirección"
-                dense
-                class="form-control"
-              />
-
-              <label class="form-label">Telefono Hogar</label>
-
-              <q-input
-                v-model="pacienteSeleccionado.telCasa"
-                label="Teléfono Casa"
-                dense
-                class="form-control"
-              />
-
-              <label class="form-label">Telefono Personal</label>
-
-              <q-input
-                v-model="pacienteSeleccionado.telPersonal"
-                label="Teléfono Personal"
-                dense
-                class="form-control"
-                :error="!validaciones.telPersonal"
-                error-message="Debe ingresar un numero de telefono"
-              />
-
-              <label class="form-label">Email @</label>
-              <q-input
-                v-model="pacienteSeleccionado.email"
-                label="E-mail"
-                dense
-                class="form-control"
-              />
-
-              <label class="form-label">Departamento</label>
-              <q-select
-                v-model="pacienteSeleccionado.departamento"
-                label="Departamento"
-                :options="departamentos"
-                option-value="id"
-                option-label="descripcion"
-                dense
-                class="form-select"
-                :error="!validaciones.departamento"
-                error-message="Debe seleccionar un departamento"
-              />
-
-              <label class="form-label">Municipio</label>
-              <q-select
-                v-model="pacienteSeleccionado.municipio"
-                label="Municipio"
-                :options="filteredMunicipios"
-                option-value="id"
-                option-label="descripcion"
-                dense
-                class="form-select"
-                :error="!validaciones.municipio"
-                error-message="Debe seleccionar un municipio"
-              />
-
-              <label class="form-label">organizacion</label>
-              <q-input
-                v-model="pacienteSeleccionado.organizacion"
-                label="Organización"
-                dense
-                class="form-control"
-              />
+          <q-card class="card card-body p-3">
+            <q-card-section>
+              <h6 class="text-primary mb-3">Información de Contacto</h6>
+            </q-card-section>
+            <q-form class="row gx-3 gy-2">
+              <div class="col-md-6">
+                <label class="form-label">Dirección</label>
+                <q-input
+                  v-model="pacienteSeleccionado.direccion"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Teléfono Hogar</label>
+                <q-input
+                  v-model="pacienteSeleccionado.telCasa"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Teléfono Personal</label>
+                <q-input
+                  v-model="pacienteSeleccionado.telPersonal"
+                  dense
+                  class="form-control"
+                  :error="!validaciones.telPersonal"
+                  error-message="Debe ingresar un número de teléfono"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <q-input
+                  v-model="pacienteSeleccionado.email"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Departamento</label>
+                <q-select
+                  v-model="pacienteSeleccionado.departamento"
+                  :options="departamentos"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.departamento"
+                  error-message="Debe seleccionar un departamento"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Municipio</label>
+                <q-select
+                  v-model="pacienteSeleccionado.municipio"
+                  :options="filteredMunicipios"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                  :error="!validaciones.municipio"
+                  error-message="Debe seleccionar un municipio"
+                />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Organización</label>
+                <q-input
+                  v-model="pacienteSeleccionado.organizacion"
+                  dense
+                  class="form-control"
+                />
+              </div>
             </q-form>
           </q-card>
         </q-tab-panel>
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
 
+        <!-- Información Familiar -->
         <q-tab-panel name="infoFamiliar">
-          <q-card
-            class="q-pa-sm q-mt-md bg-grey-1 rounded shadow-2xl formS q-pr-md q-pl-md q-pb-md"
-          >
-            <q-card-section class="text-h6 text-primary"
-              >Información Familiar</q-card-section
-            >
-            <!-- Contenido de Información Familiar -->
-            <q-form class="q-gutter-md">
-              <label class="form-label">Conyugue </label>
-              <q-input
-                v-model="pacienteSeleccionado.conyugue"
-                label="Cónyuge"
-                dense
-                class="form-control"
-              />
-              <label class="form-label">Madre</label>
-              <q-input
-                v-model="pacienteSeleccionado.madre"
-                label="Madre"
-                dense
-                class="form-control"
-              />
-              <label class="form-label">Padre</label>
-              <q-input
-                v-model="pacienteSeleccionado.padre"
-                label="Padre"
-                dense
-                class="form-control"
-              />
+          <q-card class="card card-body p-3">
+            <q-card-section>
+              <h6 class="text-primary mb-3">Información Familiar</h6>
+            </q-card-section>
+            <q-form class="row gx-3 gy-2">
+              <div class="col-md-6">
+                <label class="form-label">Cónyuge</label>
+                <q-input
+                  v-model="pacienteSeleccionado.conyugue"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Madre</label>
+                <q-input
+                  v-model="pacienteSeleccionado.madre"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Padre</label>
+                <q-input
+                  v-model="pacienteSeleccionado.padre"
+                  dense
+                  class="form-control"
+                />
+              </div>
             </q-form>
           </q-card>
         </q-tab-panel>
 
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
+        <!-- Más Datos -->
         <q-tab-panel name="masDatos">
-          <q-card
-            class="q-pa-sm q-mt-md bg-grey-1 rounded shadow-2xl formS q-pr-md q-pl-md q-pb-md"
-          >
-            <q-card-section class="text-h6 text-primary"
-              >Más Datos</q-card-section
-            >
-            <!-- Contenido de Más Datos -->
-            <q-form class="q-gutter-md">
-              <label class="form-label">Escolaridad</label>
-              <q-select
-                v-model="pacienteSeleccionado.escolaridad"
-                :options="escolaridades"
-                option-value="id"
-                option-label="descripcion"
-                label="Escolaridad"
-                dense
-                class="form-select"
-              />
-
-              <label class="form-label">Ocupacion</label>
-              <q-input
-                v-model="pacienteSeleccionado.ocupacion"
-                label="Ocupación"
-                dense
-                class="form-control"
-              />
-              <label class="form-label">Grupo Sanguineo</label>
-              <q-select
-                v-model="pacienteSeleccionado.grupoSanguineo"
-                label="Grupo Sanguíneo"
-                :options="gruposSanguineos"
-                option-value="id"
-                option-label="descripcion"
-                dense
-                class="form-select"
-              />
-              <label class="form-label">Alergias</label>
-              <q-input
-                v-model="pacienteSeleccionado.alergias"
-                label="Alergias"
-                type="textarea"
-                dense
-                class="form-control"
-              />
-
-              <label class="form-label">VIH</label>
-              <q-checkbox
-                v-model="pacienteSeleccionado.vih"
-                label="VIH"
-                dense
-                class="form-check-input"
-              />
+          <q-card class="card card-body p-3">
+            <q-card-section>
+              <h6 class="text-primary mb-3">Más Datos</h6>
+            </q-card-section>
+            <q-form class="row gx-3 gy-2">
+              <div class="col-md-6">
+                <label class="form-label">Escolaridad</label>
+                <q-select
+                  v-model="pacienteSeleccionado.escolaridad"
+                  :options="escolaridades"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Ocupación</label>
+                <q-input
+                  v-model="pacienteSeleccionado.ocupacion"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Grupo Sanguíneo</label>
+                <q-select
+                  v-model="pacienteSeleccionado.grupoSanguineo"
+                  :options="gruposSanguineos"
+                  option-value="id"
+                  option-label="descripcion"
+                  dense
+                  class="form-select"
+                />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Alergias</label>
+                <q-input
+                  v-model="pacienteSeleccionado.alergias"
+                  type="textarea"
+                  dense
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">VIH</label>
+                <div class="form-check">
+                  <q-checkbox v-model="pacienteSeleccionado.vih" dense />
+                </div>
+              </div>
             </q-form>
           </q-card>
         </q-tab-panel>
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
-        <!--  -->
 
         <slot />
       </q-tab-panels>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
@@ -448,9 +452,6 @@ import {
   useEscolaridadStore,
 } from "../stores/DatosGeneralesStores";
 import { storeToRefs } from "pinia";
-import ListadoPacientes from "./ListadoPacientes.vue";
-import PacienteActivoGraph from "src/components/PacienteActivoGraph.vue";
-import PacientesAggMensualmente from "src/components/PacientesAggMensualmente.vue";
 import { useMedicoStore } from "../stores/MedicoStores";
 import { Notify } from "quasar";
 
@@ -506,7 +507,6 @@ const pacienteSeleccionado = reactive({
   vih: false,
 });
 
-// Computed para filtrar los municipios según el departamento seleccionado
 const filteredMunicipios = computed(() => {
   if (!pacienteSeleccionado.departamento) return [];
   return municipios.value.filter(
@@ -538,18 +538,13 @@ const validarFormulario = () => {
   validaciones.tipo = !!pacienteSeleccionado.tipo;
   validaciones.medico = !!pacienteSeleccionado.medico;
   validaciones.dni = !!pacienteSeleccionado.dni?.trim();
-
   validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
   validaciones.nombres = !!pacienteSeleccionado.nombres?.trim();
   validaciones.apellidos = !!pacienteSeleccionado.apellidos?.trim();
   validaciones.fechaNacimiento = !!pacienteSeleccionado.fechaNacimiento?.trim();
   validaciones.estadoCivil = !!pacienteSeleccionado.estadoCivil;
   validaciones.telPersonal = !!pacienteSeleccionado.telPersonal?.trim();
-
   validaciones.sexo = !!pacienteSeleccionado.sexo?.trim();
-  // validaciones.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-  //   pacienteSeleccionado.email || ""
-  // );
   validaciones.departamento = !!pacienteSeleccionado.departamento;
   validaciones.municipio = !!pacienteSeleccionado.municipio;
 
@@ -557,7 +552,6 @@ const validarFormulario = () => {
   return Object.values(validaciones).every((valido) => valido);
 };
 
-// Watch para limpiar el municipio cuando cambia el departamento
 watch(
   () => pacienteSeleccionado.departamento,
   (nuevoDepartamento, antiguoDepartamento) => {
@@ -565,131 +559,17 @@ watch(
       antiguoDepartamento &&
       nuevoDepartamento?.id !== antiguoDepartamento?.id
     ) {
-      // Limpiar municipio solo si el departamento realmente cambió
       pacienteSeleccionado.municipio = null;
     }
   }
 );
-// Control de pestañas
+
 const tab = ref("Pacientes");
 const subTabFichaIdentificacion = ref("infoTecnica");
 const updateSubTab = (tabName) => {
   subTabFichaIdentificacion.value = tabName;
 };
-// Cambia a la pestaña FichaIdentificacion y asigna los datos del paciente seleccionado
-// const cambiarTab = ({ tab: nuevaTab, paciente }) => {
-const cambiarTab = ({ tab: nuevaTab, paciente }) => {
-  tab.value = nuevaTab;
 
-  // Copiar todos los datos del paciente a pacienteSeleccionado
-  Object.assign(pacienteSeleccionado, paciente);
-
-  // Ajustar los campos tipo, estadoCivil, departamento, municipio, escolaridad, grupoSanguineo
-  const tipoPacienteSeleccionado = tpacientes.value.find(
-    (tipo) => tipo.id === paciente.tipoId
-  );
-  pacienteSeleccionado.tipo = tipoPacienteSeleccionado
-    ? {
-        id: tipoPacienteSeleccionado.id,
-        descripcion: tipoPacienteSeleccionado.descripcion,
-      }
-    : null;
-
-  const estadoCivilSeleccionado = estadosCiviles.value.find(
-    (estado) => estado.id === paciente.estadoCivilId
-  );
-  pacienteSeleccionado.estadoCivil = estadoCivilSeleccionado
-    ? {
-        id: estadoCivilSeleccionado.id,
-        descripcion: estadoCivilSeleccionado.descripcion,
-      }
-    : null;
-
-  const medicoSeleccionado = medicos.value.find(
-    (medico) => medico.id === paciente.medicoId
-  );
-  pacienteSeleccionado.medico = medicoSeleccionado
-    ? {
-        id: medicoSeleccionado.id,
-        nombre: medicoSeleccionado.nombre,
-      }
-    : null;
-
-  //
-  //
-  //
-  //
-  //
-  //
-  const medicoCabeceraSeleccionado = medicos.value.find(
-    (medico) => medico.id === paciente.medicoCabecera
-  );
-  pacienteSeleccionado.medicoCabecera = medicoCabeceraSeleccionado
-    ? {
-        id: medicoCabeceraSeleccionado.id,
-        nombre: medicoCabeceraSeleccionado.nombre,
-      }
-    : null;
-
-  // Nuevo: Referido Por
-  const referidoPorSeleccionado = medicos.value.find(
-    (medico) => medico.id === paciente.referidoPorId
-  );
-  pacienteSeleccionado.referidoPor = referidoPorSeleccionado
-    ? {
-        id: referidoPorSeleccionado.id,
-        nombre: referidoPorSeleccionado.nombre,
-      }
-    : null;
-
-  //
-  //
-  //
-  //
-  //
-  //
-  const departamentoSeleccionado = departamentos.value.find(
-    (depto) => depto.id === paciente.departamentoId
-  );
-  pacienteSeleccionado.departamento = departamentoSeleccionado
-    ? {
-        id: departamentoSeleccionado.id,
-        descripcion: departamentoSeleccionado.descripcion,
-      }
-    : null;
-
-  const municipioSeleccionado = municipios.value.find(
-    (muni) => muni.id === paciente.municipioId
-  );
-  pacienteSeleccionado.municipio = municipioSeleccionado
-    ? {
-        id: municipioSeleccionado.id,
-        descripcion: municipioSeleccionado.descripcion,
-      }
-    : null;
-
-  const escolaridadSeleccionada = escolaridades.value.find(
-    (esc) => esc.id === paciente.escolaridadId
-  );
-  pacienteSeleccionado.escolaridad = escolaridadSeleccionada
-    ? {
-        id: escolaridadSeleccionada.id,
-        descripcion: escolaridadSeleccionada.descripcion,
-      }
-    : null;
-
-  const grupoSanguineoSeleccionado = gruposSanguineos.value.find(
-    (grupo) => grupo.id === paciente.grupoSanguineoId
-  );
-  pacienteSeleccionado.grupoSanguineo = grupoSanguineoSeleccionado
-    ? {
-        id: grupoSanguineoSeleccionado.id,
-        descripcion: grupoSanguineoSeleccionado.descripcion,
-      }
-    : null;
-};
-
-// Cargar datos al montar el componente
 onMounted(async () => {
   await EstadoCivilStore.cargarEstadosCiviles();
   await TiposPacientesStore.cargarPacientes();
@@ -701,7 +581,6 @@ onMounted(async () => {
   await MedicoStore.cargarMedicos();
 });
 
-// Función para guardar los datos del formulario
 const guardarDatosFormulario = () => {
   if (!validarFormulario()) {
     Notify.create({
@@ -712,53 +591,37 @@ const guardarDatosFormulario = () => {
     return;
   }
   if (pacienteSeleccionado.id) {
-    // Si el paciente ya existe, actualiza sus datos
     fichaIdentificacionStore.actualizarPaciente({
       id: pacienteSeleccionado.id,
       fechaRegistro: pacienteSeleccionado.fechaRegistro,
       codigo: pacienteSeleccionado.codigo,
       activo: pacienteSeleccionado.activo,
       tipoId: pacienteSeleccionado.tipo?.id || null,
-      // tipoDescripcion: pacienteSeleccionado.tipo?.descripcion || "",
-
-      // Guardar tanto el ID como el nombre del médico
       medicoId: pacienteSeleccionado.medico?.id || null,
-      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null, // Nuevo campo
-      referidoPorId: pacienteSeleccionado.referidoPor?.id || null, // Nuevo campo
-      // medicoNombre: pacienteSeleccionado.medico?.nombre || null,
-
+      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null,
+      referidoPorId: pacienteSeleccionado.referidoPor?.id || null,
       dni: pacienteSeleccionado.dni,
       nombres: pacienteSeleccionado.nombres,
       apellidos: pacienteSeleccionado.apellidos,
       fechaNacimiento: pacienteSeleccionado.fechaNacimiento,
       sexo: pacienteSeleccionado.sexo,
       estadoCivilId: pacienteSeleccionado.estadoCivil?.id || null,
-      // estadoCivilDescripcion:
-      //   pacienteSeleccionado.estadoCivil?.descripcion || "",
       observaciones: pacienteSeleccionado.observaciones,
       direccion: pacienteSeleccionado.direccion,
       telCasa: pacienteSeleccionado.telCasa,
       telPersonal: pacienteSeleccionado.telPersonal,
       email: pacienteSeleccionado.email,
       departamentoId: pacienteSeleccionado.departamento?.id || null,
-      // departamentoDescripcion:
-      //   pacienteSeleccionado.departamento?.descripcion || "",
       municipioId: pacienteSeleccionado.municipio?.id || null,
-      // municipioDescripcion: pacienteSeleccionado.municipio?.descripcion || "",
       organizacion: pacienteSeleccionado.organizacion,
       conyugue: pacienteSeleccionado.conyugue,
       madre: pacienteSeleccionado.madre,
       padre: pacienteSeleccionado.padre,
       escolaridadId: pacienteSeleccionado.escolaridad?.id || null,
-      // escolaridadDescripcion:
-      //   pacienteSeleccionado.escolaridad?.descripcion || "",
       ocupacion: pacienteSeleccionado.ocupacion,
       grupoSanguineoId: pacienteSeleccionado.grupoSanguineo?.id || null,
-      // grupoSanguineoDescripcion:
-      //   pacienteSeleccionado.grupoSanguineo?.descripcion || "",
       alergias: pacienteSeleccionado.alergias,
-      vih: pacienteSeleccionado.vih ?? false, // Nuevo campo
-
+      vih: pacienteSeleccionado.vih ?? false,
       tenantId: pacienteSeleccionado.tenant_id,
     });
     Notify.create({
@@ -767,63 +630,45 @@ const guardarDatosFormulario = () => {
       position: "top-right",
     });
   } else {
-    // Crear un nuevo paciente si no hay id
     fichaIdentificacionStore.guardarDatos({
       fechaRegistro: pacienteSeleccionado.fechaRegistro,
       codigo: pacienteSeleccionado.codigo,
       activo: pacienteSeleccionado.activo,
       tipoId: pacienteSeleccionado.tipo?.id || null,
-      // tipoDescripcion: pacienteSeleccionado.tipo?.descripcion || "",
-
-      // Guardar tanto el ID como el nombre del médico
       medicoId: pacienteSeleccionado.medico?.id || null,
-      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null, // Nuevo campo
-      referidoPorId: pacienteSeleccionado.referidoPor?.id || null, // Nuevo campo
-
-      // medicoNombre: pacienteSeleccionado.medico?.nombre || null,
-
+      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null,
+      referidoPorId: pacienteSeleccionado.referidoPor?.id || null,
       dni: pacienteSeleccionado.dni,
       nombres: pacienteSeleccionado.nombres,
       apellidos: pacienteSeleccionado.apellidos,
       fechaNacimiento: pacienteSeleccionado.fechaNacimiento,
       sexo: pacienteSeleccionado.sexo,
       estadoCivilId: pacienteSeleccionado.estadoCivil?.id || null,
-      // estadoCivilDescripcion:
-      //   pacienteSeleccionado.estadoCivil?.descripcion || "",
       observaciones: pacienteSeleccionado.observaciones,
       direccion: pacienteSeleccionado.direccion,
       telCasa: pacienteSeleccionado.telCasa,
       telPersonal: pacienteSeleccionado.telPersonal,
       email: pacienteSeleccionado.email,
       departamentoId: pacienteSeleccionado.departamento?.id || null,
-      // departamentoDescripcion:
-      //   pacienteSeleccionado.departamento?.descripcion || "",
       municipioId: pacienteSeleccionado.municipio?.id || null,
-      // municipioDescripcion: pacienteSeleccionado.municipio?.descripcion || "",
       organizacion: pacienteSeleccionado.organizacion,
       conyugue: pacienteSeleccionado.conyugue,
       madre: pacienteSeleccionado.madre,
       padre: pacienteSeleccionado.padre,
       escolaridadId: pacienteSeleccionado.escolaridad?.id || null,
-      // escolaridadDescripcion:
-      //   pacienteSeleccionado.escolaridad?.descripcion || "",
       ocupacion: pacienteSeleccionado.ocupacion,
       grupoSanguineoId: pacienteSeleccionado.grupoSanguineo?.id || null,
-      // grupoSanguineoDescripcion:
-      //   pacienteSeleccionado.grupoSanguineo?.descripcion || "",
       alergias: pacienteSeleccionado.alergias,
-      vih: pacienteSeleccionado.vih ?? false, // Nuevo campo
-
+      vih: pacienteSeleccionado.vih ?? false,
       tenantId: pacienteSeleccionado.tenant_id,
     });
     Notify.create({
-      message: "Paciente guradado",
+      message: "Paciente guardado",
       color: "positive",
       position: "top-right",
     });
   }
 
-  // Limpiar el formulario después de guardar
   Object.keys(pacienteSeleccionado).forEach((key) => {
     if (typeof pacienteSeleccionado[key] === "boolean") {
       pacienteSeleccionado[key] = false;
@@ -834,6 +679,7 @@ const guardarDatosFormulario = () => {
     }
   });
 };
+
 const limiarFormulario = () => {
   Object.keys(pacienteSeleccionado).forEach((key) => {
     if (typeof pacienteSeleccionado[key] === "boolean") {
@@ -846,3 +692,31 @@ const limiarFormulario = () => {
   });
 };
 </script>
+<style scoped>
+.vertical-tabs-2 {
+  /* Ajusta los estilos para que las pestañas estén más cerca */
+  margin-right: 20px;
+}
+
+.card.card-body {
+  /* Reduce el padding para que no se vea tan grande */
+  padding: 65px !important;
+}
+
+h6.text-primary.mb-3 {
+  margin-bottom: 20px !important;
+}
+
+.row.gx-3.gy-2 > div {
+  /* Ajusta el margen entre elementos del formulario */
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-weight: 500;
+}
+.cardFichaPaciente {
+  position: relative;
+  left: 15%;
+}
+</style>

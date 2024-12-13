@@ -7,22 +7,22 @@
   }
 }
 .nav-link {
-  color: variables.$default-text-color;
-  border-radius: variables.$default-radius;
+  color: $default-text-color;
+  border-radius: $default-radius;
   &.active {
-    background-color: variables.$primary-01;
-    color: variables.$primary;
+    background-color: $primary-01;
+    color: $primary;
   }
 }
 .navbar-brand {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 .navbar-nav .nav-link.active,
 .navbar-nav .show > .nav-link {
-  color: variables.$primary;
+  color: $primary;
 }
 .nav-link.disabled {
-  color: variables.$default-text-color;
+  color: $default-text-color;
   opacity: 0.3;
 }
 .nav-tabs .nav-link.disabled,
@@ -30,24 +30,24 @@
   color: rgba(var(--default-text-color), 0.5);
 }
 .navbar-text {
-  color: variables.$default-text-color;
+  color: $default-text-color;
 }
 .navbar-dark {
   &.bg-dark {
     .nav-link,
     .navbar-brand {
-      color: variables.$white;
+      color: $white;
     }
   }
   .navbar-nav .nav-link.active,
   .navbar-nav .show > .nav-link {
-    color: variables.$white;
+    color: $white;
   }
 }
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  color: variables.$white;
-  background-color: variables.$primary;
+  color: $white;
+  background-color: $primary;
 }
 /* End::Nav-link */
 
@@ -62,8 +62,8 @@
   }
   .nav-link {
     &.active {
-      background-color: variables.$primary;
-      color: variables.$white;
+      background-color: $primary;
+      color: $white;
     }
   }
 }
@@ -74,9 +74,9 @@
   .nav-item .nav-link {
     border-block-start: 3px solid transparent;
     &.active {
-      background-color: variables.$primary-01;
-      border-block-start: 3px solid variables.$primary;
-      color: variables.$primary;
+      background-color: $primary-01;
+      border-block-start: 3px solid $primary;
+      color: $primary;
     }
   }
 }
@@ -92,8 +92,8 @@
   }
   .nav-link.active {
     background-color: transparent;
-    border-block-end: 3px solid variables.$primary;
-    color: variables.$primary;
+    border-block-end: 3px solid $primary;
+    color: $primary;
   }
 }
 /* End::Nav-style-3 */
@@ -102,13 +102,13 @@
 .nav.nav-style-4 {
   border: 0;
   .nav-link {
-    color: variables.$text-muted;
+    color: $text-muted;
     border: 0;
   }
   .nav-link {
     &.active {
-      background-color: variables.$light;
-      color: variables.$default-text-color;
+      background-color: $light;
+      color: $default-text-color;
       border: 0;
     }
     &:hover,
@@ -123,13 +123,13 @@
 .nav-tabs.nav-style-5 {
   border: 0;
   .nav-link {
-    color: variables.$text-muted;
+    color: $text-muted;
     border: 0;
   }
   .nav-link {
     &.active {
-      background-color: variables.$primary;
-      color: variables.$white;
+      background-color: $primary;
+      color: $white;
       border: 0;
     }
     &:hover,
@@ -145,10 +145,10 @@
   border: 0;
   &.nav-pills .nav-link {
     &.active {
-      border: 1px solid variables.$primary;
-      border-block-end: 2px solid variables.$primary;
+      border: 1px solid $primary;
+      border-block-end: 2px solid $primary;
       background-color: transparent;
-      color: variables.$primary;
+      color: $primary;
     }
   }
 }
@@ -168,8 +168,8 @@
       padding: 0.4rem 0.5rem;
       font-weight: 500;
       &.active {
-        background: variables.$primary-01;
-        color: variables.$primary;
+        background: $primary-01;
+        color: $primary;
         border: 1px solid transparent;
       }
       &:hover,
@@ -191,17 +191,17 @@
     }
     .nav-link {
       background-color: transparent;
-      color: variables.$primary;
-      border: 1px solid variables.$primary;
+      color: $primary;
+      border: 1px solid $primary;
       font-size: 0.8rem;
       &.active {
-        background: variables.$primary;
-        color: variables.$white;
-        border: 1px solid variables.$primary;
+        background: $primary;
+        color: $white;
+        border: 1px solid $primary;
       }
       &:hover,
       &:focus {
-        border: 1px solid variables.$primary;
+        border: 1px solid $primary;
       }
     }
   }
@@ -220,16 +220,16 @@
       min-width: 7.5rem;
       max-width: 7.5rem;
       text-align: center;
-      border: 1px solid variables.$default-border;
+      border: 1px solid $default-border;
       margin-bottom: 0.5rem;
-      color: variables.$text-muted;
-      background-color: variables.$light;
+      color: $text-muted;
+      background-color: $light;
       i {
         font-size: 1rem;
       }
       &.active {
-        background-color: variables.$primary;
-        color: variables.$white;
+        background-color: $primary;
+        color: $white;
         position: relative;
         &:before {
           content: "";
@@ -239,7 +239,7 @@
           transform: rotate(45deg);
           width: 1rem;
           height: 1rem;
-          background-color: variables.$primary;
+          background-color: $primary;
         }
       }
     }
@@ -259,7 +259,7 @@
     .nav-link {
       min-width: 160px;
       max-width: 160px;
-      border: 1px solid variables.$primary;
+      border: 1px solid $primary;
       padding: 1.3rem;
       margin-block-end: 0.5rem;
       i {
@@ -268,23 +268,23 @@
         line-height: 2rem;
         text-align: center;
         font-size: 1rem;
-        background: variables.$primary;
-        color: variables.$white;
+        background: $primary;
+        color: $white;
         border-radius: 3.125rem;
         font-weight: 500;
       }
       &.active {
-        background: variables.$primary;
-        border: 1px solid variables.$primary;
-        color: variables.$white;
+        background: $primary;
+        border: 1px solid $primary;
+        color: $white;
         i {
-          background: variables.$white;
-          color: variables.$primary;
+          background: $white;
+          color: $primary;
         }
       }
       &:hover,
       &:focus {
-        border: 1px solid variables.$primary;
+        border: 1px solid $primary;
       }
     }
   }
@@ -295,21 +295,21 @@
 .nav-link {
   &:focus,
   &:hover {
-    color: variables.$primary;
+    color: $primary;
   }
 }
 .nav-tabs {
-  border-color: variables.$default-border;
+  border-color: $default-border;
   .nav-item.show .nav-link,
   .nav-link.active {
-    color: variables.$default-text-color;
-    background-color: variables.$light;
-    border-color: variables.$default-border;
+    color: $default-text-color;
+    background-color: $light;
+    border-color: $default-border;
   }
 }
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
-  border-color: variables.$default-border;
+  border-color: $default-border;
 }
 /* End:: Nav-tabs */
 
@@ -317,8 +317,8 @@
 .nav.tab-style-1 {
   border-block-end: 0;
   padding: 0.65rem;
-  background-color: variables.$light;
-  border-radius: variables.$default-radius;
+  background-color: $light;
+  border-radius: $default-radius;
   margin-block-end: 1rem;
   .nav-item {
     margin-inline-end: 0.5rem;
@@ -327,12 +327,12 @@
     }
   }
   .nav-link {
-    border-radius: variables.$default-radius;
+    border-radius: $default-radius;
     padding: 0.35rem 1rem;
     &.active {
-      background-color: variables.$primary;
-      color: variables.$white;
-      box-shadow: variables.$box-shadow;
+      background-color: $primary;
+      color: $white;
+      box-shadow: $box-shadow;
       transition: color 0.15s ease-in;
     }
   }
@@ -340,8 +340,8 @@
 .tab-content .tab-pane {
   padding: 1rem;
   // border: 1px solid $default-border;
-  border-radius: variables.$default-radius;
-  color: variables.$default-text-color;
+  border-radius: $default-radius;
+  color: $default-text-color;
 }
 /* End:: Tab-style-1 */
 
@@ -362,8 +362,8 @@
         padding: 0.4rem;
         line-height: 17px;
         border-radius: 50px;
-        background-color: variables.$light;
-        color: variables.$default-text-color;
+        background-color: $light;
+        color: $default-text-color;
         display: inline-block;
       }
       &:hover {
@@ -373,11 +373,11 @@
         background-color: transparent;
         position: relative;
         border: 0;
-        color: variables.$primary;
+        color: $primary;
         z-index: 5;
         i {
-          background-color: variables.$primary;
-          color: variables.$white;
+          background-color: $primary;
+          color: $white;
         }
         &:before {
           content: "";
@@ -386,7 +386,7 @@
           inset-block-end: 0;
           width: 100%;
           height: 0.175rem;
-          background-color: variables.$primary;
+          background-color: $primary;
           border-radius: 50px;
         }
       }
@@ -434,7 +434,7 @@
         inset-inline-start: 0;
         width: 100%;
         height: 0.1rem;
-        background-color: variables.$light;
+        background-color: $light;
         border-radius: 50%;
       }
       &:after {
@@ -449,9 +449,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: variables.$custom-white;
+        background-color: $custom-white;
         border-radius: 50%;
-        border: 2px solid variables.$default-border;
+        border: 2px solid $default-border;
       }
       &.home:after {
         content: "1";
@@ -468,13 +468,13 @@
       &.active {
         background-color: transparent;
         border: 0;
-        color: variables.$primary;
+        color: $primary;
         &:before {
-          background-color: variables.$primary;
+          background-color: $primary;
         }
         &:after {
-          border-color: variables.$primary;
-          color: variables.$primary;
+          border-color: $primary;
+          color: $primary;
         }
       }
     }
@@ -500,7 +500,7 @@
       &.active {
         background-color: transparent;
         border: 0;
-        color: variables.$primary;
+        color: $primary;
         position: relative;
         overflow: hidden;
         &::before {
@@ -513,8 +513,8 @@
           overflow: hidden;
           z-index: 1;
           height: 0.75rem;
-          background-color: variables.$primary;
-          border: 1px solid variables.$primary;
+          background-color: $primary;
+          border: 1px solid $primary;
         }
         &:after {
           position: absolute;
@@ -523,16 +523,16 @@
           height: 1px;
           inset-inline-start: 30%;
           inset-block-end: 0;
-          background-color: variables.$primary;
+          background-color: $primary;
         }
       }
     }
   }
 }
 #tab-style-4 .tab-pane.active {
-  border: 1px solid variables.$primary;
-  background-color: variables.$primary;
-  color: variables.$white;
+  border: 1px solid $primary;
+  background-color: $primary;
+  color: $white;
 }
 /* End:: Tab-style-4 */
 
@@ -544,7 +544,7 @@
       margin-inline-end: 0;
     }
     .nav-link.active {
-      background: variables.$primary;
+      background: $primary;
     }
   }
 }
@@ -553,9 +553,9 @@
 /* Start:: Tab-style-6 */
 .tab-style-6 {
   border: 0;
-  background-color: variables.$custom-white;
-  border-radius: variables.$default-radius;
-  color: variables.$primary;
+  background-color: $custom-white;
+  border-radius: $default-radius;
+  color: $primary;
   padding: 0.5rem;
   .nav-item {
     border: 0;
@@ -564,15 +564,15 @@
       margin-inline-end: 0;
     }
     .nav-link {
-      color: variables.$primary;
+      color: $primary;
       padding: 0.5rem 1rem;
       font-size: 0.813rem;
       border: 0;
       font-weight: 500;
       &.active {
         border: 0;
-        background-color: variables.$primary;
-        color: variables.$white;
+        background-color: $primary;
+        color: $white;
         border: 0;
         box-shadow: 0px 3px 10px 0px rgba(var(--dark-rgb), 0.05);
       }
@@ -590,12 +590,12 @@
   .nav-link {
     margin-block-end: 0.5rem;
     font-size: 0.813rem;
-    color: variables.$text-muted;
+    color: $text-muted;
     text-align: left;
     &:active,
     &.active {
-      background-color: variables.$primary-01;
-      color: variables.$primary;
+      background-color: $primary-01;
+      color: $primary;
     }
   }
 }
@@ -606,14 +606,14 @@
   .nav-item {
     .nav-link {
       &.active {
-        background-color: variables.$primary-01;
-        color: variables.$primary;
+        background-color: $primary-01;
+        color: $primary;
       }
     }
   }
 }
 /* End:: Nav-style-1 */
 .nav-tabs .nav-link {
-  border-start-start-radius: variables.$default-radius;
-  border-start-end-radius: variables.$default-radius;
+  border-start-start-radius: $default-radius;
+  border-start-end-radius: $default-radius;
 }
