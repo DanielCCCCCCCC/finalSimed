@@ -70,20 +70,25 @@ export const useHospitalStore = defineStore("hospitalStore", () => {
       throw err; // Propagar el error
     }
   };
-
   const eliminarHospital = async (id) => {
     try {
-      const { error } = await supabase.from("hospitales").delete().eq("id", id);
+      const { data, error } = await supabase
+        .from("hospitales")
+        .delete()
+        .eq("id", id);
+      console.log("Supabase Response:", { data, error });
 
       if (error) {
         console.error("Error al eliminar hospital:", error);
-        throw error; // Propagar el error para manejarlo en el componente
+        return false; // Retorna false si hay un error
       } else {
+        // Filtra el hospital eliminado de la lista local
         hospitales.value = hospitales.value.filter((h) => h.id !== id);
+        return true; // Retorna true si la eliminación fue exitosa
       }
     } catch (err) {
       console.error("Error en eliminarHospital:", err.message);
-      throw err; // Propagar el error
+      return false; // Captura cualquier error inesperado
     }
   };
 
@@ -138,7 +143,7 @@ export const useMedicamentoStore = defineStore("medicamentoStore", () => {
 
         .order("created_at", { ascending: true });
       if (error) {
-        console.error("Error al cargar hospitales:", error);
+        console.error("Error al cargar medicamentos:", error);
       } else {
         medicamentos.value = data || []; // Asigna el array completo a `hospitales.value`
       }

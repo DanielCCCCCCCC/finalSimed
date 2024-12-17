@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="main-content-label mb-2 title">Estado de pacientes</h3>
+    <h3 class="main-content-label title">Estado de pacientes</h3>
     <div class="card">
       <ApexCharts
         v-if="datosCargados"
@@ -48,7 +48,7 @@ const chartOptions = computed(() => ({
   chart: {
     type: "donut",
     width: 350,
-    height: 230,
+    height: 220,
   },
   labels: labels.value,
   dataLabels: {

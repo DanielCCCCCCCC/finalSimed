@@ -1,6 +1,10 @@
 <template>
-  <div class="paciente-details-card">
-    <!-- <button class="close-button" @click="$emit('close')">  &times;</button> -->
+  <!-- Overlay que cubre toda la pantalla detrás del panel, para detectar clics fuera -->
+  <div class="overlay" @click="onOverlayClick"></div>
+
+  <!-- Panel del paciente posicionado a la derecha -->
+  <div class="paciente-details-card" @click.stop>
+    <button class="close-button" @click="$emit('close')">&times;</button>
 
     <div class="header">
       <img
@@ -103,7 +107,7 @@
         </div>
 
         <!-- Estado Civil -->
-        <q-select
+        <!-- <q-select
           v-if="isEditable"
           v-model="form.estadoCivil"
           :options="estadosCiviles"
@@ -113,7 +117,7 @@
           outlined
           dense
           :rules="[(val) => !!val || 'Selecciona un estado civil']"
-        />
+        /> -->
         <div v-else class="detail-text">
           <span class="label">Estado Civil:</span>
           {{ form.estadoCivil?.descripcion || "Sin asignar" }}
@@ -136,31 +140,6 @@
           <span class="label">Teléfono Personal:</span> {{ form.telPersonal }}
         </div>
 
-        <!-- Teléfono Casa -->
-        <q-input
-          v-if="isEditable"
-          v-model="form.telCasa"
-          label="Teléfono Casa"
-          outlined
-          dense
-        />
-        <div v-else class="detail-text">
-          <span class="label">Teléfono Casa:</span> {{ form.telCasa }}
-        </div>
-
-        <!-- Email -->
-        <q-input
-          v-model="form.email"
-          label="Correo"
-          outlined
-          dense
-          v-if="isEditable"
-          :rules="[(val) => !!val || 'Este campo es obligatorio']"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Correo:</span> {{ form.email }}
-        </div>
-
         <!-- Dirección -->
         <q-input
           v-model="form.direccion"
@@ -173,58 +152,11 @@
         <div v-else class="detail-text">
           <span class="label">Dirección:</span> {{ form.direccion }}
         </div>
-
-        <!-- Departamento -->
-        <q-select
-          v-if="isEditable"
-          v-model="form.departamento"
-          :options="departamentos"
-          option-value="id"
-          option-label="descripcion"
-          label="Departamento"
-          outlined
-          dense
-          :rules="[(val) => !!val || 'Selecciona un departamento']"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Departamento:</span>
-          {{ form.departamento?.descripcion || "Sin asignar" }}
-        </div>
-
-        <!-- Municipio -->
-        <q-select
-          v-if="isEditable"
-          v-model="form.municipio"
-          :options="filteredMunicipios"
-          option-value="id"
-          option-label="descripcion"
-          label="Municipio"
-          outlined
-          dense
-          :rules="[(val) => !!val || 'Selecciona un municipio']"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Municipio:</span>
-          {{ form.municipio?.descripcion || "Sin asignar" }}
-        </div>
-
-        <!-- Organización -->
-        <q-input
-          v-model="form.organizacion"
-          label="Organización"
-          outlined
-          dense
-          v-if="isEditable"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Organización:</span> {{ form.organizacion }}
-        </div>
       </div>
 
       <!-- Información Médica -->
       <div class="detail-item">
         <h3 class="section-title">Información Médica</h3>
-        <!-- Médico -->
         <q-select
           v-if="isEditable"
           v-model="form.medico"
@@ -241,7 +173,6 @@
           {{ form.medico?.nombre || "Sin asignar" }}
         </div>
 
-        <!-- Médico de Cabecera -->
         <q-select
           v-if="isEditable"
           v-model="form.medicoCabecera"
@@ -257,7 +188,6 @@
           {{ form.medicoCabecera?.nombre || "Sin asignar" }}
         </div>
 
-        <!-- Referido Por -->
         <q-select
           v-if="isEditable"
           v-model="form.referidoPor"
@@ -273,7 +203,6 @@
           {{ form.referidoPor?.nombre || "Sin asignar" }}
         </div>
 
-        <!-- Tipo de Paciente -->
         <q-select
           v-if="isEditable"
           v-model="form.tipo"
@@ -289,54 +218,11 @@
           <span class="label">Tipo de Paciente:</span>
           {{ form.tipo?.descripcion || "Sin asignar" }}
         </div>
-
-        <!-- Grupo Sanguíneo -->
-        <q-select
-          v-if="isEditable"
-          v-model="form.grupoSanguineo"
-          :options="gruposSanguineos"
-          option-value="id"
-          option-label="descripcion"
-          label="Grupo Sanguíneo"
-          outlined
-          dense
-          :rules="[(val) => !!val || 'Selecciona un grupo sanguíneo']"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Grupo Sanguíneo:</span>
-          {{ form.grupoSanguineo?.descripcion || "Sin asignar" }}
-        </div>
-
-        <!-- Alergias -->
-        <q-input
-          v-if="isEditable"
-          v-model="form.alergias"
-          label="Alergias"
-          outlined
-          dense
-        />
-        <div v-else class="detail-text">
-          <span class="label">Alergias:</span> {{ form.alergias }}
-        </div>
-
-        <!-- VIH -->
-        <q-checkbox
-          v-model="form.vih"
-          label="VIH"
-          color="primary"
-          dense
-          v-if="isEditable"
-        />
-        <div v-else class="detail-text">
-          <span class="label">VIH:</span>
-          {{ form.vih ? "Positivo" : "Negativo" }}
-        </div>
       </div>
 
       <!-- Información Técnica -->
       <div class="detail-item">
         <h3 class="section-title">Información Técnica</h3>
-        <!-- Código -->
         <q-input
           v-model="form.codigo"
           label="Código"
@@ -348,18 +234,11 @@
         <div v-else class="detail-text">
           <span class="label">Código:</span> {{ form.codigo }}
         </div>
-
-        <!-- Fecha de Registro -->
-        <div class="detail-text">
-          <span class="label">Fecha de Registro:</span>
-          {{ form.fechaRegistro }}
-        </div>
       </div>
 
       <!-- Información Familiar -->
       <div class="detail-item">
         <h3 class="section-title">Información Familiar</h3>
-        <!-- Cónyuge -->
         <q-input
           v-model="form.conyugue"
           label="Cónyuge"
@@ -370,64 +249,11 @@
         <div v-else class="detail-text">
           <span class="label">Cónyuge:</span> {{ form.conyugue }}
         </div>
-
-        <!-- Madre -->
-        <q-input
-          v-model="form.madre"
-          label="Madre"
-          outlined
-          dense
-          v-if="isEditable"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Madre:</span> {{ form.madre }}
-        </div>
-
-        <!-- Padre -->
-        <q-input
-          v-model="form.padre"
-          label="Padre"
-          outlined
-          dense
-          v-if="isEditable"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Padre:</span> {{ form.padre }}
-        </div>
       </div>
 
       <!-- Más Datos -->
       <div class="detail-item">
         <h3 class="section-title">Más Datos</h3>
-        <!-- Escolaridad -->
-        <q-select
-          v-if="isEditable"
-          v-model="form.escolaridad"
-          :options="escolaridades"
-          option-value="id"
-          option-label="descripcion"
-          label="Escolaridad"
-          outlined
-          dense
-        />
-        <div v-else class="detail-text">
-          <span class="label">Escolaridad:</span>
-          {{ form.escolaridad?.descripcion || "Sin asignar" }}
-        </div>
-
-        <!-- Ocupación -->
-        <q-input
-          v-model="form.ocupacion"
-          label="Ocupación"
-          outlined
-          dense
-          v-if="isEditable"
-        />
-        <div v-else class="detail-text">
-          <span class="label">Ocupación:</span> {{ form.ocupacion }}
-        </div>
-
-        <!-- Observaciones -->
         <q-input
           v-model="form.observaciones"
           label="Observaciones"
@@ -457,12 +283,47 @@
         :disable="!isFormValid"
       />
     </div>
+    <div class="p">
+      <p>@Dios te bendiga</p>
+    </div>
   </div>
-  <div class="p">
-    <p>@Dios te bendiga</p>
-  </div>
-</template>
 
+  <!-- Diálogo de confirmación -->
+  <q-dialog v-model="showCloseDialog">
+    <div class="modal-content modal-content-demo">
+      <!-- Header -->
+      <div class="modal-header">
+        <h6 class="modal-title q-ml-xs">{{ closeDialogTitle }}</h6>
+        <button
+          aria-label="Close"
+          class="btn-close"
+          @click="showCloseDialog = false"
+          type="button"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body q-ml-md">
+        <p>{{ closeDialogMessage }}</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer espacioEntreBtn">
+        <button
+          class="btn btn-primary espacioEntreBtn"
+          @click="handleCloseConfirmation"
+        >
+          Save changes
+        </button>
+        <button class="btn btn-secondary" @click="showCloseDialog = false">
+          Close
+        </button>
+      </div>
+    </div>
+  </q-dialog>
+</template>
 <script>
 import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
@@ -486,10 +347,14 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const fichaIdentificacionStore = useFichaIdentificacionStore();
     const { actualizarPaciente } = fichaIdentificacionStore;
     const isEditable = ref(false);
+
+    const showCloseDialog = ref(false);
+    const closeDialogTitle = ref("");
+    const closeDialogMessage = ref("");
 
     // Definir el formulario con todos los campos
     const form = reactive({
@@ -697,6 +562,26 @@ export default {
         });
     };
 
+    const onOverlayClick = () => {
+      if (isEditable.value) {
+        closeDialogTitle.value = "Cerrar Panel";
+        closeDialogMessage.value =
+          "Hay cambios sin guardar. ¿Desea guardar antes de cerrar?";
+      } else {
+        closeDialogTitle.value = "Cerrar Panel";
+        closeDialogMessage.value = "¿Desea cerrar este panel?";
+      }
+      showCloseDialog.value = true;
+    };
+
+    const handleCloseConfirmation = () => {
+      if (isEditable.value && isFormValid.value) {
+        guardarDatosFormulario();
+      }
+      showCloseDialog.value = false;
+      emit("close");
+    };
+
     return {
       form,
       isEditable,
@@ -711,22 +596,28 @@ export default {
       escolaridades,
       filteredMunicipios,
       medicos,
+      showCloseDialog,
+      closeDialogTitle,
+      closeDialogMessage,
+      onOverlayClick,
+      handleCloseConfirmation,
     };
   },
 };
 </script>
-
 <style scoped>
 .paciente-details-card {
-  padding-top: 35px;
-  padding-left: 14px;
+  /* Antes estaba margin: auto; margin-top: 40px; ahora lo fijamos a la derecha */
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 385px;
   background-color: #ffffff;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 285px;
-  margin: auto;
-  margin-top: 40px;
-  position: relative;
+  border-radius: 0; /* ya no hace falta redondear, porque es un panel lateral */
+  padding: 35px 14px;
+  overflow-y: auto;
+  z-index: 10000; /* Por encima del overlay */
 }
 
 #titulo {
@@ -763,12 +654,15 @@ export default {
 .header-info {
   flex: 1;
 }
-
+.espacioEntreBtn {
+  margin-left: 100px;
+}
 .status {
+  display: inline;
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 4px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .active-status {
@@ -783,6 +677,8 @@ export default {
 
 .details {
   margin-bottom: 20px;
+  margin-left: 20px;
+  width: 340px;
 }
 
 .detail-item {
@@ -807,7 +703,7 @@ export default {
 
 .close-button {
   position: absolute;
-  top: 10px;
+  top: 30px;
   right: 10px;
   background: none;
   border: none;
@@ -820,5 +716,16 @@ export default {
   font-size: 10px;
   text-align: right;
   color: darkred;
+}
+
+/* Overlay detrás del panel */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(16, 14, 14, 0.5);
+  z-index: 9999; /* debajo del panel pero encima del contenido */
 }
 </style>

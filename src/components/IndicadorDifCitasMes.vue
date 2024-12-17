@@ -8,7 +8,7 @@
     <!-- Contenido principal de la tarjeta cuando ya no está cargando -->
     <div
       v-else
-      class="card-body d-flex align-items-center justify-content-between"
+      class="card-body d-flex align-items-center w-100 justify-content-between"
     >
       <!-- Sección de texto -->
       <div class="title">
@@ -83,13 +83,13 @@ const formatPorcentaje = (value) => {
 <style scoped>
 .card {
   border: none; /* Elimina todos los bordes */
-  height: 50%; /* Mantiene la altura al 50% */
-  border-bottom: 10px solid #000; /* Solo el borde inferior, con un ancho de 10px y color negro */
+  height: 46%; /* Mantiene la altura al 50% */
+  border-bottom: 10px solid #ff000087; /* Solo el borde inferior, con un ancho de 10px y color negro */
 }
 
 .title {
   position: relative;
-  top: -30px;
+  top: -20px;
 }
 
 /* Opcional: Ajustes adicionales para el icono */

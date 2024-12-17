@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-center q-py-md">
+  <div class="row justify-center espaciadoLateral q-py-md">
     <div id="app-container" class="q-mb-xl q-px-xl q-pa-xs">
       <!-- Botón para agregar nuevo médico -->
       <div class="q-pb-md">
@@ -443,6 +443,9 @@ async function handleDelete(medicoId) {
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.espaciadoLateral {
+  margin-left: 70px;
+}
 .fsButton {
   font-size: 16px;
 }
@@ -523,32 +526,4 @@ async function handleDelete(medicoId) {
     max-width: 100%;
   }
 }
-/*
-.header-container {
-  display: flex;
-  flex-direction: column;
-  margin-right: auto;
-}
-
-.parrafo {
-  font-size: 1rem;
-  color: #555;
-  margin: 5px 20px 25px 20px;
-}
-
-.header-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin: 20px 20px 0px;
-}
-
-.bajarbtn {
-  margin-bottom: -40px;
-}
-
-.card .q-input,
-.card .q-select {
-  margin-bottom: 1rem;
-} */
 </style>

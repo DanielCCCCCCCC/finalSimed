@@ -159,6 +159,7 @@ export const useTiposMedicamentosStore = defineStore(
         console.error("Error al cargar medicamentos:", error);
       } else {
         medicamentos.value = data;
+        console.log("Tipos de medicamentos ", medicamentos.value);
       }
     };
 

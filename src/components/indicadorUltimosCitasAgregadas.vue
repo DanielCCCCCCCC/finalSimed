@@ -2,9 +2,7 @@
   <!-- Encabezado de la tarjeta -->
   <div class="card title custom-card">
     <label class="main-content-label mb-1 pt-1">CITAS PROGRAMADAS</label>
-    <span class="d-block fs-12 mb-1 text-muted"
-      >Últimas 10 citas agregadas</span
-    >
+    <span class="d-block fs-12 mb-1 text-muted">Últimas 5 citas agregadas</span>
   </div>
 
   <!-- Cuerpo de la tarjeta -->
@@ -111,7 +109,7 @@ const lastTenAppointments = computed(() => {
   });
 
   // Obtener hasta las últimas 10 citas
-  return sortedAsc.slice(sortedAsc.length > 10 ? -10 : 0);
+  return sortedAsc.slice(sortedAsc.length > 5 ? -5 : 0);
 });
 
 const mappedAppointments = computed(() => {
@@ -183,7 +181,7 @@ console.log("Mapped Appointments:", mappedAppointments.value);
 }
 .subir {
   position: relative;
-  top: -30px;
+  top: -15px;
 }
 .card {
   display: flex;
@@ -196,7 +194,7 @@ console.log("Mapped Appointments:", mappedAppointments.value);
 }
 .title {
   position: relative;
-  top: -10px;
+  /* top: -10px; */
 
   display: flex;
   justify-content: center; /* Centra horizontalmente */

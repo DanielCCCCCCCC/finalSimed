@@ -7,7 +7,7 @@
 
     <q-page-container class="main-content">
       <div>
-        <router-view />
+        <!-- <router-view /> -->
       </div>
     </q-page-container>
   </q-layout>
@@ -78,10 +78,17 @@ onMounted(async () => {
 
     // Definir el tema light
     themeStore.colorThemeFn("light");
+
     themeStore.layoutStylesFn("icon-overlay");
 
     // Establecer el color naranja para --primary-rgb
+    //
     document.documentElement.style.setProperty("--primary-rgb", "223, 90, 90"); // RGB para naranja
+    //
+    // document.documentElement.style.setProperty(
+    //   "--primary-rgb",
+    //   "20, 185, 196 "
+    // ); // RGB para azul menta
   } catch (error) {
     console.error(
       "Error al obtener las organizaciones o aplicar el tema:",
@@ -89,6 +96,11 @@ onMounted(async () => {
     );
   }
 });
+
+// document.documentElement.style.setProperty(
+//   "--primary-rgb",
+//   "223, 15, 157 "
+// ); // RGB para azul rosado
 
 /**
  * (Opcional) Observar cambios en el tema y aplicar dinámicamente

@@ -34,9 +34,9 @@
                   class="ht-100 mb-0"
                   alt="user"
                 /> -->
-                <h5 class="mt-4 text-fixed-white">Inicia sesion tu cuenta</h5>
+                <h5 class="mt-4 text-fixed-white">Inicia Sesión tu cuenta</h5>
                 <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
-                  Inicia sesion para adminisitrar tu centro médico.
+                  Inicia Sesión para adminisitrar tu centro médico.
                 </span>
               </div>
             </div>
@@ -48,9 +48,9 @@
                   <div class="card-body mt-2 mb-2">
                     <div class="clearfix"></div>
                     <q-form @submit.prevent="handleLogin">
-                      <h5 class="text-start mb-2">Inicia sesion</h5>
+                      <h5 class="text-start mb-2">Inicia Sesión</h5>
                       <p class="mb-4 text-muted fs-13 ms-0 text-start">
-                        Inicia sesion para adminisitrar tu centro médico.
+                        Inicia sesión para adminisitrar tu centro médico.
                       </p>
                       <div class="form-group text-start">
                         <label for="email">Email</label>
@@ -83,7 +83,7 @@
                       <div class="flex justify-center q-mt-lg">
                         <q-btn
                           type="submit"
-                          :label="cargando ? 'Iniciando...' : 'Sign In'"
+                          :label="cargando ? 'Iniciando...' : 'Iniciar Sesión'"
                           color="primary"
                           :disable="cargando"
                           unelevated

@@ -15,7 +15,7 @@
     "sass-min": "sass ./src/assets/scss:./src/assets/css/ --style compressed"
   },
   "dependencies": {
-    "@quasar/extras": "^1.16.4",
+    "@quasar/extras": "^1.16.15",
     "@supabase/supabase-js": "^2.46.1",
     "apexcharts": "^4.1.0",
     "axios": "^1.2.1",
@@ -25,6 +25,7 @@
     "devextreme-vue": "^23.1.5",
     "feather-icons": "^4.29.2",
     "font-awesome": "^4.7.0",
+    "ionicons": "^7.4.0",
     "pinia": "^2.0.11",
     "quasar": "^2.16.0",
     "simplebar": "^6.2.7",

@@ -1,7 +1,7 @@
 <template>
   <div class="grafico-container">
     <!-- Gráfico de barras con ApexCharts -->
-    <h3 class="main-content-label mb-2 title">Registro de pacientes</h3>
+    <h3 class="main-content-label mb-5 title">Registro de pacientes</h3>
     <ApexCharts
       v-if="registrosPorDia.length > 0"
       type="bar"
@@ -191,7 +191,7 @@ watch(
 <style scoped>
 .title {
   position: relative;
-  top: 10px;
+  top: 20px;
   display: flex;
   justify-content: center; /* Centra horizontalmente */
 }

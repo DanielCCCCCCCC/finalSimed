@@ -1,11 +1,11 @@
 <template>
   <div>
     <h3 class="main-content-label mb-2 center title">Tendencia de Citas</h3>
-    <span class="d-block fs-12 mt-1 text-muted"
+    <span class="d-block fs-12 mt-4 text-muted"
       >Citas por Semana (Mes Actual)</span
     >
   </div>
-  <div class="card-body p-4">
+  <div class="card-body p-1">
     <ApexCharts
       v-if="appointmentsTrend.length > 0"
       type="area"
@@ -88,7 +88,9 @@ const chartOptions = computed(() => ({
       fontSize: "12px",
     },
   },
-  colors: projectOptions.colors,
+  colors: ["#df5a5a"], // Color principal del área
+
+  // colors: projectOptions.colors,
   title: {
     // text: "Tendencia de Citas por Semana (Mes Actual)",
     align: "left",
@@ -123,7 +125,7 @@ const chartOptions = computed(() => ({
 }
 .title {
   position: relative;
-  top: 10px;
+  top: 20px;
   display: flex;
   justify-content: center; /* Centra horizontalmente */
 }

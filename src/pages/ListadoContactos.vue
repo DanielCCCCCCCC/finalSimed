@@ -1,6 +1,6 @@
 <!-- src/components/ContactosGestion.vue -->
 <template>
-  <div class="row justify-center q-py-md">
+  <div class="row justify-center espaciadoLateral q-py-md">
     <div id="app-container" class="q-mb-xl q-px-xl q-pa-xs">
       <!-- Contenedor del título y botón -->
       <div class="q-pb-md">
@@ -36,10 +36,12 @@
       >
         <DxEditing :allow-updating="true" :allow-deleting="true" mode="popup" />
 
-        <DxScrolling mode="virtual" />
-
+        <DxPaging :enabled="true" :page-size="10" />
+        <!-- <DxScrolling mode="virtual" /> -->
         <DxSorting mode="multiple" />
         <DxHeaderFilter :visible="true" />
+        <DxFilterRow :visible="false" />
+
         <DxColumnChooser :enabled="true" />
         <DxLoadPanel :show-pane="true" />
         <DxSelection
@@ -310,6 +312,7 @@ import {
   DxSearchPanel,
   DxButton,
   DxSelection,
+  DxScrolling,
 } from "devextreme-vue/data-grid";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -636,7 +639,9 @@ const filteredMunicipios = computed(() => {
 .no-arrow .q-select__dropdown-icon {
   display: none;
 }
-
+.espaciadoLateral {
+  margin-left: 70px;
+}
 .right-content {
   justify-self: end;
 }

@@ -1,19 +1,3 @@
-// import { route } from "quasar/wrappers";
-// import { createRouter, createWebHistory } from "vue-router";
-// import routes from "./routes";
-
-// export default route(function () {
-//   const Router = createRouter({
-//     history: createWebHistory(), // Usa historial limpio (sin hashes)
-//     routes,
-//     scrollBehavior: () => ({ left: 0, top: 0 }), // Restaura scroll al cambiar rutas
-//   });
-
-//   return Router;
-// });
-
-// src/router/index.js
-
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "./routes"; // Importar las rutas definidas en routes.js
 import { useAuthStore } from "../stores/auth"; // Ajusta la ruta según tu estructura

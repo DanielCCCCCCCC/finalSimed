@@ -30,6 +30,9 @@
       <div class="card ultimosCitasAgregadas">
         <IndicadorUltimosCitasAgregadas />
       </div>
+      <div class="card">
+        <graficoPrueba />
+      </div>
     </div>
   </div>
 </template>
@@ -44,8 +47,7 @@ import PacientesAggMensualmente from "src/components/PacientesAggMensualmente.vu
 import IndicadorDifCitasMes from "src/components/IndicadorDifCitasMes.vue";
 import IndicadorUltimasTransacciones from "src/components/IndicadorUltimasTransacciones.vue";
 import IndicadorUltimosCitasAgregadas from "../components/IndicadorUltimosCitasAgregadas.vue";
-import LineChart from "../components/LineChart.vue";
-
+import graficoPrueba from "../components/graficoPrueba.vue";
 const themeStore = useThemeStore();
 
 // Computed property para obtener el color de fondo desde el themeStore
@@ -73,8 +75,7 @@ onMounted(() => {
 .dashboard {
   display: grid;
   gap: 16px;
-  padding: 16px;
-
+  margin-left: 90px;
   /* Usar la variable CSS para el fondo si prefieres */
   background-color: var(--default-body-bg-color);
   grid-template-columns: repeat(4, 1fr);
@@ -115,9 +116,11 @@ onMounted(() => {
   background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(102, 97, 97, 0.151);
   padding: 16px;
   transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: 1px;
 }
 
 .card-title {

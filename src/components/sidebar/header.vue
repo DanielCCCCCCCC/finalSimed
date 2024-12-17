@@ -46,7 +46,7 @@
           <!-- Start::header-element -->
           <div class="header-element sb">
             <a
-              @click="ToggleMenu"
+              @click="handleToggleMenu"
               aria-label="Hide Sidebar"
               class="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle"
               href="javascript:void(0);"
@@ -190,6 +190,8 @@ import { QLayout, QHeader, QMenu, QPageContainer } from "quasar";
 import { useAuthStore } from "src/stores/auth";
 import { Notify } from "quasar";
 export default {
+  name: "Header",
+  emits: ["toggle-drawer"], // Definimos el evento que este componente puede emitir
   components: {
     QLayout,
     QHeader,
@@ -212,6 +214,10 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    handleToggleMenu() {
+      this.ToggleMenu();
+      this.$emit("toggle-drawer");
+    },
     ToggleMenu() {
       let html = document.querySelector("html");
       if (window.innerWidth <= 992) {

@@ -8,15 +8,9 @@ export let menuData = [
     icon: "ti-home",
     active: true,
     defaultActive: false,
+    roles: ["admin", "medico"],
   },
-  {
-    path: "/fichapacientes", // Ruta directa a Dashboard
-    title: "Ficha de Pacientes",
-    type: "link",
-    icon: "ti-home",
-    active: false,
-    defaultActive: false,
-  },
+
   // Sección de utilidades
   {
     title: "Control de Citas",
@@ -24,10 +18,29 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin", "medico"],
     children: [
       {
         path: "/controlCitasv2",
         title: "Agendar Cita",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+    ],
+  },
+  // Sección de pacientes
+  {
+    title: "Pacientes",
+    icon: "ti-heart",
+    type: "sub",
+    active: false,
+    defaultActive: false,
+    roles: ["admin", "medico"],
+    children: [
+      {
+        path: "/listadopacientes",
+        title: "Listado de Pacientes",
         type: "link",
         active: false,
         defaultActive: false,
@@ -41,6 +54,7 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin", "medico"],
     children: [
       {
         path: "/listadoContactos",
@@ -58,6 +72,7 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin"],
     children: [
       {
         path: "/listamedicos",
@@ -75,10 +90,25 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin"],
     children: [
       {
-        path: "/directorios",
-        title: "Formulario Directorios",
+        path: "/listadohospitales",
+        title: "Listado Hospitales",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadomedicamentos",
+        title: "Listado Medicamentos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadoestudios",
+        title: "Listado Examenes y Estudios",
         type: "link",
         active: false,
         defaultActive: false,
@@ -92,10 +122,25 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin"],
     children: [
       {
-        path: "/diagnosticos",
-        title: "Formulario Diagnósticos",
+        path: "/listadoclasificaciondiagnosticos",
+        title: "Listado de Clasificacion de Diagnosticos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadodiagnosticos",
+        title: "Listado de Diagnosticos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadocontrolmedicion",
+        title: "Listado de Controles de medicion",
         type: "link",
         active: false,
         defaultActive: false,
@@ -109,33 +154,60 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin"],
     children: [
+      // {
+      //   path: "/configuracionesMedicas",
+      //   title: "Formulario Configuraciones",
+      //   type: "link",
+      //   active: false,
+      //   defaultActive: false,
+      // },
       {
-        path: "/configuracionesMedicas",
-        title: "Formulario Configuraciones",
+        path: "/listadoespecialidadesmedicas",
+        title: "Listado de Especialidaes Medicas",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadotiposestudios",
+        title: "Listado de Tipos de Estudios",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadotipomedicamentos",
+        title: "Listado de Tipos de Medicamentos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadotipopacientes",
+        title: "Listado de Tipos de Pacientes",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadogruposcontactos",
+        title: "Listado de Grupos de Contactos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadotiposcitas",
+        title: "Listado de Tipos de Citas",
         type: "link",
         active: false,
         defaultActive: false,
       },
     ],
   },
-  // Sección de pacientes
-  {
-    title: "Pacientes",
-    icon: "ti-heart",
-    type: "sub",
-    active: false,
-    defaultActive: false,
-    children: [
-      {
-        path: "/listadopacientes",
-        title: "Listado de Pacientes",
-        type: "link",
-        active: false,
-        defaultActive: false,
-      },
-    ],
-  },
+
   // Sección de datos generales
   {
     title: "Datos Generales",
@@ -143,10 +215,39 @@ export let menuData = [
     type: "sub",
     active: false,
     defaultActive: false,
+    roles: ["admin"],
     children: [
+      // {
+      //   path: "/datosGenerales",
+      //   title: "Formulario Datos Generales",
+      //   type: "link",
+      //   active: false,
+      //   defaultActive: false,
+      // },
       {
-        path: "/datosGenerales",
-        title: "Formulario Datos Generales",
+        path: "/listadomunicipios",
+        title: "Listado de Municipios & Departamentos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadogruposanguineo",
+        title: "Listado de Grupos Sanguineos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadoescolaridad",
+        title: "Listado de Niveles de Educacion",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
+      {
+        path: "/listadotipoestadocivil",
+        title: "Listado de Tipos de Estado Civil",
         type: "link",
         active: false,
         defaultActive: false,

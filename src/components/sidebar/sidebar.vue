@@ -113,6 +113,7 @@ import RecursiveMenu from "../../UI/recursiveMenu.vue";
 import { menuData } from "../../data/menuData";
 import { watchEffect } from "vue";
 import { useRouter } from "vue-router";
+
 export default {
   components: {
     RecursiveMenu,
