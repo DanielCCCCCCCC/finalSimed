@@ -45,6 +45,13 @@ export let menuData = [
         active: false,
         defaultActive: false,
       },
+      {
+        path: "/pacientes",
+        title: "Pacientes",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
     ],
   },
   // Sección de contactos

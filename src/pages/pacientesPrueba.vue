@@ -164,20 +164,18 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <!-- <label class="form-label">Tipo de Paciente</label> -->
+                          <label class="form-label">Tipo de Paciente</label>
                           <q-select
                             v-model="pacienteSeleccionado.tipo"
                             :options="tpacientes"
                             option-value="id"
                             option-label="descripcion"
-                            placeholder="Seleccione un tipo de paciente"
                             dense
-                            required
-                            class="w-100"
+                            class="w-100 form-select"
+                            map-options
+                            dropdown-icon="ion-md-arrow-dropdown"
                             :error="!validaciones.tipo"
                             error-message="Debe seleccionar un tipo de paciente"
-                            emit-value
-                            map-options
                           />
                         </div>
 

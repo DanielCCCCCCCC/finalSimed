@@ -4,7 +4,7 @@
     <h3 class="main-content-label mb-5 title">Registro de pacientes</h3>
     <ApexCharts
       v-if="registrosPorDia.length > 0"
-      type="bar"
+      type="radar"
       :options="chartOptions"
       :series="series"
       height="300px"
@@ -36,7 +36,7 @@ const series = computed(() => [
 // Configuración de las opciones del gráfico (reactivo)
 const chartOptions = ref({
   chart: {
-    type: "bar",
+    type: "radar",
     toolbar: {
       show: false,
     },

@@ -32,6 +32,7 @@ import AdminPanel from "../pages/AdminPanel.vue";
 import NotAuthorized from "../pages/NotAuthorized.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import ListadoTipoEstadoCivil from "../pages/ListadoTipoEstadoCivil.vue";
+import pacientesPrueba from "../pages/pacientesPrueba.vue";
 const routes = [
   {
     path: "/",
@@ -143,6 +144,12 @@ const routes = [
         path: "listadogruposcontactos",
         name: "listadogruposcontactos",
         component: ListadoGruposContactos,
+        meta: { requiresAuth: true, roles: ["admin"] },
+      },
+      {
+        path: "pacientes",
+        name: "pacientes",
+        component: pacientesPrueba,
         meta: { requiresAuth: true, roles: ["admin"] },
       },
       {

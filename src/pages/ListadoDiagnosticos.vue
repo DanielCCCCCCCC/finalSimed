@@ -203,11 +203,9 @@ import { storeToRefs } from "pinia";
 
 // Instancia de las tiendas
 const diagnosticosStore = useDiagnosticosStore();
-const clasificacionStore = useClasificacionDiagnosticosStore();
 
 // Referencias reactivas a los datos de las tiendas
 const { diagnosticos } = storeToRefs(diagnosticosStore);
-const { clasificaciones } = storeToRefs(clasificacionStore);
 
 // Estados del modal
 const mostrarDialogo = ref(false);
