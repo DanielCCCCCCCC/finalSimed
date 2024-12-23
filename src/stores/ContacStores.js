@@ -1,16 +1,33 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
-import { supabase } from "../supabaseClient"; // Asegúrate de que este archivo esté configurado correctamente
+import { ref, watch } from "vue";
+import { supabase } from "../supabaseClient";
+import { useAuthStore } from "./auth";
+
+// Helper para validar roles y tenant_id
+function verificarRolAdmin(authStore) {
+  if (!authStore.tenant_id) {
+    console.warn("No hay tenant_id disponible");
+    return false;
+  }
+  if (authStore.role?.toLowerCase() !== "admin") {
+    console.error("Permisos insuficientes.");
+    return false;
+  }
+  return true;
+}
 
 export const useContactStore = defineStore("contactStore", () => {
   const contactos = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
-  // Cargar contactos desde la base de datos
+  // Cargar contactos
   const cargarContactos = async () => {
     try {
-      const { data, error } = await supabase.from("contactos").select("*");
-
+      const { data, error } = await supabase
+        .from("contactos")
+        .select("*")
+        // .eq("tenant_id", authStore.tenant_id)
+        .order("created_at", { ascending: true });
       if (error) {
         console.error("Error al cargar contactos:", error.message);
       } else {
@@ -21,21 +38,20 @@ export const useContactStore = defineStore("contactStore", () => {
     }
   };
 
-  // Agregar un contacto a la base de datos
+  // Agregar contacto
   const agregarContacto = async (contacto) => {
-    const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+    if (!verificarRolAdmin(authStore)) return;
 
     try {
       const { data, error } = await supabase
         .from("contactos")
-        .insert([{ ...contacto, tenant_Id: tenantId }])
+        .insert([{ ...contacto, tenant_id: authStore.tenant_id }])
         .select();
 
       if (error) {
         console.error("Error al agregar contacto:", error.message);
       } else if (data && data.length > 0) {
         contactos.value.push(data[0]);
-        // console.log("Contacto agregado:", data[0]);
       } else {
         console.warn("Contacto agregado, pero sin datos devueltos.");
       }
@@ -44,22 +60,16 @@ export const useContactStore = defineStore("contactStore", () => {
     }
   };
 
-  const actualizarGrupoDescripcion = async (id, nuevaDescripcion) => {
-    const exito = await gruposStore.actualizarGrupo(id, nuevaDescripcion);
-    if (exito) {
-      // console.log("Grupo actualizado exitosamente");
-    } else {
-      console.error("Error al actualizar el grupo");
-    }
-  };
-
+  // Eliminar contacto
   const eliminarContacto = async (contactoId) => {
+    if (!verificarRolAdmin(authStore)) return;
+
     try {
       const { error } = await supabase
         .from("contactos")
         .delete()
         .eq("id", contactoId)
-        .eq("tenant_Id", tenantId);
+        .eq("tenant_id", authStore.tenant_id);
 
       if (error) {
         console.error("Error al eliminar contacto:", error.message);
@@ -67,17 +77,18 @@ export const useContactStore = defineStore("contactStore", () => {
         contactos.value = contactos.value.filter(
           (contacto) => contacto.id !== contactoId
         );
-        // console.log("Contacto eliminado:", contactoId);
       }
     } catch (err) {
       console.error("Error al conectar con Supabase:", err);
     }
   };
 
-  // Actualizar un contacto en la base de datos y en la lista local
+  // Actualizar contacto
   const actualizarContacto = async (contactoActualizado) => {
-    if (!contactoActualizado.id) {
-      console.error("Error: El id del contacto es undefined o null.");
+    if (!verificarRolAdmin(authStore)) return;
+
+    if (!contactoActualizado || !contactoActualizado.id) {
+      console.error("Error: contactoActualizado es undefined o no tiene id.");
       return;
     }
 
@@ -86,8 +97,7 @@ export const useContactStore = defineStore("contactStore", () => {
         .from("contactos")
         .update(contactoActualizado)
         .eq("id", contactoActualizado.id)
-        .eq("tenant_Id", tenantId)
-        .select();
+        .eq("tenant_id", authStore.tenant_id);
 
       if (error) {
         console.error("Error al actualizar contacto:", error.message);
@@ -97,7 +107,6 @@ export const useContactStore = defineStore("contactStore", () => {
         );
         if (index !== -1) {
           contactos.value[index] = { ...data[0] };
-          // console.log("Contacto actualizado:", data[0]);
         }
       } else {
         console.warn("Contacto actualizado, pero sin datos devueltos.");
@@ -106,13 +115,21 @@ export const useContactStore = defineStore("contactStore", () => {
       console.error("Error al conectar con Supabase:", err);
     }
   };
-
+  // Observar cambios en tenant_id
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId, oldTenantId) => {
+      if (newTenantId && newTenantId !== oldTenantId) {
+        cargarContactos();
+      }
+    },
+    { immediate: true }
+  );
   return {
     contactos,
     cargarContactos,
     agregarContacto,
     eliminarContacto,
     actualizarContacto,
-    actualizarGrupoDescripcion,
   };
 });

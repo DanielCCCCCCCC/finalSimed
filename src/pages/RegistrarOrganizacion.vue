@@ -27,11 +27,11 @@
                   />
                 </router-link>
                 <div class="clearfix"></div>
-                <img
+                <!-- <img
                   src="/images/svgs/user.svg"
                   class="ht-100 mb-0"
                   alt="user"
-                />
+                /> -->
                 <h5 class="mt-4 text-fixed-white">Registrar Organización</h5>
                 <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
                   Completa el formulario para registrar una nueva organización
@@ -92,17 +92,6 @@
                           v-model="numero_telefono"
                           placeholder="Ingrese el número de teléfono"
                           type="text"
-                          outlined
-                          dense
-                          class="form-control"
-                        />
-                      </div>
-                      <div class="form-group text-start">
-                        <label>Sitio Web</label>
-                        <q-input
-                          v-model="sitio_web"
-                          placeholder="Ingrese el sitio web"
-                          type="url"
                           outlined
                           dense
                           class="form-control"
@@ -182,7 +171,6 @@ const nombre = ref("");
 const direccion = ref("");
 const email_contacto = ref("");
 const numero_telefono = ref("");
-const sitio_web = ref("");
 
 // Campos del administrador
 const admin_email = ref("");
@@ -204,7 +192,6 @@ const handleSubmit = async () => {
     direccion: direccion.value,
     email_contacto: email_contacto.value,
     numero_telefono: numero_telefono.value || null,
-    sitio_web: sitio_web.value || null,
   };
 
   const datosAdmin = {

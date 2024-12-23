@@ -1,19 +1,19 @@
-// src/stores/appointments.js
-
 import { defineStore } from "pinia";
 import { supabase } from "../supabaseClient";
-import { useAuthStore } from "./auth"; // Importar el store de autenticación
+import { useAuthStore } from "./auth";
 import { ref, watch } from "vue";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
-  // Estados reactivos
   const appointments = ref([]);
   const appointmentsTrend = ref([]);
   const loading = ref(false);
   const error = ref(null);
 
   const authStore = useAuthStore();
-  // const userId = authStore.userId;
+
+  // Definir una variable 'role' para evitar errores en la consola.
+  // Puedes reemplazar 'null' con el valor adecuado si es necesario.
+  const role = ref(null);
 
   /**
    * Calcula la tendencia de citas por semana en el mes actual.
@@ -25,7 +25,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     const groupedData = [];
 
-    // Obtiene el primer día del mes actual
+    // Obtiene el primer día del mes actual para cada semana
     for (let i = 0; i < 5; i++) {
       const startOfWeek = new Date(currentYear, currentMonth, 1 + i * 7);
       const endOfWeek = new Date(currentYear, currentMonth, 1 + i * 7 + 6);
@@ -39,8 +39,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     appointments.value.forEach((appointment) => {
       const date = new Date(appointment.startDate);
-
-      // Filtra por el mes y año actual
       if (
         date.getMonth() === currentMonth &&
         date.getFullYear() === currentYear
@@ -48,13 +46,12 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         for (const week of groupedData) {
           if (date >= week.start && date <= week.end) {
             week.count++;
-            break; // Rompe el bucle si ya encontramos la semana correspondiente
+            break;
           }
         }
       }
     });
 
-    // Ahora, en lugar de 'period' como string, puedes crear un texto a partir de las fechas
     appointmentsTrend.value = groupedData.map((week) => ({
       period: `${week.start.toLocaleDateString()} - ${week.end.toLocaleDateString()}`,
       count: week.count,
@@ -68,7 +65,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
    */
   const fetchAppointments = async () => {
     const userId = authStore?.userId;
-    const tenantId = authStore?.tenantId;
+    const tenant_id = authStore?.tenant_id;
 
     if (!userId) {
       console.warn("No hay un usuario autenticado. No se cargarán citas.");
@@ -76,8 +73,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       appointmentsTrend.value = [];
       return;
     }
-
-    console.log("Buscando citas para userId:", userId, "y tenantId:", tenantId);
 
     loading.value = true;
     error.value = null;
@@ -108,7 +103,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
   };
 
-  // Watch for changes in userId and fetch appointments when userId is set
   watch(
     () => authStore.userId,
     (newUserId) => {
@@ -123,17 +117,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   );
 
   /**
-   * Agrega una nueva cita al usuario autenticado.
-   * @param {Object} appointment - Datos de la cita a agregar.
-   * @returns {Object} - La cita agregada.
+   * Agrega una nueva cita.
    */
   const addAppointment = async (appointment) => {
-    const tenantId = authStore.tenantId;
+    const tenant_id = authStore.tenant_id;
     const userId = authStore.userId;
 
     console.log("Estado de autenticación actualizado:", {
-      tenantId: tenantId.value,
-      role: role.value, // Asegúrate de que 'role' esté definido en tu auth store
+      tenant_id: tenant_id,
+      role: role.value,
       userId: userId,
     });
 
@@ -190,9 +182,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   };
 
   /**
-   * Actualiza una cita específica del usuario autenticado.
-   * @param {string} id - ID de la cita a actualizar.
-   * @param {Object} updates - Datos de actualización.
+   * Actualiza una cita específica.
    */
   const updateAppointment = async (id, updates) => {
     const userId = authStore.userId;
@@ -245,8 +235,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   };
 
   /**
-   * Elimina una cita específica del usuario autenticado.
-   * @param {string} id - ID de la cita a eliminar.
+   * Elimina una cita específica.
    */
   const deleteAppointment = async (id) => {
     const userId = authStore.userId;
@@ -288,25 +277,21 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   };
 
   /**
-   * Calcula la cantidad de citas del mes actual hasta la fecha actual,
-   * la cantidad de citas del mes anterior y la diferencia porcentual.
+   * Calcula estadísticas mensuales.
    */
   const calculateMonthlyStats = () => {
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
-    // Inicio de mes actual
     const startCurrentMonth = new Date(currentYear, currentMonth, 1);
 
-    // Citas del mes actual hasta hoy
     const currentMonthAppointments = appointments.value.filter((appt) => {
       const apptDate = new Date(appt.startDate);
       return apptDate >= startCurrentMonth && apptDate <= now;
     });
     const currentMonthCount = currentMonthAppointments.length;
 
-    // Mes anterior
     let prevMonth = currentMonth - 1;
     let prevYear = currentYear;
     if (prevMonth < 0) {
@@ -314,16 +299,14 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       prevYear = currentYear - 1;
     }
     const startPrevMonth = new Date(prevYear, prevMonth, 1);
-    const endPrevMonth = new Date(prevYear, prevMonth + 1, 0); // último día del mes anterior
+    const endPrevMonth = new Date(prevYear, prevMonth + 1, 0);
 
-    // Citas del mes anterior completo
     const prevMonthAppointments = appointments.value.filter((appt) => {
       const apptDate = new Date(appt.startDate);
       return apptDate >= startPrevMonth && apptDate <= endPrevMonth;
     });
     const prevMonthCount = prevMonthAppointments.length;
 
-    // Diferencia porcentual
     let diffPercentage = 0;
     if (prevMonthCount > 0) {
       diffPercentage =
@@ -345,6 +328,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     updateAppointment,
     deleteAppointment,
     calculateAppointmentsTrend,
-    calculateMonthlyStats, // Exportamos la nueva función
+    calculateMonthlyStats,
   };
 });

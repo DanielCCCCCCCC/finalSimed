@@ -16,7 +16,7 @@
           >TOTAL CITAS AGENDADAS</label
         >
         <span class="d-block fs-12 mb-2 text-muted"
-          >Mes anterior vs mes actual</span
+          >Mes anterior vs fecha actual</span
         >
 
         <p class="mb-0 fs-24 mt-2">

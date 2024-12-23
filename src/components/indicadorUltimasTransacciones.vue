@@ -18,7 +18,7 @@
                   class="rounded-circle me-3"
                   text-color="white"
                 >
-                  <q-icon :name="appointment.icon" />
+                  <q-icon class="icon" :name="appointment.icon" />
                 </q-avatar>
               </div>
             </td>
@@ -115,5 +115,9 @@ const appointments = ref([
   top: 10px;
   display: flex;
   justify-content: center; /* Centra horizontalmente */
+}
+.icon {
+  position: relative;
+  left: 100px;
 }
 </style>

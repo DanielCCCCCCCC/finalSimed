@@ -60,7 +60,7 @@
         <!-- Start::header-content-right -->
         <div class="header-content-right">
           <!-- Start::header-element -->
-          <div class="header-element q-mt-xs header-theme-mode">
+          <!-- <div class="header-element q-mt-xs header-theme-mode">
             <a href="javascript:void(0);" class="header-link layout-setting">
               <span class="light-layout" @click="colorthemeFn('dark')">
                 <i class="fe fe-moon header-link-icon lh-2"></i>
@@ -69,7 +69,7 @@
                 <i class="fe fe-sun header-link-icon lh-2"></i>
               </span>
             </a>
-          </div>
+          </div> -->
           <!-- End::header-element -->
 
           <!-- Start::header-element -->

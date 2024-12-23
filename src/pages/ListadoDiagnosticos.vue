@@ -203,9 +203,11 @@ import { storeToRefs } from "pinia";
 
 // Instancia de las tiendas
 const diagnosticosStore = useDiagnosticosStore();
+const clasificacionDiagnosticosStore = useClasificacionDiagnosticosStore();
 
 // Referencias reactivas a los datos de las tiendas
 const { diagnosticos } = storeToRefs(diagnosticosStore);
+const { clasificaciones } = storeToRefs(clasificacionDiagnosticosStore);
 
 // Estados del modal
 const mostrarDialogo = ref(false);
@@ -229,7 +231,7 @@ const cargarDatos = async () => {
   try {
     await Promise.all([
       diagnosticosStore.cargarDiagnosticos(),
-      clasificacionStore.cargarClasificaciones(),
+      clasificacionDiagnosticosStore.cargarClasificaciones(),
     ]);
     console.log("Diagnósticos cargados:", diagnosticos.value);
     console.log("Clasificaciones cargadas:", clasificaciones.value);

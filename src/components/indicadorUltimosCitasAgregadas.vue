@@ -1,11 +1,9 @@
 <template>
-  <!-- Encabezado de la tarjeta -->
   <div class="card title custom-card">
     <label class="main-content-label mb-1 pt-1">CITAS PROGRAMADAS</label>
     <span class="d-block fs-12 mb-1 text-muted">Últimas 5 citas agregadas</span>
   </div>
 
-  <!-- Cuerpo de la tarjeta -->
   <div class="subir">
     <q-list dense bordered class="citas-list">
       <q-item
@@ -14,7 +12,6 @@
         clickable
         class="custom-card"
       >
-        <!-- Sección del Avatar -->
         <q-item-section avatar>
           <q-avatar
             rounded
@@ -26,7 +23,6 @@
           </q-avatar>
         </q-item-section>
 
-        <!-- Sección de Información de la Cita -->
         <q-item-section>
           <q-item-label class="fs-13 fw-semibold">
             {{ appointment.tipoCita }}
@@ -37,7 +33,6 @@
           </q-item-label>
         </q-item-section>
 
-        <!-- Sección de Fecha -->
         <q-item-section side class="text-end separarderecho">
           <q-item-label class="fs-15 fw-semibold">
             {{ formatDate(appointment.startDate) }}
@@ -58,16 +53,13 @@ import { useMedicoStore } from "../stores/MedicoStores";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 import { useTiposCitasStore } from "../stores/ConfiMedicasStores";
 
-// Importa componentes de Quasar
 import { QAvatar, QIcon, QList, QItem, QItemSection, QItemLabel } from "quasar";
 
-// Instancia de las tiendas
 const AppointmentsStore = useAppointmentsStore();
 const MedicoStore = useMedicoStore();
 const FichaIdentificacionStore = useFichaIdentificacionStore();
 const TiposCitasStore = useTiposCitasStore();
 
-// Cargar datos al montar el componente
 onMounted(() => {
   AppointmentsStore.fetchAppointments();
   MedicoStore.cargarMedicos();
@@ -75,7 +67,6 @@ onMounted(() => {
   TiposCitasStore.cargarCitas();
 });
 
-// Funciones para obtener datos relacionados
 const getCita = (id) => {
   const tipoCita = TiposCitasStore.citas.find((p) => p.id == id);
   return tipoCita ? tipoCita.descripcion : "Desconocido";
@@ -93,22 +84,18 @@ const getMedicoName = (id) => {
   return medico ? medico.nombre : "Desconocido";
 };
 
-// Computed para las últimas 10 citas en orden ascendente
 const lastTenAppointments = computed(() => {
-  // Ordenar las citas en orden ascendente (de más antiguas a más recientes)
   const sortedAsc = [...AppointmentsStore.appointments].sort((a, b) => {
     const dateA = new Date(a.startDate);
     const dateB = new Date(b.startDate);
 
-    // Manejar fechas inválidas
     if (isNaN(dateA) && isNaN(dateB)) return 0;
     if (isNaN(dateA)) return -1;
     if (isNaN(dateB)) return 1;
 
-    return dateA - dateB; // Orden ascendente
+    return dateA - dateB;
   });
 
-  // Obtener hasta las últimas 10 citas
   return sortedAsc.slice(sortedAsc.length > 5 ? -5 : 0);
 });
 
@@ -121,14 +108,12 @@ const mappedAppointments = computed(() => {
   }));
 });
 
-// Formatear fecha
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   if (isNaN(date)) return "Fecha Inválida";
-  return date.toLocaleDateString(); // Ajusta el formato según tu necesidad
+  return date.toLocaleDateString();
 };
 
-// Depuración: Verificar los datos ordenados y mapeados
 console.log("Sorted Ascending Appointments:", lastTenAppointments.value);
 console.log("Mapped Appointments:", mappedAppointments.value);
 </script>
@@ -152,11 +137,10 @@ console.log("Mapped Appointments:", mappedAppointments.value);
 
 .cita-item {
   padding: 10px 15px;
-  /* border-bottom: 1px solid #e3e3e3; */
 }
 
 .cita-item:last-child {
-  border-bottom: none; /* Remover el borde del último elemento */
+  border-bottom: none;
 }
 
 .q-avatar {
@@ -165,9 +149,9 @@ console.log("Mapped Appointments:", mappedAppointments.value);
 }
 .center {
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  height: 36px; /* Asegura que ocupe toda la altura del contenedor */
+  justify-content: center;
+  align-items: center;
+  height: 36px;
   width: 36px;
   margin-bottom: 10px;
   margin-top: 5px;
@@ -185,18 +169,17 @@ console.log("Mapped Appointments:", mappedAppointments.value);
 }
 .card {
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   position: relative;
   top: 10px;
   border: none;
 }
 .title {
   position: relative;
-  /* top: -10px; */
 
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
+  justify-content: center;
 }
 </style>

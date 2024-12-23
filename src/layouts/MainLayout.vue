@@ -97,14 +97,6 @@ onMounted(async () => {
   }
 });
 
-// document.documentElement.style.setProperty(
-//   "--primary-rgb",
-//   "223, 15, 157 "
-// ); // RGB para azul rosado
-
-/**
- * (Opcional) Observar cambios en el tema y aplicar dinámicamente
- */
 watch(
   () => themeStore.colortheme,
   (newTheme) => {
@@ -127,16 +119,6 @@ watch(
 }
 
 .app-container {
-  /* padding: 20px; */
   background-color: #eaedf7;
-  /* margin: 0 0px; */
-  /* border: none; */
-
-  /* position: relative;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 1.2%;
-  width: 99%;
-  height: 100%; */
 }
 </style>

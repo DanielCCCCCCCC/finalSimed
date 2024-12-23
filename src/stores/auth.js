@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", () => {
   // Estados reactivos
   const user = ref(null);
   const session = ref(null);
-  const tenantId = ref(null);
+  const tenant_id = ref(null);
   const role = ref(null);
   const isAuthenticated = ref(false);
   const loading = ref(false);
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const { data, error: fetchError } = await supabase
         .from("users")
-        .select("tenantId, role")
+        .select("tenant_id, role")
         .eq("id", userId)
         .maybeSingle(); // Permite devolver una fila o null
 
@@ -57,7 +57,7 @@ export const useAuthStore = defineStore("auth", () => {
   const resetAuthState = () => {
     user.value = null;
     session.value = null;
-    tenantId.value = null;
+    tenant_id.value = null;
     role.value = null;
     isAuthenticated.value = false;
     error.value = null;
@@ -95,10 +95,10 @@ export const useAuthStore = defineStore("auth", () => {
 
         const userDetails = await fetchUserDetails(userId);
         if (userDetails) {
-          tenantId.value = userDetails.tenantId;
+          tenant_id.value = userDetails.tenant_id;
           role.value = userDetails.role;
           console.log("Estado de autenticación actualizado:", {
-            tenantId: tenantId.value,
+            tenant_id: tenant_id.value,
             role: role.value,
             userId: userId,
           });
@@ -173,14 +173,11 @@ export const useAuthStore = defineStore("auth", () => {
 
       const userDetails = await fetchUserDetails(data.user.id);
       if (userDetails) {
-        tenantId.value = userDetails.tenantId;
+        tenant_id.value = userDetails.tenant_id; // Asegúrate de usar tenant_id en minúsculas
         role.value = userDetails.role;
-        console.log(
-          "Tenant ID y Rol, user Id asignados:",
-          tenantId.value,
-          role.value,
-          userId.value
-        );
+        isAuthenticated.value = true;
+        user.value = data.user;
+        session.value = data.session;
       } else {
         console.warn("El usuario no tiene una entrada en la tabla 'users'.");
         resetAuthState();
@@ -241,9 +238,13 @@ export const useAuthStore = defineStore("auth", () => {
 
       fetchUserDetails(newSession.user.id).then((userDetails) => {
         if (userDetails) {
-          tenantId.value = userDetails.tenantId;
+          tenant_id.value = userDetails.tenant_id;
           role.value = userDetails.role;
-          console.log("Tenant ID y Rol asignados:", tenantId.value, role.value);
+          console.log(
+            "Tenant ID y Rol asignados:",
+            tenant_id.value,
+            role.value
+          );
         } else {
           console.warn("El usuario no tiene una entrada en la tabla 'users'.");
           resetAuthState();
@@ -275,7 +276,7 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     user,
     session,
-    tenantId,
+    tenant_id,
     role,
     userId,
     isAuthenticated,

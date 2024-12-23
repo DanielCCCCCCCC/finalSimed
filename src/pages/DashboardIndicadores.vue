@@ -29,6 +29,7 @@
       <!-- Tarjeta de Últimas Citas Agregadas -->
       <div class="card ultimosCitasAgregadas">
         <IndicadorUltimosCitasAgregadas />
+        <!-- <ProximasCincoCitas /> -->
       </div>
       <div class="card">
         <graficoPrueba />
@@ -46,8 +47,9 @@ import PacienteActivoGraph from "src/components/PacienteActivoGraph.vue";
 import PacientesAggMensualmente from "src/components/PacientesAggMensualmente.vue";
 import IndicadorDifCitasMes from "src/components/IndicadorDifCitasMes.vue";
 import IndicadorUltimasTransacciones from "src/components/IndicadorUltimasTransacciones.vue";
-import IndicadorUltimosCitasAgregadas from "../components/IndicadorUltimosCitasAgregadas.vue";
+import IndicadorUltimosCitasAgregadas from "../components/indicadorUltimosCitasAgregadas.vue";
 import graficoPrueba from "../components/graficoPrueba.vue";
+import ProximasCincoCitas from "../components/ProximasCincoCitas.vue";
 const themeStore = useThemeStore();
 
 // Computed property para obtener el color de fondo desde el themeStore

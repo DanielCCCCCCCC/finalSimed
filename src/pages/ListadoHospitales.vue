@@ -269,7 +269,7 @@ const formData = ref({
   telefono: "",
   email: "",
   web: "",
-  tenant_Id: null, // se puede asignar si es necesario, o dejarlo null
+  tenant_id: null, // se puede asignar si es necesario, o dejarlo null
 });
 
 const formErrors = ref({});
@@ -346,7 +346,7 @@ function resetFormulario() {
     telefono: "",
     email: "",
     web: "",
-    tenant_Id: null,
+    tenant_id: null,
   };
   formErrors.value = {};
   isEditing.value = false;
@@ -362,7 +362,7 @@ function cargarHospitalParaEditar(hospital) {
   formData.value.telefono = hospital.telefono || "";
   formData.value.email = hospital.email || "";
   formData.value.web = hospital.web || "";
-  formData.value.tenant_Id = hospital.tenant_Id || null;
+  formData.value.tenant_id = hospital.tenant_id || null;
 
   selectedHospitalId = hospital.id || null;
   isEditing.value = true;
@@ -401,7 +401,7 @@ async function guardarHospital() {
     telefono: formData.value.telefono,
     email: formData.value.email,
     web: formData.value.web,
-    tenant_Id: formData.value.tenant_Id,
+    tenant_id: formData.value.tenant_id,
   };
 
   try {

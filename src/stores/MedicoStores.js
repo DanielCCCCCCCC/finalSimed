@@ -1,20 +1,18 @@
 // MedicoStores.js
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient"; // Asegúrate de que este archivo esté configurado correctamente
+import { useAuthStore } from "./auth";
 
 export const useMedicoStore = defineStore("medicoStore", () => {
   const medicos = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3"; // Reemplaza con tu tenant ID
 
-  // Función para cargar médicos desde Supabase
-  // Función para cargar médicos desde Supabase
+  const authStore = useAuthStore();
+
   async function cargarMedicos() {
     try {
-      const { data, error } = await supabase
-        .from("medicos")
-        .select("*")
-        .eq("tenant_Id", tenantId); // Filtra por el tenant_Id
+      const { data, error } = await supabase.from("medicos").select("*");
+      // .eq("tenant_id", authStore.tenant_id);
       if (error) {
         console.error("Error al cargar médicos:", error.message);
       } else {
@@ -32,10 +30,18 @@ export const useMedicoStore = defineStore("medicoStore", () => {
 
   // Función para agregar un médico a la base de datos de Supabase
   async function agregarMedico(medico) {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para agregar un medico.");
+      return;
+    }
     try {
       const { data, error } = await supabase
         .from("medicos")
-        .insert([{ ...medico, tenant_Id: tenantId }])
+        .insert([{ ...medico, tenant_id: authStore.tenant_id }])
         .select(); // Asegúrate de usar .select() para obtener los datos insertados
 
       if (error) {
@@ -62,12 +68,20 @@ export const useMedicoStore = defineStore("medicoStore", () => {
 
   // Función para eliminar un médico de la base de datos de Supabase
   async function eliminarMedico(id) {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para eliminar un medico.");
+      return;
+    }
     try {
       const { error } = await supabase
         .from("medicos")
         .delete()
         .eq("id", id)
-        .eq("tenant_Id", tenantId); // Asegura que solo eliminas del tenant actual
+        .eq("tenant_id", tenant_id); // Asegura que solo eliminas del tenant actual
 
       if (error) {
         console.error("Error al eliminar médico:", error.message);
@@ -85,6 +99,14 @@ export const useMedicoStore = defineStore("medicoStore", () => {
 
   // Función para actualizar un médico en la base de datos de Supabase
   async function actualizarMedico(medico) {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para actualizar un medico.");
+      return;
+    }
     if (!medico.id) {
       console.error("Error: el ID del médico es indefinido.");
       return false;
@@ -101,7 +123,7 @@ export const useMedicoStore = defineStore("medicoStore", () => {
           email: medico.email,
         })
         .eq("id", medico.id)
-        .eq("tenant_Id", tenantId)
+        .eq("tenant_id", tenant_id)
         .select(); // Añade .select() para devolver los datos actualizados
 
       if (error) {
@@ -133,8 +155,16 @@ export const useMedicoStore = defineStore("medicoStore", () => {
   }
 
   // Llamar a cargarMedicos al montar la store
-  cargarMedicos();
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarMedicos();
+      }
+    },
+    { immediate: true }
+  );
   return {
     medicos,
     agregarMedico,

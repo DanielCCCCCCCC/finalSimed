@@ -73,6 +73,7 @@
           </template>
         </DxColumn>
         <!-- Columna con lookup para mostrar descripción del status -->
+        <DxColumn data-field="facturar" caption="facturar" />
         <DxColumn data-field="statusDescripcion" caption="Status" />
 
         <DxEditing
@@ -201,7 +202,14 @@
                     required
                   />
                 </div>
-
+                <div class="col-12 col-md-6 mb-3">
+                  <q-checkbox
+                    v-model="formData.facturar"
+                    label="Facturar"
+                    outlined
+                    class="w-10"
+                  />
+                </div>
                 <div class="col-12 col-md-6 mb-3">
                   <q-select
                     v-model="formData.status"
@@ -282,6 +290,7 @@ const formData = ref({
   indicaciones: "",
   precioCosto: "",
   precioVenta: "",
+  facturar: false,
   status: null,
 });
 
@@ -351,6 +360,7 @@ function resetFormulario() {
     indicaciones: "",
     precioCosto: "",
     precioVenta: "",
+    facturar: false,
     status: null,
   };
   formErrors.value = {};
@@ -370,6 +380,7 @@ function abrirFormularioEdicion(e) {
     indicaciones: estudio.indicaciones || "",
     precioCosto: estudio.precioCosto || "",
     precioVenta: estudio.precioVenta || "",
+    facturar: estudio.facturar || false,
     status: estudio.status || null,
   };
   dialogoEstudio.value = true;
@@ -407,6 +418,7 @@ async function guardarEstudio() {
       indicaciones: formData.value.indicaciones,
       precioCosto: formData.value.precioCosto,
       precioVenta: formData.value.precioVenta,
+      facturar: formData.value.facturar,
       status: formData.value.status, // bigint (ID)
     };
 

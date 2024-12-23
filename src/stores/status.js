@@ -1,17 +1,19 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
+import { useAuthStore } from "./auth";
 
 export const useStatusStore = defineStore("statusStore", () => {
   const statuses = ref([]);
 
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarStatuses = async () => {
     const { data, error } = await supabase
       .from("statusMedicamento")
       .select("*")
-      .order("created_at", { ascending: true }); // Ordenar por descripción
+      .eq("tenant_id", authStore.tenant_id)
+      .order("created_at", { ascending: true });
 
     if (error) {
       console.error("Error al cargar medicamentos:", error);
@@ -19,6 +21,15 @@ export const useStatusStore = defineStore("statusStore", () => {
       statuses.value = data;
     }
   };
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarStatuses();
+      }
+    },
+    { immediate: true }
+  );
   return {
     statuses,
     cargarStatuses,

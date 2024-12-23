@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
-
-const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+import { useAuthStore } from "./auth";
 
 function loadFromLocalStorage(key, defaultValue) {
   const saved = localStorage.getItem(key);
@@ -17,13 +16,15 @@ function saveToLocalStorage(key, value) {
 export const useClasificacionDiagnosticosStore = defineStore(
   "clasificacionDiagnosticos",
   () => {
-    const clasificaciones = ref(loadFromLocalStorage("clasificaciones", []));
+    const clasificaciones = ref([]);
+    const authStore = useAuthStore();
 
     const cargarClasificaciones = async () => {
+      if (!authStore.tenant_id) return;
       const { data, error } = await supabase
         .from("clasificacionDiagnosticos")
         .select("*")
-        .eq("tenant_id", tenantId)
+        .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
 
       if (error) {
@@ -35,9 +36,20 @@ export const useClasificacionDiagnosticosStore = defineStore(
     };
 
     const agregarClasificacion = async (nombre) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para agregar clasificaciones."
+        );
+        return;
+      }
+
       const { data, error } = await supabase
         .from("clasificacionDiagnosticos")
-        .insert([{ nombre, tenant_id: tenantId }]);
+        .insert([{ nombre, tenant_id: authStore.tenant_id }]);
 
       if (error) {
         console.error("Error al agregar clasificación:", error);
@@ -48,6 +60,17 @@ export const useClasificacionDiagnosticosStore = defineStore(
     };
 
     const actualizarClasificacion = async (id, datos) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para actualizar clasificaciones."
+        );
+        return;
+      }
+
       const { data, error } = await supabase
         .from("clasificacionDiagnosticos")
         .update(datos)
@@ -59,10 +82,10 @@ export const useClasificacionDiagnosticosStore = defineStore(
         const index = clasificaciones.value.findIndex(
           (clasificacion) => clasificacion.id === id
         );
-        if (index !== -1) {
+        if (index !== -1 && data[0]) {
           clasificaciones.value[index] = {
             ...clasificaciones.value[index],
-            ...datos,
+            ...data[0],
           };
           saveToLocalStorage("clasificaciones", clasificaciones.value);
         }
@@ -70,6 +93,17 @@ export const useClasificacionDiagnosticosStore = defineStore(
     };
 
     const eliminarClasificacion = async (id) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para eliminar clasificaciones."
+        );
+        return;
+      }
+
       const { error } = await supabase
         .from("clasificacionDiagnosticos")
         .delete()
@@ -85,7 +119,16 @@ export const useClasificacionDiagnosticosStore = defineStore(
       }
     };
 
-    onMounted(cargarClasificaciones);
+    // Colocamos el watch después de haber definido la función
+    watch(
+      () => authStore.tenant_id,
+      (newTenantId) => {
+        if (newTenantId) {
+          cargarClasificaciones();
+        }
+      },
+      { immediate: true }
+    );
 
     return {
       clasificaciones,
@@ -100,13 +143,14 @@ export const useClasificacionDiagnosticosStore = defineStore(
 // Tienda para Diagnósticos
 export const useDiagnosticosStore = defineStore("diagnosticos", () => {
   const diagnosticos = ref([]);
+  const authStore = useAuthStore();
 
-  // Cargar diagnósticos desde la base de datos
   const cargarDiagnosticos = async () => {
+    if (!authStore.tenant_id) return;
     const { data, error } = await supabase
       .from("diagnosticos")
       .select("*")
-      .eq("tenant_Id", tenantId) // Reemplaza tenantId por tu lógica
+      .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -116,13 +160,23 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
     }
   };
 
-  // Agregar un diagnóstico
   const agregarDiagnostico = async (descripcion, clasificacionId) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para agregar un diagnóstico."
+      );
+      return;
+    }
+
     const { data, error } = await supabase.from("diagnosticos").insert([
       {
         descripcion,
-        clasificacionId: clasificacionId, // Ajuste para el nombre correcto
-        tenant_Id: tenantId, // Reemplaza tenantId por tu lógica
+        clasificacionId: clasificacionId,
+        tenant_id: authStore.tenant_id,
       },
     ]);
 
@@ -133,8 +187,18 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
     }
   };
 
-  // Actualizar un diagnóstico existente
   const actualizarDiagnostico = async (id, datos) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para actualizar un diagnóstico."
+      );
+      return;
+    }
+
     const { data, error } = await supabase
       .from("diagnosticos")
       .update(datos)
@@ -142,31 +206,48 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
 
     if (error) {
       console.error("Error al actualizar diagnóstico:", error);
-    } else if (data) {
-      const index = diagnosticos.value.findIndex(
-        (diagnostico) => diagnostico.id === id
-      );
+    } else if (data && data[0]) {
+      const index = diagnosticos.value.findIndex((d) => d.id === id);
       if (index !== -1) {
-        diagnosticos.value[index] = { ...diagnosticos.value[index], ...datos };
+        diagnosticos.value[index] = {
+          ...diagnosticos.value[index],
+          ...data[0],
+        };
       }
     }
   };
 
-  // Eliminar un diagnóstico por ID
   const eliminarDiagnostico = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para eliminar un diagnóstico."
+      );
+      return;
+    }
+
     const { error } = await supabase.from("diagnosticos").delete().eq("id", id);
 
     if (error) {
       console.error("Error al eliminar el diagnóstico:", error);
     } else {
-      diagnosticos.value = diagnosticos.value.filter(
-        (diagnostico) => diagnostico.id !== id
-      );
+      diagnosticos.value = diagnosticos.value.filter((d) => d.id !== id);
     }
   };
 
-  // Cargar diagnósticos al montar la tienda
-  onMounted(cargarDiagnosticos);
+  // Watch después de definir la función cargarDiagnosticos
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarDiagnosticos();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     diagnosticos,
@@ -181,13 +262,15 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
 export const useControlesMedicionStore = defineStore(
   "controlesMedicion",
   () => {
-    const controles = ref(loadFromLocalStorage("controles", []));
+    const controles = ref([]);
+    const authStore = useAuthStore();
 
     const cargarControles = async () => {
+      if (!authStore.tenant_id) return;
       const { data, error } = await supabase
         .from("controles")
         .select("*")
-        .eq("tenant_id", tenantId)
+        .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
 
       if (error) {
@@ -199,9 +282,20 @@ export const useControlesMedicionStore = defineStore(
     };
 
     const agregarControl = async (descripcion) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para agregar un control de medición."
+        );
+        return;
+      }
+
       const { data, error } = await supabase
         .from("controles")
-        .insert([{ descripcion, tenant_id: tenantId }]);
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
       if (error) {
         console.error("Error al agregar control:", error);
@@ -212,6 +306,17 @@ export const useControlesMedicionStore = defineStore(
     };
 
     const actualizarControl = async (id, datos) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para actualizar un control de medición."
+        );
+        return;
+      }
+
       const { data, error } = await supabase
         .from("controles")
         .update(datos)
@@ -219,16 +324,27 @@ export const useControlesMedicionStore = defineStore(
 
       if (error) {
         console.error("Error al actualizar control:", error);
-      } else if (data) {
-        const index = controles.value.findIndex((control) => control.id === id);
+      } else if (data && data[0]) {
+        const index = controles.value.findIndex((c) => c.id === id);
         if (index !== -1) {
-          controles.value[index] = { ...controles.value[index], ...datos };
+          controles.value[index] = { ...controles.value[index], ...data[0] };
           saveToLocalStorage("controles", controles.value);
         }
       }
     };
 
     const eliminarControl = async (id) => {
+      if (!authStore.tenant_id) {
+        console.warn("No hay tenant_id disponible");
+        return;
+      }
+      if (authStore.role !== "admin") {
+        console.error(
+          "El usuario no tiene permisos para eliminar un control de medición."
+        );
+        return;
+      }
+
       const { error } = await supabase.from("controles").delete().eq("id", id);
 
       if (error) {
@@ -241,7 +357,16 @@ export const useControlesMedicionStore = defineStore(
       }
     };
 
-    onMounted(cargarControles);
+    // Watch después de definir las funciones
+    watch(
+      () => authStore.tenant_id,
+      (newTenantId) => {
+        if (newTenantId) {
+          cargarControles();
+        }
+      },
+      { immediate: true }
+    );
 
     return {
       controles,

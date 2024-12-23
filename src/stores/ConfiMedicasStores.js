@@ -1,76 +1,103 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
+import { useAuthStore } from "./auth";
 
-const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3"; // Tenant fijo
+// Helper para validar roles y tenant_id
+function verificarRolAdmin(authStore) {
+  if (!authStore.tenant_id) {
+    console.warn("No hay tenant_id disponible");
+    return false;
+  }
+  if (authStore.role?.toLowerCase() !== "admin") {
+    console.error("Permisos insuficientes.");
+    return false;
+  }
+  return true;
+}
 
+// Tienda para Especialidades Médicas
 export const useEspecialidadMedicaStore = defineStore(
   "especialidadesMedicas",
   () => {
+    const authStore = useAuthStore();
     const especialidades = ref([]);
 
     async function cargarEspecialidades() {
-      const { data, error } = await supabase
-        .from("especialidadesMedicas")
-        .select("*");
-      if (error) {
-        console.error("Error al cargar especialidades:", error.message);
-      } else {
+      try {
+        const { data, error } = await supabase
+          .from("especialidadesMedicas")
+          .select("*")
+          // .eq("tenant_id", authStore.tenant_id)
+          .order("created_at", { ascending: true });
+        if (error) throw error;
         especialidades.value = data;
-        // console.log("Especialidades cargadas:", especialidades.value);
+      } catch (error) {
+        console.error("Error al cargar especialidades:", error.message);
       }
     }
 
-    const agregarEspecialidad = async (descripcion) => {
-      const { data, error } = await supabase
-        .from("especialidadesMedicas")
-        .insert([{ descripcion, tenant_id: tenantId }]);
-
-      if (error) {
-        console.error("Error al agregar especialidad:", error);
-      } else if (data && data[0]) {
-        especialidades.value.push(data[0]);
+    async function agregarEspecialidad(descripcion) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { data, error } = await supabase
+          .from("especialidadesMedicas")
+          .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+        if (error) throw error;
+        if (data && data[0]) especialidades.value.push(data[0]);
+      } catch (error) {
+        console.error("Error al agregar especialidad:", error.message);
       }
-    };
+    }
 
-    const eliminarEspecialidad = async (id) => {
-      const { error } = await supabase
-        .from("especialidadesMedicas")
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        console.error("Error al eliminar la especialidad:", error);
-      } else {
+    async function eliminarEspecialidad(id) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { error } = await supabase
+          .from("especialidadesMedicas")
+          .delete()
+          .eq("id", id);
+        if (error) throw error;
         especialidades.value = especialidades.value.filter(
           (especialidad) => especialidad.id !== id
         );
+      } catch (error) {
+        console.error("Error al eliminar especialidad:", error.message);
       }
-    };
+    }
 
-    // Función para actualizar una especialidad
-    const actualizarEspecialidad = async (id, descripcion) => {
-      const { data, error } = await supabase
-        .from("especialidadesMedicas")
-        .update({ descripcion })
-        .eq("id", id);
-
-      if (error) {
-        console.error("Error al actualizar la especialidad:", error);
-      } else if (data && data[0]) {
+    async function actualizarEspecialidad(id, descripcion) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { data, error } = await supabase
+          .from("especialidadesMedicas")
+          .update({ descripcion })
+          .eq("id", id);
+        if (error) throw error;
         const index = especialidades.value.findIndex((e) => e.id === id);
-        if (index !== -1) {
+        if (index !== -1 && data && data[0]) {
           especialidades.value[index] = data[0];
         }
+      } catch (error) {
+        console.error("Error al actualizar especialidad:", error.message);
       }
-    };
+    }
+    watch(
+      () => authStore.tenant_id,
+      (newTenantId, oldTenantId) => {
+        if (newTenantId && newTenantId !== oldTenantId) {
+          cargarEspecialidades();
+        }
+      },
+      { immediate: true }
+    );
 
     return {
       especialidades,
       cargarEspecialidades,
       agregarEspecialidad,
       eliminarEspecialidad,
-      actualizarEspecialidad, // Agregamos la función al return
+      actualizarEspecialidad,
     };
   }
 );
@@ -78,68 +105,80 @@ export const useEspecialidadMedicaStore = defineStore(
 // Tienda para Tipos de Estudios
 export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
   const estudios = ref([]);
+  const authStore = useAuthStore();
 
-  const cargarEstudios = async () => {
-    const { data, error } = await supabase
-      .from("tiposEstudios")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error al cargar estudios:", error);
-    } else {
+  async function cargarEstudios() {
+    try {
+      const { data, error } = await supabase
+        .from("tiposEstudios")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
       estudios.value = data;
+    } catch (error) {
+      console.error("Error al cargar estudios:", error.message);
     }
-  };
+  }
 
-  const agregarEstudio = async (descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposEstudios")
-      .insert([{ descripcion, tenant_id: tenantId }]);
-
-    if (error) {
-      console.error("Error al agregar estudio:", error);
-    } else if (data && data[0]) {
-      estudios.value.push(data[0]);
+  async function agregarEstudio(descripcion) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposEstudios")
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+      if (error) throw error;
+      if (data && data[0]) estudios.value.push(data[0]);
+    } catch (error) {
+      console.error("Error al agregar estudio:", error.message);
     }
-  };
+  }
 
-  const eliminarEstudio = async (id) => {
-    const { error } = await supabase
-      .from("tiposEstudios")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      console.error("Error al eliminar el estudio:", error);
-    } else {
+  async function eliminarEstudio(id) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { error } = await supabase
+        .from("tiposEstudios")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
       estudios.value = estudios.value.filter((estudio) => estudio.id !== id);
+    } catch (error) {
+      console.error("Error al eliminar estudio:", error.message);
     }
-  };
+  }
 
-  // Función para actualizar un estudio
-  const actualizarEstudio = async (id, descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposEstudios")
-      .update({ descripcion })
-      .eq("id", id);
-
-    if (error) {
-      console.error("Error al actualizar el estudio:", error);
-    } else if (data && data[0]) {
+  async function actualizarEstudio(id, descripcion) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposEstudios")
+        .update({ descripcion })
+        .eq("id", id);
+      if (error) throw error;
       const index = estudios.value.findIndex((e) => e.id === id);
-      if (index !== -1) {
+      if (index !== -1 && data && data[0]) {
         estudios.value[index] = data[0];
       }
+    } catch (error) {
+      console.error("Error al actualizar estudio:", error.message);
     }
-  };
+  }
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId, oldTenantId) => {
+      if (newTenantId && newTenantId !== oldTenantId) {
+        cargarEstudios();
+      }
+    },
+    { immediate: true }
+  );
   return {
     estudios,
     cargarEstudios,
     agregarEstudio,
     eliminarEstudio,
-    actualizarEstudio, // Agregamos la función al return
+    actualizarEstudio,
   };
 });
 
@@ -148,133 +187,152 @@ export const useTiposMedicamentosStore = defineStore(
   "tiposMedicamentos",
   () => {
     const medicamentos = ref([]);
+    const authStore = useAuthStore();
 
-    const cargarMedicamentos = async () => {
-      const { data, error } = await supabase
-        .from("tiposMedicamentos")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Error al cargar medicamentos:", error);
-      } else {
+    async function cargarMedicamentos() {
+      try {
+        const { data, error } = await supabase
+          .from("tiposMedicamentos")
+          .select("*")
+          .order("created_at", { ascending: true });
+        if (error) throw error;
         medicamentos.value = data;
-        console.log("Tipos de medicamentos ", medicamentos.value);
+      } catch (error) {
+        console.error("Error al cargar medicamentos:", error.message);
       }
-    };
+    }
 
-    const agregarMedicamento = async (descripcion) => {
-      const { data, error } = await supabase
-        .from("tiposMedicamentos")
-        .insert([{ descripcion, tenant_id: tenantId }]);
-
-      if (error) {
-        console.error("Error al agregar medicamento:", error);
-      } else if (data && data[0]) {
-        medicamentos.value.push(data[0]);
+    async function agregarMedicamento(descripcion) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { data, error } = await supabase
+          .from("tiposMedicamentos")
+          .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+        if (error) throw error;
+        if (data && data[0]) medicamentos.value.push(data[0]);
+      } catch (error) {
+        console.error("Error al agregar medicamento:", error.message);
       }
-    };
+    }
 
-    const eliminarMedicamento = async (id) => {
-      const { error } = await supabase
-        .from("tiposMedicamentos")
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        console.error("Error al eliminar el medicamento:", error);
-      } else {
+    async function eliminarMedicamento(id) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { error } = await supabase
+          .from("tiposMedicamentos")
+          .delete()
+          .eq("id", id);
+        if (error) throw error;
         medicamentos.value = medicamentos.value.filter(
           (medicamento) => medicamento.id !== id
         );
+      } catch (error) {
+        console.error("Error al eliminar medicamento:", error.message);
       }
-    };
+    }
 
-    // Función para actualizar un medicamento
-    const actualizarMedicamento = async (id, descripcion) => {
-      const { data, error } = await supabase
-        .from("tiposMedicamentos")
-        .update({ descripcion })
-        .eq("id", id);
-
-      if (error) {
-        console.error("Error al actualizar el medicamento:", error);
-      } else if (data && data[0]) {
+    async function actualizarMedicamento(id, descripcion) {
+      if (!verificarRolAdmin(authStore)) return;
+      try {
+        const { data, error } = await supabase
+          .from("tiposMedicamentos")
+          .update({ descripcion })
+          .eq("id", id);
+        if (error) throw error;
         const index = medicamentos.value.findIndex((m) => m.id === id);
-        if (index !== -1) {
+        if (index !== -1 && data && data[0]) {
           medicamentos.value[index] = data[0];
         }
+      } catch (error) {
+        console.error("Error al actualizar medicamento:", error.message);
       }
-    };
+    }
+    watch(
+      () => authStore.tenant_id,
+      (newTenantId, oldTenantId) => {
+        if (newTenantId && newTenantId !== oldTenantId) {
+          cargarMedicamentos();
+        }
+      },
+      { immediate: true }
+    );
 
     return {
       medicamentos,
       cargarMedicamentos,
       agregarMedicamento,
       eliminarMedicamento,
-      actualizarMedicamento, // Agregamos la función al return
+      actualizarMedicamento,
     };
   }
 );
 
 // Tienda para Tipos de Pacientes
+
 export const useTiposPacientesStore = defineStore("tiposPacientes", () => {
-  const tpacientes = ref([]);
+  const tpacientes = ref([]); // Inicialización de la referencia reactiva
+  const authStore = useAuthStore();
 
   const cargarPacientes = async () => {
-    const { data, error } = await supabase
-      .from("tiposPacientes")
-      .select("*")
-      .order("created_at", { ascending: true });
+    if (!authStore.tenant_id) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposPacientes")
+        .select("*")
+        // .eq("tenant_id", authStore.tenant_id)
+        .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error("Error al cargar pacientes:", error);
-    } else {
-      tpacientes.value = data;
+      if (error) throw error;
+      tpacientes.value = data || [];
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
     }
   };
 
   const agregarPaciente = async (descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposPacientes")
-      .insert([{ descripcion, tenant_id: tenantId }]);
+    if (!authStore.tenant_id) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposPacientes")
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
-    if (error) {
-      console.error("Error al agregar paciente:", error);
-    } else if (data && data[0]) {
-      tpacientes.value.push(data[0]);
+      if (error) throw error;
+      if (data) tpacientes.value.push(data[0]);
+    } catch (err) {
+      console.error("Error al agregar paciente:", err);
     }
   };
 
   const eliminarPaciente = async (id) => {
-    const { error } = await supabase
-      .from("tiposPacientes")
-      .delete()
-      .eq("id", id);
+    if (!authStore.tenant_id) return;
+    try {
+      const { error } = await supabase
+        .from("tiposPacientes")
+        .delete()
+        .eq("id", id);
 
-    if (error) {
-      console.error("Error al eliminar el paciente:", error);
-    } else {
-      tpacientes.value = tpacientes.value.filter(
-        (paciente) => paciente.id !== id
-      );
+      if (error) throw error;
+      tpacientes.value = tpacientes.value.filter((p) => p.id !== id);
+    } catch (err) {
+      console.error("Error al eliminar paciente:", err);
     }
   };
 
-  // Función para actualizar un tipo de paciente
   const actualizarPaciente = async (id, descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposPacientes")
-      .update({ descripcion })
-      .eq("id", id);
+    if (!authStore.tenant_id) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposPacientes")
+        .update({ descripcion })
+        .eq("id", id);
 
-    if (error) {
-      console.error("Error al actualizar el tipo de paciente:", error);
-    } else if (data && data[0]) {
+      if (error) throw error;
       const index = tpacientes.value.findIndex((p) => p.id === id);
-      if (index !== -1) {
-        tpacientes.value[index] = data[0];
+      if (index !== -1 && data) {
+        tpacientes.value[index] = { ...tpacientes.value[index], ...data[0] };
       }
+    } catch (err) {
+      console.error("Error al actualizar paciente:", err);
     }
   };
 
@@ -283,132 +341,160 @@ export const useTiposPacientesStore = defineStore("tiposPacientes", () => {
     cargarPacientes,
     agregarPaciente,
     eliminarPaciente,
-    actualizarPaciente, // Agregamos la función al return
+    actualizarPaciente,
   };
 });
 
 // Tienda para Grupos de Contactos
 export const useGruposContactosStore = defineStore("gruposContactos", () => {
   const grupos = ref([]);
+  const authStore = useAuthStore();
 
-  const cargarGrupos = async () => {
-    const { data, error } = await supabase
-      .from("gruposContactos")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error al cargar grupos:", error);
-    } else {
+  async function cargarGrupos() {
+    try {
+      const { data, error } = await supabase
+        .from("gruposContactos")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
       grupos.value = data;
+    } catch (error) {
+      console.error("Error al cargar grupos:", error.message);
     }
-  };
+  }
 
-  const agregarGrupo = async (descripcion) => {
-    const { data, error } = await supabase
-      .from("gruposContactos")
-      .insert([{ descripcion, tenant_id: tenantId }]);
-
-    if (error) {
-      console.error("Error al agregar grupo:", error);
-    } else if (data && data[0]) {
-      grupos.value.push(data[0]);
+  async function agregarGrupo(descripcion) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("gruposContactos")
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+      if (error) throw error;
+      if (data && data[0]) grupos.value.push(data[0]);
+    } catch (error) {
+      console.error("Error al agregar grupo:", error.message);
     }
-  };
+  }
 
-  const eliminarGrupo = async (id) => {
-    const { error } = await supabase
-      .from("gruposContactos")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      console.error("Error al eliminar el grupo:", error);
-    } else {
+  async function eliminarGrupo(id) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { error } = await supabase
+        .from("gruposContactos")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
       grupos.value = grupos.value.filter((grupo) => grupo.id !== id);
+    } catch (error) {
+      console.error("Error al eliminar grupo:", error.message);
     }
-  };
+  }
 
-  // Función para actualizar un grupo de contacto
-  const actualizarGrupo = async (id, descripcion) => {
-    const { data, error } = await supabase
-      .from("gruposContactos")
-      .update({ descripcion })
-      .eq("id", id);
-
-    if (error) {
-      console.error("Error al actualizar el grupo de contacto:", error);
-    } else if (data && data[0]) {
+  async function actualizarGrupo(id, descripcion) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("gruposContactos")
+        .update({ descripcion })
+        .eq("id", id);
+      if (error) throw error;
       const index = grupos.value.findIndex((g) => g.id === id);
-      if (index !== -1) {
+      if (index !== -1 && data && data[0]) {
         grupos.value[index] = data[0];
       }
+    } catch (error) {
+      console.error("Error al actualizar grupo:", error.message);
     }
-  };
+  }
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId, oldTenantId) => {
+      if (newTenantId && newTenantId !== oldTenantId) {
+        cargarGrupos();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     grupos,
     cargarGrupos,
     agregarGrupo,
     eliminarGrupo,
-    actualizarGrupo, // Agregamos la función al return
+    actualizarGrupo,
   };
 });
+
 // Tienda para Tipos de Citas
 export const useTiposCitasStore = defineStore("tiposCitas", () => {
   const citas = ref([]);
+  const authStore = useAuthStore();
 
-  const cargarCitas = async () => {
-    const { data, error } = await supabase
-      .from("tiposCitas")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error al cargar citas:", error);
-    } else {
+  async function cargarCitas() {
+    try {
+      const { data, error } = await supabase
+        .from("tiposCitas")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
       citas.value = data;
+    } catch (error) {
+      console.error("Error al cargar citas:", error.message);
     }
-  };
+  }
 
-  const agregarCita = async (descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposCitas")
-      .insert([{ descripcion, tenant_id: tenantId }]);
-
-    if (error) {
-      console.error("Error al agregar cita:", error);
-    } else if (data && data[0]) {
-      citas.value.push(data[0]);
+  async function agregarCita(descripcion) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposCitas")
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+      if (error) throw error;
+      if (data && data[0]) citas.value.push(data[0]);
+    } catch (error) {
+      console.error("Error al agregar cita:", error.message);
     }
-  };
+  }
 
-  const eliminarCita = async (id) => {
-    const { error } = await supabase.from("tiposCitas").delete().eq("id", id);
-
-    if (error) {
-      console.error("Error al eliminar la cita:", error);
-    } else {
+  async function eliminarCita(id) {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { error } = await supabase.from("tiposCitas").delete().eq("id", id);
+      if (error) throw error;
       citas.value = citas.value.filter((cita) => cita.id !== id);
+    } catch (error) {
+      console.error("Error al eliminar cita:", error.message);
     }
-  };
+  }
 
   // Función para actualizar un tipo de cita
   const actualizarCita = async (id, descripcion) => {
-    const { data, error } = await supabase
-      .from("tiposCitas")
-      .update({ descripcion })
-      .eq("id", id);
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("tiposCitas")
+        .update({ descripcion })
+        .eq("id", id);
 
-    if (error) {
-      console.error("Error al actualizar el tipo de cita:", error);
-    } else if (data && data[0]) {
+      if (error) throw error;
       const index = citas.value.findIndex((c) => c.id === id);
-      if (index !== -1) {
+      if (index !== -1 && data && data[0]) {
         citas.value[index] = data[0];
       }
+    } catch (error) {
+      console.error("Error al actualizar grupo:", error.message);
     }
   };
+
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId, oldTenantId) => {
+      if (newTenantId && newTenantId !== oldTenantId) {
+        cargarCitas();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     citas,

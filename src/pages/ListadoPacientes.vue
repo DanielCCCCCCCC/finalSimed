@@ -41,7 +41,6 @@
                       data-bs-toggle="tab"
                       role="tab"
                       href="#infoTecnica-tab"
-                      aria-selected="subTabFichaIdentificacion === 'infoTecnica'"
                       @click="updateSubTab('infoTecnica')"
                     >
                       <p class="mb-1"><i class="ri-home-4-line"></i></p>
@@ -57,7 +56,6 @@
                       data-bs-toggle="tab"
                       role="tab"
                       href="#infoPersonal-tab"
-                      aria-selected="subTabFichaIdentificacion === 'infoPersonal'"
                       @click="updateSubTab('infoPersonal')"
                     >
                       <p class="mb-1"><i class="ri-phone-line"></i></p>
@@ -74,7 +72,6 @@
                       data-bs-toggle="tab"
                       role="tab"
                       href="#infoContacto-tab"
-                      aria-selected="subTabFichaIdentificacion === 'infoContacto'"
                       @click="updateSubTab('infoContacto')"
                     >
                       <p class="mb-1">
@@ -92,7 +89,6 @@
                       data-bs-toggle="tab"
                       role="tab"
                       href="#infoFamiliar-tab"
-                      aria-selected="subTabFichaIdentificacion === 'infoFamiliar'"
                       @click="updateSubTab('infoFamiliar')"
                     >
                       <p class="mb-1">
@@ -110,7 +106,6 @@
                       data-bs-toggle="tab"
                       role="tab"
                       href="#masDatos-tab"
-                      aria-selected="subTabFichaIdentificacion === 'masDatos'"
                       @click="updateSubTab('masDatos')"
                     >
                       <p class="mb-1">
@@ -127,7 +122,11 @@
                         @click="guardarDatosFormulario"
                         class="mb-2"
                       />
-                      <q-btn label="Limpiar Formulario" color="danger" />
+                      <q-btn
+                        label="Limpiar Formulario"
+                        color="danger"
+                        @click="limpiarFormulario"
+                      />
                     </div>
                   </li>
                 </ul>
@@ -135,6 +134,7 @@
 
               <div class="col-12 col-md-10">
                 <q-tab-panels v-model="subTabFichaIdentificacion" animated>
+                  <!-- Información Técnica -->
                   <q-tab-panel name="infoTecnica">
                     <div class="card card-body p-4 form-container">
                       <div class="q-card-section">
@@ -164,9 +164,9 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <!-- <label class="form-label">Tipo de Paciente</label> -->
+                          <label class="form-label">Tipo de pacientes</label>
                           <q-select
-                            v-model="pacienteSeleccionado.tipo"
+                            v-model="pacienteSeleccionado.tipoId"
                             :options="tpacientes"
                             option-value="id"
                             option-label="descripcion"
@@ -184,7 +184,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Médico</label>
                           <q-select
-                            v-model="pacienteSeleccionado.medico"
+                            v-model="pacienteSeleccionado.medicoId"
                             :options="medicos"
                             option-value="id"
                             option-label="nombre"
@@ -192,6 +192,8 @@
                             class="form-select"
                             :error="!validaciones.medico"
                             error-message="Debe seleccionar un médico"
+                            emit-value
+                            map-options
                           />
                         </div>
 
@@ -206,6 +208,8 @@
                             class="form-select"
                             :error="!validaciones.medicoCabecera"
                             error-message="Debe seleccionar un médico de cabecera"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-6 mb-3">
@@ -213,18 +217,21 @@
                             >Referido por (Médico)</label
                           >
                           <q-select
-                            v-model="pacienteSeleccionado.referidoPor"
+                            v-model="pacienteSeleccionado.referidoPorId"
                             :options="medicos"
                             option-value="id"
                             option-label="nombre"
                             dense
                             class="form-select"
+                            emit-value
+                            map-options
                           />
                         </div>
                       </q-form>
                     </div>
                   </q-tab-panel>
 
+                  <!-- Información Personal -->
                   <q-tab-panel name="infoPersonal">
                     <div class="card card-body p-4 form-container">
                       <div class="q-card-section">
@@ -285,7 +292,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Estado Civil</label>
                           <q-select
-                            v-model="pacienteSeleccionado.estadoCivil"
+                            v-model="pacienteSeleccionado.estadoCivilId"
                             :options="estadosCiviles"
                             option-value="id"
                             option-label="descripcion"
@@ -293,6 +300,8 @@
                             class="form-select"
                             :error="!validaciones.estadoCivil"
                             error-message="Debe seleccionar un estado civil"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-12 mb-3">
@@ -310,6 +319,7 @@
                     </div>
                   </q-tab-panel>
 
+                  <!-- Información de Contacto -->
                   <q-tab-panel name="infoContacto">
                     <div class="card card-body p-4 form-container">
                       <div class="q-card-section">
@@ -353,20 +363,22 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Departamento</label>
                           <q-select
-                            v-model="pacienteSeleccionado.departamento"
+                            v-model="pacienteSeleccionado.departamentoId"
                             :options="departamentos"
                             option-value="id"
                             option-label="descripcion"
                             dense
                             class="form-select"
-                            :error="!validaciones.departamento"
+                            :error="!validaciones.departamentoId"
                             error-message="Debe seleccionar un departamento"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Municipio</label>
                           <q-select
-                            v-model="pacienteSeleccionado.municipio"
+                            v-model="pacienteSeleccionado.municipioId"
                             :options="filteredMunicipios"
                             option-value="id"
                             option-label="descripcion"
@@ -374,6 +386,8 @@
                             class="form-select"
                             :error="!validaciones.municipio"
                             error-message="Debe seleccionar un municipio"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-12 mb-3">
@@ -388,6 +402,7 @@
                     </div>
                   </q-tab-panel>
 
+                  <!-- Información Familiar -->
                   <q-tab-panel name="infoFamiliar">
                     <div class="card card-body p-4 form-container">
                       <div class="q-card-section">
@@ -422,6 +437,7 @@
                     </div>
                   </q-tab-panel>
 
+                  <!-- Más Datos -->
                   <q-tab-panel name="masDatos">
                     <div class="card card-body p-4 form-container">
                       <div class="q-card-section">
@@ -431,12 +447,14 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Escolaridad</label>
                           <q-select
-                            v-model="pacienteSeleccionado.escolaridad"
+                            v-model="pacienteSeleccionado.escolaridadId"
                             :options="escolaridades"
                             option-value="id"
                             option-label="descripcion"
                             dense
                             class="form-select"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-6 mb-3">
@@ -450,12 +468,14 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Grupo Sanguíneo</label>
                           <q-select
-                            v-model="pacienteSeleccionado.grupoSanguineo"
+                            v-model="pacienteSeleccionado.grupoSanguineoId"
                             :options="gruposSanguineos"
                             option-value="id"
                             option-label="descripcion"
                             dense
                             class="form-select"
+                            emit-value
+                            map-options
                           />
                         </div>
                         <div class="col-md-12 mb-3">
@@ -496,6 +516,8 @@
           </div>
         </q-dialog>
       </div>
+
+      <!-- DataGrid de Pacientes -->
       <DxDataGrid
         ref="dataGrid"
         :data-source="pacientesConDetalles"
@@ -618,7 +640,6 @@
     </transition>
   </div>
 </template>
-
 <script setup>
 import {
   DxDataGrid,
@@ -684,39 +705,39 @@ const pacienteSeleccionado = reactive({
   fechaRegistro: "",
   codigo: "",
   activo: false,
-  tipo: null,
-  medico: "",
+  tipoId: null,
+  medicoId: null,
   medicoCabecera: null,
-  referidoPor: null,
+  referidoPorId: null,
   dni: "",
   nombres: "",
   apellidos: "",
   fechaNacimiento: "",
   sexo: "",
-  estadoCivil: null,
+  estadoCivilId: null,
   observaciones: "",
   direccion: "",
   telCasa: "",
   telPersonal: "",
   email: "",
-  departamento: null,
-  municipio: null,
+  departamentoId: null,
+  municipioId: null,
   organizacion: "",
   conyugue: "",
   madre: "",
   padre: "",
-  escolaridad: "",
+  escolaridadId: null,
   ocupacion: "",
-  grupoSanguineo: "",
+  grupoSanguineoId: null,
   alergias: "",
   vih: false,
 });
 
 const filteredMunicipios = computed(() => {
-  if (!pacienteSeleccionado.departamento) return [];
+  if (!pacienteSeleccionado.departamentoId) return [];
   return municipios.value.filter(
     (municipio) =>
-      municipio.departamentoId === pacienteSeleccionado.departamento.id
+      municipio.departamentoId === pacienteSeleccionado.departamentoId
   );
 });
 
@@ -733,36 +754,50 @@ const validaciones = reactive({
   estadoCivil: true,
   observaciones: true,
   telPersonal: true,
-  departamento: true,
+  departamentoId: true,
   municipio: true,
 });
 
 const validarFormulario = () => {
   validaciones.codigo = !!pacienteSeleccionado.codigo?.trim();
-  validaciones.tipo = !!pacienteSeleccionado.tipo;
-  validaciones.medico = !!pacienteSeleccionado.medico;
+  validaciones.tipo = !!pacienteSeleccionado.tipoId;
+  validaciones.medico = !!pacienteSeleccionado.medicoId;
   validaciones.dni = !!pacienteSeleccionado.dni?.trim();
   validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
   validaciones.nombres = !!pacienteSeleccionado.nombres?.trim();
   validaciones.apellidos = !!pacienteSeleccionado.apellidos?.trim();
   validaciones.fechaNacimiento = !!pacienteSeleccionado.fechaNacimiento?.trim();
-  validaciones.estadoCivil = !!pacienteSeleccionado.estadoCivil;
+  validaciones.estadoCivil = !!pacienteSeleccionado.estadoCivilId;
   validaciones.telPersonal = !!pacienteSeleccionado.telPersonal?.trim();
   validaciones.sexo = !!pacienteSeleccionado.sexo?.trim();
-  validaciones.departamento = !!pacienteSeleccionado.departamento;
-  validaciones.municipio = !!pacienteSeleccionado.municipio;
+  validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
+  validaciones.municipio = !!pacienteSeleccionado.municipioId;
 
   return Object.values(validaciones).every((valido) => valido);
 };
 
-watch(
-  () => pacienteSeleccionado.departamento,
-  (nuevo, antiguo) => {
-    if (antiguo && nuevo?.id !== antiguo?.id) {
-      pacienteSeleccionado.municipio = null;
+const limpiarFormulario = () => {
+  Object.keys(pacienteSeleccionado).forEach((key) => {
+    if (typeof pacienteSeleccionado[key] === "boolean") {
+      pacienteSeleccionado[key] = false;
+    } else if (Array.isArray(pacienteSeleccionado[key])) {
+      pacienteSeleccionado[key] = [];
+    } else {
+      pacienteSeleccionado[key] = "";
     }
-  }
-);
+  });
+  // Poner los campos numéricos en null
+  pacienteSeleccionado.tipoId = null;
+  pacienteSeleccionado.medicoId = null;
+  pacienteSeleccionado.medicoCabecera = null;
+  pacienteSeleccionado.referidoPorId = null;
+  pacienteSeleccionado.estadoCivilId = null;
+  pacienteSeleccionado.departamentoId = null;
+  pacienteSeleccionado.municipioId = null;
+  pacienteSeleccionado.escolaridadId = null;
+  pacienteSeleccionado.grupoSanguineoId = null;
+  pacienteSeleccionado.vih = false;
+};
 
 const tab = ref("Pacientes");
 const subTabFichaIdentificacion = ref("infoTecnica");
@@ -772,28 +807,32 @@ const updateSubTab = (tabName) => {
 
 const pacientesConDetalles = computed(() => {
   return (formIdentificacion.value || []).map((paciente) => {
-    const medico = (medicos.value || []).find(
+    const medicoEncontrado = (medicos.value || []).find(
       (medic) => medic.id === Number(paciente.medicoId)
     );
-    const medicoCabecera = (medicos.value || []).find(
+    const medicoCabeceraEncontrado = (medicos.value || []).find(
       (medic) => medic.id === Number(paciente.medicoCabecera)
     );
-    const referidoPor = (medicos.value || []).find(
+    const referidoPorEncontrado = (medicos.value || []).find(
       (medic) => medic.id === Number(paciente.referidoPorId)
     );
-    const tipoPaciente = (tpacientes.value || []).find(
+    const tipoPacienteEncontrado = (tpacientes.value || []).find(
       (tipo) => tipo.id === Number(paciente.tipoId)
     );
 
     return {
       ...paciente,
-      medicoNombre: medico ? medico.nombre : "Médico no encontrado",
-      medicoCabeceraNombre: medicoCabecera
-        ? medicoCabecera.nombre
+      medicoNombre: medicoEncontrado
+        ? medicoEncontrado.nombre
+        : "Médico no encontrado",
+      medicoCabeceraNombre: medicoCabeceraEncontrado
+        ? medicoCabeceraEncontrado.nombre
         : "No asignado",
-      referidoPorNombre: referidoPor ? referidoPor.nombre : "No asignado",
-      tipoDescripcion: tipoPaciente
-        ? tipoPaciente.descripcion
+      referidoPorNombre: referidoPorEncontrado
+        ? referidoPorEncontrado.nombre
+        : "No asignado",
+      tipoDescripcion: tipoPacienteEncontrado
+        ? tipoPacienteEncontrado.descripcion
         : "Tipo no encontrado",
     };
   });
@@ -808,51 +847,81 @@ const guardarDatosFormulario = () => {
     });
     return;
   }
-  if (pacienteSeleccionado.id) {
-    fichaIdentificacionStore.actualizarPaciente({
-      ...pacienteSeleccionado,
-      tipoId: pacienteSeleccionado.tipo?.id || null,
-      medicoId: pacienteSeleccionado.medico?.id || null,
-      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null,
-      referidoPorId: pacienteSeleccionado.referidoPor?.id || null,
-      departamentoId: pacienteSeleccionado.departamento?.id || null,
-      municipioId: pacienteSeleccionado.municipio?.id || null,
-      escolaridadId: pacienteSeleccionado.escolaridad?.id || null,
-      grupoSanguineoId: pacienteSeleccionado.grupoSanguineo?.id || null,
-    });
-    Notify.create({
-      message: "Paciente actualizado",
-      color: "positive",
-      position: "top-right",
-    });
-  } else {
-    fichaIdentificacionStore.guardarDatos({
-      ...pacienteSeleccionado,
-      tipoId: pacienteSeleccionado.tipo?.id || null,
-      medicoId: pacienteSeleccionado.medico?.id || null,
-      medicoCabecera: pacienteSeleccionado.medicoCabecera?.id || null,
-      referidoPorId: pacienteSeleccionado.referidoPor?.id || null,
-      departamentoId: pacienteSeleccionado.departamento?.id || null,
-      municipioId: pacienteSeleccionado.municipio?.id || null,
-      escolaridadId: pacienteSeleccionado.escolaridad?.id || null,
-      grupoSanguineoId: pacienteSeleccionado.grupoSanguineo?.id || null,
-    });
-    Notify.create({
-      message: "Paciente guardado",
-      color: "positive",
-      position: "top-right",
-    });
-  }
 
-  Object.keys(pacienteSeleccionado).forEach((key) => {
-    if (typeof pacienteSeleccionado[key] === "boolean") {
-      pacienteSeleccionado[key] = false;
-    } else if (Array.isArray(pacienteSeleccionado[key])) {
-      pacienteSeleccionado[key] = [];
-    } else {
-      pacienteSeleccionado[key] = "";
-    }
-  });
+  const payload = {
+    fechaRegistro:
+      pacienteSeleccionado.fechaRegistro || new Date().toISOString(),
+    codigo: pacienteSeleccionado.codigo,
+    activo: pacienteSeleccionado.activo,
+    tipoId: pacienteSeleccionado.tipoId,
+    medicoId: pacienteSeleccionado.medicoId,
+    medicoCabecera: pacienteSeleccionado.medicoCabecera,
+    referidoPorId: pacienteSeleccionado.referidoPorId,
+    dni: pacienteSeleccionado.dni,
+    nombres: pacienteSeleccionado.nombres,
+    apellidos: pacienteSeleccionado.apellidos,
+    fechaNacimiento: pacienteSeleccionado.fechaNacimiento,
+    sexo: pacienteSeleccionado.sexo,
+    estadoCivilId: pacienteSeleccionado.estadoCivilId,
+    observaciones: pacienteSeleccionado.observaciones,
+    direccion: pacienteSeleccionado.direccion,
+    telCasa: pacienteSeleccionado.telCasa,
+    telPersonal: pacienteSeleccionado.telPersonal,
+    email: pacienteSeleccionado.email,
+    departamentoId: pacienteSeleccionado.departamentoId,
+    municipioId: pacienteSeleccionado.municipioId,
+    organizacion: pacienteSeleccionado.organizacion,
+    conyugue: pacienteSeleccionado.conyugue,
+    madre: pacienteSeleccionado.madre,
+    padre: pacienteSeleccionado.padre,
+    escolaridadId: pacienteSeleccionado.escolaridadId,
+    ocupacion: pacienteSeleccionado.ocupacion,
+    grupoSanguineoId: pacienteSeleccionado.grupoSanguineoId,
+    alergias: pacienteSeleccionado.alergias,
+    vih: pacienteSeleccionado.vih,
+  };
+
+  if (pacienteSeleccionado.id) {
+    fichaIdentificacionStore
+      .actualizarPaciente({ ...payload, id: pacienteSeleccionado.id })
+      .then(() => {
+        Notify.create({
+          message: "Paciente actualizado",
+          color: "positive",
+          position: "top-right",
+        });
+        limpiarFormulario();
+        dialogNuevoContacto.value = false;
+      })
+      .catch((error) => {
+        Notify.create({
+          message: "Error al actualizar el paciente",
+          color: "negative",
+          position: "top-right",
+        });
+        console.error("Error actualizando el paciente:", error);
+      });
+  } else {
+    fichaIdentificacionStore
+      .guardarDatos(payload)
+      .then(() => {
+        Notify.create({
+          message: "Paciente guardado",
+          color: "positive",
+          position: "top-right",
+        });
+        limpiarFormulario();
+        dialogNuevoContacto.value = false;
+      })
+      .catch((error) => {
+        Notify.create({
+          message: "Error al guardar el paciente",
+          color: "negative",
+          position: "top-right",
+        });
+        console.error("Error guardando el paciente:", error);
+      });
+  }
 };
 
 const focusedRowKey = ref(null);
@@ -936,6 +1005,7 @@ const onCheckboxChange = async (data) => {
 
 const dialogNuevoContacto = ref(false);
 const handleNuevoContacto = () => {
+  limpiarFormulario();
   dialogNuevoContacto.value = true;
 };
 </script>

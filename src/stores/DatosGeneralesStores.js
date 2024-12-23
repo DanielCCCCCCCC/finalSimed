@@ -1,16 +1,35 @@
+// DatosGeneralesStores.js
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
+import { useAuthStore } from "./auth";
 
+// Helper para validar roles y tenant_id
+function verificarRolAdmin(authStore) {
+  if (!authStore.tenant_id) {
+    console.warn("No hay tenant_id disponible");
+    return false;
+  }
+  if (authStore.role?.toLowerCase() !== "admin") {
+    console.error("Permisos insuficientes.");
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------
 // Tienda para Departamentos
+//------------------------------------------
 export const useDepartamentoStore = defineStore("departamentos", () => {
   const departamentos = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarDepartamentos = async () => {
+    if (!authStore.tenant_id) return;
     const { data, error } = await supabase
       .from("departamentos")
       .select("*")
+      // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -21,66 +40,90 @@ export const useDepartamentoStore = defineStore("departamentos", () => {
   };
 
   const agregarDepartamento = async (descripcion) => {
-    const { data, error } = await supabase
-      .from("departamentos")
-      .insert([{ descripcion, tenant_id: tenantId }]);
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("departamentos")
+        .insert([{ descripcion, tenant_id: authStore.tenant_id }])
+        .select(); // Para retornar el registro insertado
 
-    if (error) {
+      if (error) throw error;
+      if (data && data[0]) departamentos.value.push(data[0]);
+    } catch (error) {
       console.error("Error al agregar departamento:", error);
-    } else if (data && data[0]) {
-      departamentos.value.push(data[0]);
     }
   };
 
   const eliminarDepartamento = async (id) => {
-    const { error } = await supabase
-      .from("departamentos")
-      .delete()
-      .eq("id", id);
-    if (error) {
-      console.error("Error al eliminar departamento:", error);
-    } else {
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { error } = await supabase
+        .from("departamentos")
+        .delete()
+        .eq("id", id)
+        .eq("tenant_id", authStore.tenant_id); // Aseguramos el tenant
+
+      if (error) throw error;
       departamentos.value = departamentos.value.filter(
         (depto) => depto.id !== id
       );
+    } catch (error) {
+      console.error("Error al eliminar departamento:", error);
     }
   };
 
-  // Nueva función para actualizar un departamento
   const actualizarDepartamento = async (id, descripcion) => {
-    const { data, error } = await supabase
-      .from("departamentos")
-      .update({ descripcion })
-      .eq("id", id);
+    if (!verificarRolAdmin(authStore)) return;
+    try {
+      const { data, error } = await supabase
+        .from("departamentos")
+        .update({ descripcion })
+        .eq("id", id)
+        .eq("tenant_id", authStore.tenant_id)
+        .select(); // Para retornar el registro actualizado
 
-    if (error) {
-      console.error("Error al actualizar departamento:", error);
-    } else if (data && data[0]) {
+      if (error) throw error;
       const index = departamentos.value.findIndex((depto) => depto.id === id);
-      if (index !== -1) {
+      if (index !== -1 && data && data[0]) {
         departamentos.value[index] = data[0];
       }
+    } catch (error) {
+      console.error("Error al actualizar departamento:", error);
     }
   };
+
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId, oldTenantId) => {
+      if (newTenantId && newTenantId !== oldTenantId) {
+        cargarDepartamentos();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     departamentos,
     cargarDepartamentos,
     agregarDepartamento,
     eliminarDepartamento,
-    actualizarDepartamento, // Asegúrate de exportar la función
+    actualizarDepartamento,
   };
 });
 
+//------------------------------------------
 // Tienda para Municipios
+//------------------------------------------
 export const useMunicipioStore = defineStore("municipios", () => {
   const municipios = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarMunicipios = async () => {
+    if (!authStore.tenant_id) return;
     const { data, error } = await supabase
       .from("municipios")
       .select("*")
+      // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -91,23 +134,25 @@ export const useMunicipioStore = defineStore("municipios", () => {
   };
 
   const agregarMunicipio = async (descripcion, departamentoId) => {
+    if (!verificarRolAdmin(authStore)) return;
     const { data, error } = await supabase.from("municipios").insert([
       {
         descripcion,
         departamentoId,
-        tenant_id: tenantId,
+        tenant_id: authStore.tenant_id,
       },
     ]);
 
     if (error) {
       console.error("Error al agregar municipio:", error);
-      throw error; // Opcional: para manejar el error en el componente
+      throw error;
     } else if (data && data[0]) {
       municipios.value.push(data[0]);
     }
   };
 
   const eliminarMunicipio = async (id) => {
+    if (!verificarRolAdmin(authStore)) return;
     const { error } = await supabase.from("municipios").delete().eq("id", id);
     if (error) {
       console.error("Error al eliminar municipio:", error);
@@ -116,8 +161,8 @@ export const useMunicipioStore = defineStore("municipios", () => {
     }
   };
 
-  // Nueva función para actualizar un municipio
   const actualizarMunicipio = async (id, descripcion, departamentoId) => {
+    if (!verificarRolAdmin(authStore)) return;
     const { data, error } = await supabase
       .from("municipios")
       .update({ descripcion, departamentoId })
@@ -133,24 +178,37 @@ export const useMunicipioStore = defineStore("municipios", () => {
     }
   };
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarMunicipios();
+      }
+    },
+    { immediate: true }
+  );
+
   return {
     municipios,
     cargarMunicipios,
     agregarMunicipio,
     eliminarMunicipio,
-    actualizarMunicipio, // Exportar la función
+    actualizarMunicipio,
   };
 });
 
+//------------------------------------------
 // Tienda para Grupo Sanguíneo
+//------------------------------------------
 export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
   const gruposSanguineos = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarGruposSanguineos = async () => {
     const { data, error } = await supabase
       .from("grupoSanguineo")
       .select("*")
+      // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -161,9 +219,20 @@ export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
   };
 
   const agregarGrupoSanguineo = async (descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para agregar grupos sanguineos."
+      );
+      return;
+    }
+
     const { data, error } = await supabase
       .from("grupoSanguineo")
-      .insert([{ descripcion, tenant_id: tenantId }]);
+      .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
     if (error) {
       console.error("Error al agregar grupo sanguíneo:", error);
@@ -173,6 +242,16 @@ export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
   };
 
   const eliminarGrupoSanguineo = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para eliminar grupos sanguineos."
+      );
+      return;
+    }
     const { error } = await supabase
       .from("grupoSanguineo")
       .delete()
@@ -186,8 +265,17 @@ export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
     }
   };
 
-  // Nueva función para actualizar un grupo sanguíneo
   const actualizarGrupoSanguineo = async (id, descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para actualizar grupos sanguineos."
+      );
+      return;
+    }
     const { data, error } = await supabase
       .from("grupoSanguineo")
       .update({ descripcion })
@@ -205,24 +293,37 @@ export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
     }
   };
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarGruposSanguineos();
+      }
+    },
+    { immediate: true }
+  );
+
   return {
     gruposSanguineos,
     cargarGruposSanguineos,
     agregarGrupoSanguineo,
     eliminarGrupoSanguineo,
-    actualizarGrupoSanguineo, // Exportar la función
+    actualizarGrupoSanguineo,
   };
 });
 
+//------------------------------------------
 // Tienda para Escolaridad
+//------------------------------------------
 export const useEscolaridadStore = defineStore("escolaridad", () => {
   const escolaridades = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarEscolaridades = async () => {
     const { data, error } = await supabase
       .from("escolaridad")
       .select("*")
+      // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -233,9 +334,18 @@ export const useEscolaridadStore = defineStore("escolaridad", () => {
   };
 
   const agregarEscolaridad = async (descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para agregar escolaridades.");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("escolaridad")
-      .insert([{ descripcion, tenant_id: tenantId }]);
+      .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
     if (error) {
       console.error("Error al agregar escolaridad:", error);
@@ -245,6 +355,16 @@ export const useEscolaridadStore = defineStore("escolaridad", () => {
   };
 
   const eliminarEscolaridad = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para eliminar una escolaridad."
+      );
+      return;
+    }
     const { error } = await supabase.from("escolaridad").delete().eq("id", id);
     if (error) {
       console.error("Error al eliminar escolaridad:", error);
@@ -253,8 +373,17 @@ export const useEscolaridadStore = defineStore("escolaridad", () => {
     }
   };
 
-  // Nueva función para actualizar una escolaridad
   const actualizarEscolaridad = async (id, descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para actualizar una escolaridad."
+      );
+      return;
+    }
     const { data, error } = await supabase
       .from("escolaridad")
       .update({ descripcion })
@@ -270,24 +399,37 @@ export const useEscolaridadStore = defineStore("escolaridad", () => {
     }
   };
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarEscolaridades();
+      }
+    },
+    { immediate: true }
+  );
+
   return {
     escolaridades,
     cargarEscolaridades,
     agregarEscolaridad,
     eliminarEscolaridad,
-    actualizarEscolaridad, // Exportar la función
+    actualizarEscolaridad,
   };
 });
 
+//------------------------------------------
 // Tienda para Estado Civil
+//------------------------------------------
 export const useEstadoCivilStore = defineStore("estadoCivil", () => {
   const estadosCiviles = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarEstadosCiviles = async () => {
     const { data, error } = await supabase
       .from("estadoCivil")
       .select("*")
+      // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -298,9 +440,19 @@ export const useEstadoCivilStore = defineStore("estadoCivil", () => {
   };
 
   const agregarEstadoCivil = async (descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para agregar estados civiles."
+      );
+      return;
+    }
     const { data, error } = await supabase
       .from("estadoCivil")
-      .insert([{ descripcion, tenant_id: tenantId }]);
+      .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
     if (error) {
       console.error("Error al agregar estado civil:", error);
@@ -310,6 +462,16 @@ export const useEstadoCivilStore = defineStore("estadoCivil", () => {
   };
 
   const eliminarEstadoCivil = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para eliminar un estado civil."
+      );
+      return;
+    }
     const { error } = await supabase.from("estadoCivil").delete().eq("id", id);
     if (error) {
       console.error("Error al eliminar estado civil:", error);
@@ -320,8 +482,17 @@ export const useEstadoCivilStore = defineStore("estadoCivil", () => {
     }
   };
 
-  // Nueva función para actualizar un estado civil
   const actualizarEstadoCivil = async (id, descripcion) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para actualizar un estado civil."
+      );
+      return;
+    }
     const { data, error } = await supabase
       .from("estadoCivil")
       .update({ descripcion })
@@ -339,11 +510,21 @@ export const useEstadoCivilStore = defineStore("estadoCivil", () => {
     }
   };
 
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarEstadosCiviles();
+      }
+    },
+    { immediate: true }
+  );
+
   return {
     estadosCiviles,
     cargarEstadosCiviles,
     agregarEstadoCivil,
     eliminarEstadoCivil,
-    actualizarEstadoCivil, // Exportar la función
+    actualizarEstadoCivil,
   };
 });

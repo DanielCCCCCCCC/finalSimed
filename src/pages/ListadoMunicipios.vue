@@ -400,7 +400,7 @@ const guardarDepartamento = async () => {
       position: "top-right",
     });
     await departamentoStore.cargarDepartamentos();
-    cerrarDialogoAgregar();
+    // cerrarDialogoAgregar();
   } catch (error) {
     Notify.create({
       type: "negative",
@@ -447,7 +447,7 @@ const guardarMunicipio = async () => {
       position: "top-right",
     });
     await municipioStore.cargarMunicipios();
-    cerrarDialogoAgregar();
+    // cerrarDialogoAgregar();
   } catch (error) {
     Notify.create({
       type: "negative",

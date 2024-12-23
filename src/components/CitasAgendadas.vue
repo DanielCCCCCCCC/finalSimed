@@ -6,15 +6,19 @@
     >
   </div>
   <div class="card-body p-1">
-    <ApexCharts
-      v-if="appointmentsTrend.length > 0"
-      type="area"
-      :options="chartOptions"
-      :series="series"
-      class="apex-chart"
-      width="790"
-      height="270"
-    />
+    <div v-if="appointmentsTrend && appointmentsTrend.length > 0">
+      <ApexCharts
+        type="area"
+        :options="chartOptions"
+        :series="series"
+        class="apex-chart"
+        width="790"
+        height="270"
+      />
+    </div>
+    <div v-else>
+      <p>No hay citas para mostrar.</p>
+    </div>
   </div>
 </template>
 
@@ -22,7 +26,6 @@
 import { onMounted, computed } from "vue";
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import ApexCharts from "vue3-apexcharts";
-import { projectOptions } from "../dahboardData";
 
 const store = useAppointmentsStore();
 
@@ -88,11 +91,8 @@ const chartOptions = computed(() => ({
       fontSize: "12px",
     },
   },
-  colors: ["#df5a5a"], // Color principal del área
-
-  // colors: projectOptions.colors,
+  colors: ["#df5a5a"],
   title: {
-    // text: "Tendencia de Citas por Semana (Mes Actual)",
     align: "left",
     style: {
       fontWeight: "bold",
@@ -116,9 +116,9 @@ const chartOptions = computed(() => ({
 }
 .card {
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   position: relative;
   top: 10px;
   border: none;
@@ -127,6 +127,6 @@ const chartOptions = computed(() => ({
   position: relative;
   top: 20px;
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
+  justify-content: center;
 }
 </style>

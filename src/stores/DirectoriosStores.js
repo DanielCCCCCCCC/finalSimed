@@ -1,99 +1,99 @@
 // src/stores/ConfiMedicasStores.js
 import { defineStore } from "pinia";
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
-import { Notify } from "quasar";
+import { useAuthStore } from "./auth";
 
-// Helper para cargar y guardar en localStorage
-function loadFromLocalStorage(key, defaultValue) {
-  const saved = localStorage.getItem(key);
-  return saved ? JSON.parse(saved) : defaultValue;
-}
-
-function saveToLocalStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-//
-
+// -----------------------------------------------------------------------------
 // Tienda para Hospitales
-
-// DirectoriosStores.js
-
+// -----------------------------------------------------------------------------
 export const useHospitalStore = defineStore("hospitalStore", () => {
   const hospitales = ref([]);
-  const hospitalSeleccionado = ref(null); // Para manejar el hospital que se está editando
-
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3"; // Asegúrate de que este es el valor correcto
+  const hospitalSeleccionado = ref(null);
+  const authStore = useAuthStore();
 
   const setHospitalSeleccionado = (hospital) => {
-    hospitalSeleccionado.value = { ...hospital }; // Clonamos el objeto para evitar mutaciones no deseadas
-    // console.log("Hospital Seleccionado:", hospitalSeleccionado.value);
+    hospitalSeleccionado.value = { ...hospital };
   };
 
   const cargarHospitales = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("hospitales")
-        .select("*")
-        .order("created_at", { ascending: true });
+    if (!authStore.tenant_id) return;
 
-      if (error) {
-        console.error("Error al cargar hospitales:", error);
-      } else {
-        hospitales.value = data || [];
-      }
-      // console.log("Datos de hospitales cargados:", hospitales.value);
-    } catch (err) {
-      console.error("Error en cargarHospitales:", err.message);
+    const { data, error } = await supabase
+      .from("hospitales")
+      .select("*")
+      .eq("tenant_id", authStore.tenant_id)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Error al cargar hospitales:", error);
+    } else if (data) {
+      hospitales.value = data;
     }
   };
 
   const agregarHospital = async (hospitalInfo) => {
-    const hospitalConTenant = { ...hospitalInfo, tenant_Id: tenantId }; // Asegúrate de usar 'tenant_id' en minúsculas
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para agregar hospitales.");
+      return;
+    }
 
-    // console.log("Hospital Con Tenant:", hospitalConTenant); // Para depuración
+    const hospitalConTenant = {
+      ...hospitalInfo,
+      tenant_id: authStore.tenant_id,
+    };
 
-    try {
-      const { data, error } = await supabase
-        .from("hospitales")
-        .insert([hospitalConTenant], { returning: "representation" });
+    const { data, error } = await supabase
+      .from("hospitales")
+      .insert([hospitalConTenant], { returning: "representation" });
 
-      if (error) {
-        console.error("Error al agregar hospital:", error);
-        throw error; // Propagar el error para manejarlo en el componente
-      } else if (data && data[0]) {
-        hospitales.value.push(data[0]);
-      }
-    } catch (err) {
-      console.error("Error en agregarHospital:", err.message);
-      throw err; // Propagar el error
+    if (error) {
+      console.error("Error al agregar un hospital:", error);
+    } else if (data && data.length > 0) {
+      hospitales.value.push(data[0]);
     }
   };
+
   const eliminarHospital = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return false;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para eliminar hospitales.");
+      return false;
+    }
+
     try {
-      const { data, error } = await supabase
-        .from("hospitales")
-        .delete()
-        .eq("id", id);
-      console.log("Supabase Response:", { data, error });
+      const { error } = await supabase.from("hospitales").delete().eq("id", id);
 
       if (error) {
         console.error("Error al eliminar hospital:", error);
-        return false; // Retorna false si hay un error
+        return false;
       } else {
-        // Filtra el hospital eliminado de la lista local
         hospitales.value = hospitales.value.filter((h) => h.id !== id);
-        return true; // Retorna true si la eliminación fue exitosa
+        return true;
       }
     } catch (err) {
       console.error("Error en eliminarHospital:", err.message);
-      return false; // Captura cualquier error inesperado
+      return false;
     }
   };
 
   const actualizarHospital = async (hospitalInfo) => {
-    // console.log("Datos enviados para actualizar:", hospitalInfo);
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para actualizar hospitales.");
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("hospitales")
@@ -101,21 +101,31 @@ export const useHospitalStore = defineStore("hospitalStore", () => {
         .eq("id", hospitalInfo.id);
       if (error) {
         console.error("Error al actualizar hospital:", error);
-        throw error; // Propagar el error
+        throw error;
       } else if (data && data[0]) {
         const index = hospitales.value.findIndex(
           (h) => h.id === hospitalInfo.id
         );
         if (index !== -1) {
-          hospitales.value[index] = { ...hospitalInfo };
+          hospitales.value[index] = { ...data[0] };
         }
         hospitalSeleccionado.value = null;
       }
     } catch (err) {
       console.error("Error en actualizarHospital:", err.message);
-      throw err; // Propagar el error
+      throw err;
     }
   };
+
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarHospitales();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     hospitales,
@@ -128,55 +138,76 @@ export const useHospitalStore = defineStore("hospitalStore", () => {
   };
 });
 
-///Tienda para Medicamentos
+// -----------------------------------------------------------------------------
+// Tienda para Medicamentos
+// -----------------------------------------------------------------------------
 export const useMedicamentoStore = defineStore("medicamentoStore", () => {
   const medicamentos = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
-  const medicamentoSeleccionado = ref(null); // Estado para el medicamento seleccionado
+  const medicamentoSeleccionado = ref(null);
+  const authStore = useAuthStore();
 
   const cargarMedicamentos = async () => {
+    if (!authStore.tenant_id) return;
     try {
       const { data, error } = await supabase
-
         .from("medicamentos")
         .select("*")
-
+        .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
+
       if (error) {
         console.error("Error al cargar medicamentos:", error);
       } else {
-        medicamentos.value = data || []; // Asigna el array completo a `hospitales.value`
+        medicamentos.value = data || [];
       }
-      // console.log("Medicamentos:", medicamentos.value); // Para depurar
     } catch (err) {
-      console.error("Error en cargarmMdicamentos:", err.message);
+      console.error("Error en cargarMedicamentos:", err.message);
     }
   };
 
   const agregarMedicamento = async (medicamento) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para agregar medicamentos.");
+      return;
+    }
+
     // Verifica si el medicamento ya existe
-    if (!medicamentos.value.some((m) => m.codigo === medicamento.codigo)) {
-      const { data, error } = await supabase
-        .from("medicamentos")
-        .insert([{ ...medicamento, tenant_Id: tenantId }])
-        .select(); // Asegura que siempre intente devolver los datos insertados
-
-      if (error) {
-        console.error("Error al agregar medicamento:", error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        medicamentos.value.push(data[0]);
-      } else {
-        console.warn("No se devolvieron datos después de la inserción.");
-      }
-    } else {
+    if (medicamentos.value.some((m) => m.codigo === medicamento.codigo)) {
       console.warn("Este medicamento ya existe.");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("medicamentos")
+      .insert([{ ...medicamento, tenant_id: authStore.tenant_id }])
+      .select();
+
+    if (error) {
+      console.error("Error al agregar medicamento:", error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      medicamentos.value.push(data[0]);
+    } else {
+      console.warn("No se devolvieron datos después de la inserción.");
     }
   };
 
   const eliminarMedicamento = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para eliminar medicamentos.");
+      return;
+    }
+
     const { error } = await supabase.from("medicamentos").delete().eq("id", id);
 
     if (error) {
@@ -185,7 +216,19 @@ export const useMedicamentoStore = defineStore("medicamentoStore", () => {
       medicamentos.value = medicamentos.value.filter((m) => m.id !== id);
     }
   };
+
   const actualizarMedicamento = async (medicamento) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error(
+        "El usuario no tiene permisos para actualizar medicamentos."
+      );
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("medicamentos")
@@ -193,13 +236,12 @@ export const useMedicamentoStore = defineStore("medicamentoStore", () => {
         .eq("id", medicamento.id);
       if (error) {
         console.error("Error al actualizar medicamento:", error);
-      } else if (data) {
-        // Actualiza el estado local
+      } else if (data && data[0]) {
         const index = medicamentos.value.findIndex(
           (m) => m.id === medicamento.id
         );
         if (index !== -1) {
-          medicamentos.value[index] = { ...medicamento };
+          medicamentos.value[index] = { ...data[0] };
         }
       }
     } catch (err) {
@@ -208,8 +250,18 @@ export const useMedicamentoStore = defineStore("medicamentoStore", () => {
   };
 
   const setMedicamentoSeleccionado = (medicamento) => {
-    medicamentoSeleccionado.value = { ...medicamento }; // Clona el medicamento
+    medicamentoSeleccionado.value = { ...medicamento };
   };
+  // Cargar medicamentos cuando haya tenant_id
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarMedicamentos();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     medicamentos,
@@ -222,43 +274,46 @@ export const useMedicamentoStore = defineStore("medicamentoStore", () => {
   };
 });
 
-///
-///
-///
-///
-//
-///
+// -----------------------------------------------------------------------------
 // Tienda para Estudios
+// -----------------------------------------------------------------------------
 export const useEstudioStore = defineStore("examenesEstudios", () => {
   const estudios = ref([]);
-  const tenantId = "a780935f-76e7-46c7-98a3-b4c3ab9bb2c3";
+  const authStore = useAuthStore();
 
   const cargarEstudios = async () => {
+    if (!authStore.tenant_id) return;
     try {
       const { data, error } = await supabase
-
         .from("examenesEstudios")
         .select("*")
-
-        .eq("tenant_id", tenantId)
+        .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
 
       if (error) {
-        console.error("Error al cargar hospitales:", error);
+        console.error("Error al cargar estudios:", error);
       } else {
-        estudios.value = data || []; // Asigna el array completo a `hospitales.value`
+        estudios.value = data || [];
       }
-      // console.log("Medicamentos:", estudios.value); // Para depurar
     } catch (err) {
-      console.error("Error en cargarmMdicamentos:", err.message);
+      console.error("Error en cargarEstudios:", err.message);
     }
   };
 
   const agregarEstudio = async (estudioInfo) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para agregar estudios.");
+      return;
+    }
+
     const { data, error } = await supabase.from("examenesEstudios").insert([
       {
         ...estudioInfo,
-        tenant_id: tenantId,
+        tenant_id: authStore.tenant_id,
         updated_at: new Date().toISOString(),
       },
     ]);
@@ -271,25 +326,43 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
   };
 
   const eliminarEstudio = async (id) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para eliminar estudios.");
+      return;
+    }
+
     const { error } = await supabase
       .from("examenesEstudios")
       .delete()
       .eq("id", id);
 
     if (error) {
-      console.error("Error al eliminar la cita:", error);
+      console.error("Error al eliminar el estudio:", error);
     } else {
-      estudios.value = estudios.value.filter((estudios) => estudios.id !== id);
+      estudios.value = estudios.value.filter((e) => e.id !== id);
     }
-    onMounted(cargarEstudios);
   };
+
   const actualizarEstudio = async (estudioInfo) => {
+    if (!authStore.tenant_id) {
+      console.warn("No hay tenant_id disponible");
+      return;
+    }
+    if (authStore.role !== "admin") {
+      console.error("El usuario no tiene permisos para actualizar estudios.");
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("examenesEstudios")
         .update({
           ...estudioInfo,
-          updated_at: new Date().toISOString(), // Actualizamos la fecha de modificación
+          updated_at: new Date().toISOString(),
         })
         .eq("id", estudioInfo.id);
 
@@ -299,18 +372,24 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
       }
 
       if (data && data.length > 0) {
-        // Actualiza el array local con los datos modificados
         const index = estudios.value.findIndex((e) => e.id === estudioInfo.id);
         if (index !== -1) {
           estudios.value[index] = { ...data[0] };
         }
       }
-
-      // console.log("Estudio actualizado:", data);
     } catch (err) {
       console.error("Error en actualizarEstudio:", err.message);
     }
   };
+  watch(
+    () => authStore.tenant_id,
+    (newTenantId) => {
+      if (newTenantId) {
+        cargarEstudios();
+      }
+    },
+    { immediate: true }
+  );
   return {
     estudios,
     cargarEstudios,

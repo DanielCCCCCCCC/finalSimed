@@ -1,6 +1,6 @@
 <template>
   <div class="grafico-container">
-    <!-- Gráfico de barras con ApexCharts -->
+    <!-- Gráfico de radar con ApexCharts -->
     <h3 class="main-content-label mb-5 title">Registro de pacientes</h3>
     <ApexCharts
       v-if="registrosPorDia.length > 0"
@@ -15,11 +15,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 import { storeToRefs } from "pinia";
 import ApexCharts from "vue3-apexcharts";
-import { projectOptions } from "../dahboardData"; // Importa colores desde dashboardData
 
 // Instancia de la tienda
 const fichaIdentificacionStore = useFichaIdentificacionStore();
@@ -44,100 +43,36 @@ const chartOptions = ref({
       enabled: true,
       easing: "easeinout",
       speed: 800,
-      animateGradually: {
-        enabled: true,
-        delay: 150,
-      },
       dynamicAnimation: {
         enabled: true,
         speed: 350,
       },
     },
-    zoom: {
-      enabled: false,
-    },
   },
-  colors: projectOptions.colors, // Colores dinámicos desde dashboardData
+  colors: ["#6A5ACD"], // Color base para el gráfico
   fill: {
-    type: "bar",
-    gradient: {
-      shade: "light",
-      type: "vertical",
-      shadeIntensity: 1,
-      gradientToColors: projectOptions.colors.map((color) =>
-        color.replace("rgba(", "rgba(").replace(")", ", 0.7)")
-      ), // Aplica un degradado transparente dinámico
-      inverseColors: false,
-      opacityFrom: 1,
-      opacityTo: 0.7,
-      stops: [0, 100],
-    },
+    type: "solid", // Relleno sólido
+    opacity: 0.4, // Transparencia del área rellena
   },
-  plotOptions: {
-    bar: {
-      borderRadius: 6,
-      horizontal: false,
-      columnWidth: "90%",
-    },
+  stroke: {
+    show: true,
+    width: 2, // Grosor del borde del gráfico
+    colors: ["#6A5ACD"], // Color del borde
   },
-  dataLabels: {
-    enabled: true,
-    formatter: (val) => `${val}`,
-    style: {
-      fontSize: "12px",
-      colors: ["#333"],
-    },
+  markers: {
+    size: 4, // Tamaño de los puntos en cada vértice
+    colors: ["#FFFFFF"], // Color interno de los puntos
+    strokeColors: "#6A5ACD", // Color del borde de los puntos
+    strokeWidth: 2,
   },
   xaxis: {
-    categories: registrosPorDia.value.map((item) => item.day),
-    position: "bottom",
-    labels: {
-      style: {
-        colors: "#333",
-        fontSize: "14px",
-      },
-    },
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-    title: {
-      text: "Días de la Semana",
-      style: {
-        fontWeight: "bold",
-        fontSize: "14px",
-      },
-    },
-  },
-  yaxis: {
-    title: {
-      text: "Cantidad de Registros",
-      style: {
-        fontWeight: "bold",
-        fontSize: "14px",
-      },
-    },
-    labels: {
-      style: {
-        fontSize: "12px",
-      },
-    },
+    categories: registrosPorDia.value.map((item) => item.day), // Días de la semana como categorías
   },
   tooltip: {
     enabled: true,
     theme: "light",
     y: {
       formatter: (val) => `${val} registros`,
-    },
-  },
-  title: {
-    // text: "Registros por Día (Semana Actual)",
-    align: "left",
-    style: {
-      fontWeight: "bold",
-      fontSize: "16px",
     },
   },
   responsive: [
@@ -150,20 +85,6 @@ const chartOptions = ref({
         xaxis: {
           labels: {
             fontSize: "10px",
-          },
-          title: {
-            text: "Días",
-            style: {
-              fontSize: "10px",
-            },
-          },
-        },
-        yaxis: {
-          title: {
-            text: "Cantidad",
-            style: {
-              fontSize: "10px",
-            },
           },
         },
       },
@@ -188,6 +109,7 @@ watch(
   { deep: true }
 );
 </script>
+
 <style scoped>
 .title {
   position: relative;

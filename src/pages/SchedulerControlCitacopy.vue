@@ -6,7 +6,7 @@
       :current-date="currentDate"
       :time-zone="'America/Tegucigalpa'"
       :height="800"
-      :cell-duration="30"
+      :cell-duration="15"
       :start-day-hour="8"
       :end-day-hour="18"
       :views="views"
@@ -482,18 +482,18 @@ const onAppointmentAdded = async (e) => {
 
     const { useAuthStore } = await import("../stores/auth");
     const authStore = useAuthStore();
-    const tenantId = authStore.tenantId;
+    const tenant_id = authStore.tenant_id;
     const userId = authStore.user?.id;
-    console.log("tenantId: ", tenantId);
+    console.log("tenant_id: ", tenant_id);
     console.log("userId: ", userId);
 
-    if (!tenantId || !userId) {
+    if (!tenant_id || !userId) {
       Notify.create({
         message: "No se encontraron datos de usuario o tenant.",
         color: "negative",
         position: "top-right",
       });
-      throw new Error("tenantId o userId faltante.");
+      throw new Error("tenant_id o userId faltante.");
     }
 
     const newAppointment = {
@@ -510,7 +510,7 @@ const onAppointmentAdded = async (e) => {
       nombre: selectedPatientId.value,
       medico: selectedDoctorId.value,
       tipoCita: appointmentData.tipoCita,
-      tenantId: tenantId,
+      tenant_id: tenant_id,
       userId: userId,
     };
 
@@ -746,18 +746,20 @@ const onDoctorSelected = (e) => {
 
 // Evento onAppointmentRendered para aplicar color basado en tipoCita
 const onAppointmentRendered = (e) => {
+  console.log("onAppointmentRendered llamado para:", e.appointmentData);
+
   const appointmentData = e.appointmentData;
   const appointmentElement = e.appointmentElement;
 
-  console.log("appointmentData:", appointmentData);
-  console.log("citas:", citas.value);
+  console.log("APPOINTMENTDATA :", appointmentData);
+  console.log("citas LINEA 753:", citas.value);
 
   // Convertir tipoCita a número
   const tipoCitaId = parseInt(appointmentData.tipoCita, 10);
   const tipoCitaObj = citas.value.find((c) => c.id === tipoCitaId);
 
   let descripcionTipoCita = tipoCitaObj ? tipoCitaObj.descripcion : null;
-  console.log("descripcionTipoCita:", descripcionTipoCita);
+  console.log("Descripción del Tipo de Cita:", descripcionTipoCita);
 
   const bgColor = colorMapping[descripcionTipoCita] || "#FFFFFF";
   appointmentElement.style.backgroundColor = bgColor;
@@ -776,19 +778,19 @@ onMounted(async () => {
       throw new Error("El usuario no está autenticado.");
     }
 
-    const tenantId = authStore?.tenantId;
+    const tenant_id = authStore?.tenant_id;
     const userId = authStore?.user?.id;
 
-    console.log("Linea 753 el tenantId " + tenantId);
+    console.log("Linea 753 el tenant_id " + tenant_id);
     console.log("Linea 754 el userId " + userId);
 
-    if (!tenantId) {
+    if (!tenant_id) {
       Notify.create({
         message: "No se encontraron datos de usuario o tenant.",
         color: "negative",
         position: "top-right",
       });
-      throw new Error("tenantId o userId faltante.");
+      throw new Error("tenant_id o userId faltante.");
     }
 
     await appointmentsStore.fetchAppointments();
