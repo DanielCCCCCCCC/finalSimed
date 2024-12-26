@@ -68,9 +68,9 @@ onMounted(async () => {
 
 const monthlyStats = computed(() => store.calculateMonthlyStats());
 
-watch(monthlyStats, (newVal) => {
-  console.log("Monthly stats changed:", newVal);
-});
+// watch(monthlyStats, (newVal) => {
+//   console.log("Monthly stats changed:", newVal);
+// });
 
 const currentMonthCount = computed(() => monthlyStats.value.currentMonthCount);
 const prevMonthCount = computed(() => monthlyStats.value.prevMonthCount);

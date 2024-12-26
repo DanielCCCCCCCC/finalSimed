@@ -14,7 +14,7 @@
             <q-btn
               label="Nuevo Tipo de Paciente"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirDialogoNuevoPaciente"
             />
           </div>

@@ -23,7 +23,7 @@ export const useFichaIdentificacionStore = defineStore(
       const { data, error } = await supabase
         .from("fichaIdentificacion")
         .select("*")
-        .eq("tenant_id", authStore.tenant_id)
+        .eq("userId", authStore.userId)
         .order("created_at", { ascending: true });
 
       if (error) {

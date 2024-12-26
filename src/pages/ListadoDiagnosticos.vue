@@ -12,7 +12,7 @@
             <q-btn
               label="Nuevo Diagnóstico"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirDialogoNuevoDiagnostico"
             />
           </div>

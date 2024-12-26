@@ -27,11 +27,6 @@
                   />
                 </router-link>
                 <div class="clearfix"></div>
-                <!-- <img
-                  src="/images/svgs/user.svg"
-                  class="ht-100 mb-0"
-                  alt="user"
-                /> -->
                 <h5 class="mt-4 text-fixed-white">Registrar Organización</h5>
                 <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
                   Completa el formulario para registrar una nueva organización
@@ -50,7 +45,7 @@
                       Completa los campos para registrar una nueva organización.
                     </p>
 
-                    <q-form @submit.prevent="handleSubmit">
+                    <q-form @submit.prevent="handleSubmit" ref="form">
                       <!-- Campos de la organización -->
                       <div class="form-group text-start">
                         <label>Nombre de la Organización</label>
@@ -61,6 +56,8 @@
                           dense
                           class="form-control"
                           required
+                          :rules="[(v) => !!v || 'El nombre es obligatorio.']"
+                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
@@ -72,6 +69,10 @@
                           dense
                           class="form-control"
                           required
+                          :rules="[
+                            (v) => !!v || 'La dirección es obligatoria.',
+                          ]"
+                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
@@ -84,6 +85,8 @@
                           dense
                           class="form-control"
                           required
+                          :rules="emailRules"
+                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
@@ -95,6 +98,8 @@
                           outlined
                           dense
                           class="form-control"
+                          :rules="[]"
+                          lazy-rules
                         />
                       </div>
 
@@ -110,6 +115,8 @@
                           dense
                           class="form-control"
                           required
+                          :rules="emailRules"
+                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
@@ -122,6 +129,8 @@
                           dense
                           class="form-control"
                           required
+                          :rules="passwordRules"
+                          lazy-rules
                         />
                       </div>
 
@@ -162,17 +171,16 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useQuasar, Notify } from "quasar";
 import { useRouter } from "vue-router";
 import { useOrganizacionStore } from "../stores/organizacionStore";
 import { useThemeStore } from "../stores/themeStore"; // Asegúrate de que la ruta es correcta
-const themeStore = useThemeStore();
-// Campos de la organización
+
+// Refs para los campos del formulario
 const nombre = ref("");
 const direccion = ref("");
 const email_contacto = ref("");
 const numero_telefono = ref("");
-
-// Campos del administrador
 const admin_email = ref("");
 const admin_password = ref("");
 
@@ -182,8 +190,47 @@ const router = useRouter();
 const error = ref(null);
 const mensajeExito = ref(null);
 const cargando = ref(false);
+const $q = useQuasar();
+const themeStore = useThemeStore();
 
+// Ref para el formulario
+const form = ref(null);
+
+// Reglas de validación para el Email
+const emailRules = [
+  (value) => !!value || "El email es obligatorio.",
+  (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value) || "Ingrese un email válido.";
+  },
+];
+
+// Reglas de validación para la Contraseña
+const passwordRules = [
+  (value) => {
+    console.log("Validando contraseña:", value);
+    return !!value || "La contraseña es obligatoria.";
+  },
+  (value) => {
+    // Regex actualizada para permitir una gama más amplia de símbolos
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    const isValid = regex.test(value);
+    console.log(`Contraseña válida: ${isValid}`);
+    return (
+      isValid ||
+      "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos."
+    );
+  },
+];
+
+// Manejo del envío del formulario
 const handleSubmit = async () => {
+  // Validar el formulario antes de enviar
+  const isValid = await form.value.validate();
+  if (!isValid) {
+    return;
+  }
+
   cargando.value = true;
   error.value = null;
 
@@ -205,10 +252,20 @@ const handleSubmit = async () => {
       datosAdmin
     );
     mensajeExito.value = "Organización registrada exitosamente.";
+    $q.notify({
+      type: "positive",
+      message: "Revise el correo electrónico para verificar su cuenta.",
+      position: "top-right",
+    });
     router.push({ name: "dashboard" });
   } catch (err) {
     error.value =
       err.message || "Ocurrió un error al registrar la organización.";
+    $q.notify({
+      type: "negative",
+      message: "Fallo al crear la organización, inténtelo más tarde.",
+      position: "top-right",
+    });
   } finally {
     cargando.value = false;
   }
@@ -229,12 +286,6 @@ onMounted(() => {
 .page {
   min-height: 100vh;
 }
-/*
-.header-setting-icon {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-} */
 
 .details {
   position: relative;
@@ -260,5 +311,14 @@ onMounted(() => {
 
 .fs-13 {
   font-size: 13px;
+}
+
+/* Estilos para mensajes de error en los campos */
+.q-field__messages {
+  color: #f44336; /* Rojo para mensajes de error */
+}
+
+.q-input--error .q-field__control {
+  border-color: #f44336;
 }
 </style>

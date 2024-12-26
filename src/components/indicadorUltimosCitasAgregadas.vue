@@ -114,8 +114,8 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString();
 };
 
-console.log("Sorted Ascending Appointments:", lastTenAppointments.value);
-console.log("Mapped Appointments:", mappedAppointments.value);
+// console.log("Sorted Ascending Appointments:", lastTenAppointments.value);
+// console.log("Mapped Appointments:", mappedAppointments.value);
 </script>
 
 <style scoped>

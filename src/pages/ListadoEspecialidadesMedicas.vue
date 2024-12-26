@@ -12,7 +12,7 @@
             <q-btn
               label="Nueva Especialidad"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirFormularioNuevaEspecialidad"
             />
           </div>

@@ -30,9 +30,12 @@ import Login from "../pages/loginOrganizaciones.vue";
 import RegistrarOrganizacion from "../pages/RegistrarOrganizacion.vue";
 import AdminPanel from "../pages/AdminPanel.vue";
 import NotAuthorized from "../pages/NotAuthorized.vue";
-import ForgotPassword from "../pages/ForgotPassword.vue";
 import ListadoTipoEstadoCivil from "../pages/ListadoTipoEstadoCivil.vue";
 import pacientesPrueba from "../pages/pacientesPrueba.vue";
+import Configuraciones from "../pages/Configuraciones.vue";
+import ResetPassword from "../pages/ResetPassword.vue";
+import RecoverPassword from "../pages/RecoverPassword.vue";
+
 const routes = [
   {
     path: "/",
@@ -43,176 +46,154 @@ const routes = [
         path: "dashboard",
         name: "dashboard",
         component: DashboardIndicadores,
-        meta: { requiresAuth: true, roles: ["admin", "medico"] },
+        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
-
       {
         path: "controlCitasv2",
         name: "controlCitasv2",
         component: SchedulerControlCitaCopy,
-        meta: { requiresAuth: true, roles: ["admin", "medico"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["admin", "medico", "paciente", "secretario"],
+        },
       },
-
       {
         path: "listadoContactos",
         name: "listadoContactos",
         component: ListadoContactos,
-        meta: { requiresAuth: true, roles: ["admin", "medico"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "listamedicos",
         name: "listamedicos",
         component: ListadoMedicos,
-        meta: { requiresAuth: true, roles: ["admin"] },
-      },
-      {
-        path: "listadohospitales",
-        name: "listadohospitales",
-        component: ListadoHospitales,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadomedicamentos",
         name: "listadomedicamentos",
         component: ListadoMedicamentos,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadoestudios",
         name: "listadoestudios",
         component: ListadoExamenesEstudios,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "diagnosticos",
         name: "diagnosticos",
         component: FormDiagnosticos,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "listadoclasificaciondiagnosticos",
         name: "listadoclasificaciondiagnosticos",
         component: ListadoClasificacionDiagnostico,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadodiagnosticos",
         name: "listadodiagnosticos",
         component: ListadoDiagnosticos,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-      {
-        path: "listadocontrolmedicion",
-        name: "listadocontrolmedicion",
-        component: ListadoControlMedicion,
-        meta: { requiresAuth: true, roles: ["admin"] },
-      },
+      // Otras rutas protegidas...
       {
         path: "configuracionesMedicas",
         name: "configuracionesMedicas",
         component: FormConfiMedicas,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadoespecialidadesmedicas",
         name: "listadoespecialidadesmedicas",
         component: ListadoEspecialidadesMedicas,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadotiposestudios",
         name: "listadotiposestudios",
         component: ListadoTiposEstudios,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadotipomedicamentos",
         name: "listadotipomedicamentos",
         component: ListadoTiposMedicamentos,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadotipopacientes",
         name: "listadotipopacientes",
         component: ListadoTipoPacientes,
-        meta: { requiresAuth: true, roles: ["admin"] },
-      },
-      {
-        path: "listadogruposcontactos",
-        name: "listadogruposcontactos",
-        component: ListadoGruposContactos,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "pacientes",
         name: "pacientes",
         component: pacientesPrueba,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
       {
         path: "listadotiposcitas",
         name: "listadotiposcitas",
         component: ListadoTiposCitas,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "listadopacientes",
         name: "listadopacientes",
         component: ListadoPacientes,
-        meta: { requiresAuth: true, roles: ["admin", "medico"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "datosGenerales",
         name: "datosGenerales",
         component: FormDatosGenerales,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadomunicipios",
         name: "listadomunicipios",
         component: ListadoMunicipios,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-
       {
         path: "listadogruposanguineo",
         name: "listadogruposanguineo",
         component: ListadoGrupoSanguineo,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadoescolaridad",
         name: "listadoescolaridad",
         component: ListadoTipoEscolaridad,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "listadotipoestadocivil",
         name: "listadotipoestadocivil",
         component: ListadoTipoEstadoCivil,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
+      },
+      {
+        path: "configuraciones",
+        name: "configuraciones",
+        component: Configuraciones,
+        meta: { requiresAuth: true, roles: ["admin", "secretario", "medico"] },
       },
       {
         path: "admin",
         name: "AdminPanel",
         component: AdminPanel,
-        meta: { requiresAuth: true, roles: ["admin"] },
+        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
       {
         path: "not-authorized",
         name: "NotAuthorized",
         component: NotAuthorized,
-      },
-      {
-        path: "forgotpassword",
-        name: "forgotPassword",
-        component: ForgotPassword,
-        meta: { requiresAuth: false },
       },
     ],
   },
@@ -221,6 +202,18 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
+  },
+  {
+    path: "/recover-password",
+    name: "RecoverPassword",
+    component: RecoverPassword,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: ResetPassword,
+    meta: { requiresAuth: false },
   },
   {
     path: "/registrarOrganizacion",

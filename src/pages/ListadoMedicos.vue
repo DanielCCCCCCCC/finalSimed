@@ -5,14 +5,14 @@
       <div class="q-pb-md">
         <div class="row items-center">
           <div class="header-container">
-            <h4 class="header-title">Médicos Existentes</h4>
+            <h4 class="header-title">Médicos referente o de cabecera</h4>
             <p class="parrafo">Catálogo de médicos del centro médico</p>
           </div>
           <div>
             <q-btn
               label="Nuevo Médico"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirDialogoNuevoMedico"
             />
           </div>

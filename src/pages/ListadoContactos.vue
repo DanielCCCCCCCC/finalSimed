@@ -6,14 +6,14 @@
       <div class="q-pb-md">
         <div class="row items-center">
           <div class="header-container">
-            <h4 class="header-title">Contactos Existentes</h4>
+            <h4 class="header-title">Guia Telefónica</h4>
             <p class="parrafo">Catálogo de contactos del centro médico</p>
           </div>
           <div>
             <q-btn
               label="Nuevo contacto"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="handleNuevoContacto"
             />
           </div>
@@ -67,19 +67,19 @@
           :allow-sorting="true"
           :min-width="180"
         />
-        <DxColumn
+        <!-- <DxColumn
           data-field="organizacionContacto"
           caption="Organización"
           :allow-sorting="true"
           :min-width="140"
-        />
-        <DxColumn
+        /> -->
+        <!-- <DxColumn
           data-field="grupoDescripcion"
           caption="Grupo de Contacto"
           :allow-sorting="true"
           :visible="true"
           :min-width="120"
-        />
+        /> -->
         <DxColumn
           data-field="departamentoDescripcion"
           caption="Departamento"
@@ -145,152 +145,153 @@
                 class="btnCerrarModal fe-log-out"
               />
             </div>
+            <div class="q-ml-md">
+              <q-form @submit.prevent="guardarcontact">
+                <!-- Información Personal -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre</label>
+                    <q-input
+                      v-model="formData.nombreContacto"
+                      placeholder="Nombre"
+                      dense
+                      required
+                      class="form-control"
+                      :error="!!formErrors.nombreContacto"
+                      :error-message="formErrors.nombreContacto"
+                    />
+                  </div>
 
-            <q-form @submit.prevent="guardarcontact">
-              <!-- Información Personal -->
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Nombre</label>
-                  <q-input
-                    v-model="formData.nombreContacto"
-                    placeholder="Nombre"
-                    dense
-                    required
-                    class="form-control"
-                    :error="!!formErrors.nombreContacto"
-                    :error-message="formErrors.nombreContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Dirección</label>
+                    <q-input
+                      v-model="formData.direccionContacto"
+                      placeholder="Dirección"
+                      dense
+                      required
+                      class="form-control"
+                      :error="!!formErrors.direccionContacto"
+                      :error-message="formErrors.direccionContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Dirección</label>
-                  <q-input
-                    v-model="formData.direccionContacto"
-                    placeholder="Dirección"
-                    dense
-                    required
-                    class="form-control"
-                    :error="!!formErrors.direccionContacto"
-                    :error-message="formErrors.direccionContacto"
-                  />
-                </div>
+                  <!-- <div class="col-md-6 mb-3">
+        <label class="form-label">Grupo</label>
+        <q-select
+          v-model="formData.grupoIdContacto"
+          :options="grupos"
+          option-value="id"
+          option-label="descripcion"
+          required
+          dense
+          class="form-select no-arrow"
+          :error="!!formErrors.grupoIdContacto"
+          :error-message="formErrors.grupoIdContacto"
+        />
+      </div> -->
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Grupo</label>
-                  <q-select
-                    v-model="formData.grupoIdContacto"
-                    :options="grupos"
-                    option-value="id"
-                    option-label="descripcion"
-                    required
-                    dense
-                    class="form-select no-arrow"
-                    :error="!!formErrors.grupoIdContacto"
-                    :error-message="formErrors.grupoIdContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Departamento</label>
+                    <q-select
+                      v-model="formData.departamentoIdContacto"
+                      :options="departamentos"
+                      option-value="id"
+                      option-label="descripcion"
+                      placeholder="Seleccione un departamento"
+                      dense
+                      required
+                      class="form-select"
+                      @update:model-value="onDepartamentoChange"
+                      :error="!!formErrors.departamentoIdContacto"
+                      :error-message="formErrors.departamentoIdContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Departamento</label>
-                  <q-select
-                    v-model="formData.departamentoIdContacto"
-                    :options="departamentos"
-                    option-value="id"
-                    option-label="descripcion"
-                    placeholder="Seleccione un departamento"
-                    dense
-                    required
-                    class="form-select"
-                    @update:model-value="onDepartamentoChange"
-                    :error="!!formErrors.departamentoIdContacto"
-                    :error-message="formErrors.departamentoIdContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Municipio</label>
+                    <q-select
+                      v-model="formData.municipioIdContacto"
+                      :options="filteredMunicipios"
+                      option-value="id"
+                      option-label="descripcion"
+                      placeholder="Seleccione un municipio"
+                      dense
+                      required
+                      class="form-select"
+                      :disable="!formData.departamentoIdContacto"
+                      :error="!!formErrors.municipioIdContacto"
+                      :error-message="formErrors.municipioIdContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Municipio</label>
-                  <q-select
-                    v-model="formData.municipioIdContacto"
-                    :options="filteredMunicipios"
-                    option-value="id"
-                    option-label="descripcion"
-                    placeholder="Seleccione un municipio"
-                    dense
-                    required
-                    class="form-select"
-                    :disable="!formData.departamentoIdContacto"
-                    :error="!!formErrors.municipioIdContacto"
-                    :error-message="formErrors.municipioIdContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    <q-input
+                      v-model="formData.emailContacto"
+                      type="email"
+                      placeholder="Email"
+                      dense
+                      required
+                      class="form-control"
+                      :error="!!formErrors.emailContacto"
+                      :error-message="formErrors.emailContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Email</label>
-                  <q-input
-                    v-model="formData.emailContacto"
-                    type="email"
-                    placeholder="Email"
-                    dense
-                    required
-                    class="form-control"
-                    :error="!!formErrors.emailContacto"
-                    :error-message="formErrors.emailContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Teléfono Casa</label>
+                    <q-input
+                      v-model="formData.telefonoCasaContacto"
+                      placeholder="Teléfono Casa"
+                      dense
+                      mask="####-####"
+                      class="form-control"
+                      :error="!!formErrors.telefonoCasaContacto"
+                      :error-message="formErrors.telefonoCasaContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Teléfono Casa</label>
-                  <q-input
-                    v-model="formData.telefonoCasaContacto"
-                    placeholder="Teléfono Casa"
-                    dense
-                    mask="####-####"
-                    class="form-control"
-                    :error="!!formErrors.telefonoCasaContacto"
-                    :error-message="formErrors.telefonoCasaContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Teléfono Personal</label>
+                    <q-input
+                      v-model="formData.telefonoPersonalContacto"
+                      placeholder="Teléfono Personal"
+                      dense
+                      mask="####-####"
+                      class="form-control"
+                      :error="!!formErrors.telefonoPersonalContacto"
+                      :error-message="formErrors.telefonoPersonalContacto"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Teléfono Personal</label>
-                  <q-input
-                    v-model="formData.telefonoPersonalContacto"
-                    placeholder="Teléfono Personal"
-                    dense
-                    mask="####-####"
-                    class="form-control"
-                    :error="!!formErrors.telefonoPersonalContacto"
-                    :error-message="formErrors.telefonoPersonalContacto"
-                  />
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Observación</label>
+                    <q-input
+                      v-model="formData.observacionContacto"
+                      type="textarea"
+                      placeholder="Observación"
+                      dense
+                      maxlength="500"
+                      counter
+                      class="form-control"
+                    />
+                  </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Observación</label>
-                  <q-input
-                    v-model="formData.observacionContacto"
-                    type="textarea"
-                    placeholder="Observación"
-                    dense
-                    maxlength="500"
-                    counter
-                    class="form-control"
-                  />
+                  <div class="col-md-12">
+                    <q-btn
+                      :label="
+                        isEditMode ? 'Actualizar Contacto' : 'Guardar Contacto'
+                      "
+                      color="primary"
+                      type="submit"
+                      unelevated
+                      rounded
+                      class="btn btn-primary d-grid"
+                    />
+                  </div>
                 </div>
-
-                <div class="col-md-12">
-                  <q-btn
-                    :label="
-                      isEditMode ? 'Actualizar Contacto' : 'Guardar Contacto'
-                    "
-                    color="primary"
-                    type="submit"
-                    unelevated
-                    rounded
-                    class="btn btn-primary d-grid"
-                  />
-                </div>
-              </div>
-            </q-form>
+              </q-form>
+            </div>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -326,13 +327,13 @@ import { Notify } from "quasar";
 import { storeToRefs } from "pinia";
 
 // **Instancias de las tiendas**
-const gruposContactosStore = useGruposContactosStore();
+// const gruposContactosStore = useGruposContactosStore();
 const departamentoStore = useDepartamentoStore();
 const municipioStore = useMunicipioStore();
 const contactStore = useContactStore();
 
 // **Referencias a los datos de las tiendas**
-const { grupos } = storeToRefs(gruposContactosStore);
+// const { grupos } = storeToRefs(gruposContactosStore);
 const { departamentos } = storeToRefs(departamentoStore);
 const { municipios } = storeToRefs(municipioStore);
 const { contactos } = storeToRefs(contactStore);
@@ -347,7 +348,7 @@ const formData = ref({
   nombreContacto: "",
   direccionContacto: "",
   organizacionContacto: "",
-  grupoIdContacto: null,
+  // grupoIdContacto: null,
   departamentoIdContacto: null,
   municipioIdContacto: null,
   emailContacto: "",
@@ -362,9 +363,9 @@ const contactId = ref(null);
 // **Computed properties**
 const contactosConDetalles = computed(() => {
   return (contactos.value || []).map((contacto) => {
-    const grupo = (grupos.value || []).find(
-      (grp) => grp.id === Number(contacto.grupoIdContacto)
-    );
+    // const grupo = (grupos.value || []).find(
+    //   (grp) => grp.id === Number(contacto.grupoIdContacto)
+    // );
     const departamento = (departamentos.value || []).find(
       (dept) => dept.id === Number(contacto.departamentoIdContacto)
     );
@@ -373,7 +374,7 @@ const contactosConDetalles = computed(() => {
     );
     return {
       ...contacto,
-      grupoDescripcion: grupo ? grupo.descripcion : "Grupo no encontrado",
+      // grupoDescripcion: grupo ? grupo.descripcion : "Grupo no encontrado",
       departamentoDescripcion: departamento
         ? departamento.descripcion
         : "Departamento no encontrado",
@@ -408,7 +409,7 @@ const resetForm = () => {
     nombreContacto: "",
     direccionContacto: "",
     organizacionContacto: "",
-    grupoIdContacto: null,
+    // grupoIdContacto: null,
     departamentoIdContacto: null,
     municipioIdContacto: null,
     emailContacto: "",
@@ -422,7 +423,7 @@ const resetForm = () => {
 // Fetch de datos al montar el componente
 onMounted(async () => {
   await contactStore.cargarContactos();
-  await gruposContactosStore.cargarGrupos();
+  // await gruposContactosStore.cargarGrupos();
   await departamentoStore.cargarDepartamentos();
   await municipioStore.cargarMunicipios();
   window.addEventListener("resize", updateWidth);
@@ -448,7 +449,7 @@ const handleEdit = (contacto) => {
       nombreContacto: contacto.nombreContacto,
       direccionContacto: contacto.direccionContacto,
       organizacionContacto: contacto.organizacionContacto,
-      grupoIdContacto: contacto.grupoIdContacto,
+      // grupoIdContacto: contacto.grupoIdContacto,
       departamentoIdContacto: contacto.departamentoIdContacto,
       municipioIdContacto: contacto.municipioIdContacto,
       emailContacto: contacto.emailContacto,
@@ -487,8 +488,8 @@ const handleDelete = async (contactoId) => {
 async function guardarcontact() {
   const contactData = {
     ...formData.value,
-    grupoIdContacto:
-      formData.value.grupoIdContacto?.id || formData.value.grupoIdContacto,
+    // grupoIdContacto:
+    //   formData.value.grupoIdContacto?.id || formData.value.grupoIdContacto,
     departamentoIdContacto:
       formData.value.departamentoIdContacto?.id ||
       formData.value.departamentoIdContacto,
@@ -506,9 +507,9 @@ async function guardarcontact() {
   if (!contactData.direccionContacto) {
     formErrors.value.direccionContacto = "La dirección es obligatoria.";
   }
-  if (!contactData.grupoIdContacto) {
-    formErrors.value.grupoIdContacto = "El grupo es obligatorio.";
-  }
+  // if (!contactData.grupoIdContacto) {
+  //   formErrors.value.grupoIdContacto = "El grupo es obligatorio.";
+  // }
   if (!contactData.departamentoIdContacto) {
     formErrors.value.departamentoIdContacto = "El departamento es obligatorio.";
   }
@@ -567,7 +568,7 @@ async function cargarContactoParaEditar(contactoId) {
         nombreContacto: contacto.nombreContacto,
         direccionContacto: contacto.direccionContacto,
         organizacionContacto: contacto.organizacionContacto,
-        grupoIdContacto: contacto.grupoIdContacto,
+        // grupoIdContacto: contacto.grupoIdContacto,
         departamentoIdContacto: contacto.departamentoIdContacto,
         municipioIdContacto: contacto.municipioIdContacto,
         emailContacto: contacto.emailContacto,

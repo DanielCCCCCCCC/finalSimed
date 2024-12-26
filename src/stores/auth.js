@@ -204,7 +204,7 @@ export const useAuthStore = defineStore("auth", () => {
         throw signOutError;
       }
 
-      console.log("Sesión cerrada exitosamente.");
+      // console.log("Sesión cerrada exitosamente.");
       resetAuthState();
 
       // Eliminar ambos tokens del localStorage
@@ -223,7 +223,7 @@ export const useAuthStore = defineStore("auth", () => {
    * @param {Object} sessionData - Datos de la sesión.
    */
   const handleAuthStateChange = (event, sessionData) => {
-    console.log("Evento de autenticación recibido:", event);
+    // console.log("Evento de autenticación recibido:", event);
 
     if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
       const newSession = sessionData;

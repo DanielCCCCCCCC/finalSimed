@@ -57,7 +57,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       count: week.count,
     }));
 
-    console.log("Tendencia de citas:", appointmentsTrend.value);
+    // console.log("Tendencia de citas:", appointmentsTrend.value);
   };
 
   /**
@@ -85,14 +85,14 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         )
         .eq("userId", userId);
 
-      console.log("Data fetched from Supabase:", data);
+      // console.log("Data fetched from Supabase:", data);
 
       if (fetchError) {
         console.error("Error al obtener las citas:", fetchError);
         error.value = fetchError.message;
       } else {
         appointments.value = data || [];
-        console.log("Appointments cargadas:", appointments.value);
+        // console.log("Appointments cargadas:", appointments.value);
         calculateAppointmentsTrend();
       }
     } catch (err) {
@@ -123,11 +123,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     const tenant_id = authStore.tenant_id;
     const userId = authStore.userId;
 
-    console.log("Estado de autenticación actualizado:", {
-      tenant_id: tenant_id,
-      role: role.value,
-      userId: userId,
-    });
+    // console.log("Estado de autenticación actualizado:", {
+    //   tenant_id: tenant_id,
+    //   role: role.value,
+    //   userId: userId,
+    // });
 
     if (!userId) {
       console.error(
@@ -141,7 +141,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       ...appointment,
     };
 
-    console.log("Adding appointment:", appointmentWithUser);
+    // console.log("Adding appointment:", appointmentWithUser);
 
     loading.value = true;
     error.value = null;
@@ -152,7 +152,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         .insert([appointmentWithUser])
         .select();
 
-      console.log("Inserted appointment data:", data);
+      // console.log("Inserted appointment data:", data);
 
       if (insertError) {
         console.error("Error inserting appointment:", insertError);
@@ -163,7 +163,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       if (data && data.length > 0) {
         appointments.value.push(data[0]);
         calculateAppointmentsTrend();
-        console.log("Appointment added:", data[0]);
+        // console.log("Appointment added:", data[0]);
         return data[0];
       } else {
         console.error(
@@ -195,7 +195,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       return;
     }
 
-    console.log("Actualizando cita con ID:", id, "y datos:", updates);
+    // console.log("Actualizando cita con ID:", id, "y datos:", updates);
 
     loading.value = true;
     error.value = null;
@@ -207,7 +207,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         .eq("id", id)
         .eq("userId", userId);
 
-      console.log("Updated appointment data:", data);
+      // console.log("Updated appointment data:", data);
 
       if (updateError) {
         console.error("Error al actualizar la cita en Supabase:", updateError);
@@ -219,10 +219,10 @@ export const useAppointmentsStore = defineStore("appointments", () => {
             ...appointments.value[index],
             ...updates,
           };
-          console.log(
-            "Appointment updated locally:",
-            appointments.value[index]
-          );
+          // console.log(
+          //   "Appointment updated locally:",
+          //   appointments.value[index]
+          // );
         }
         calculateAppointmentsTrend();
       }
@@ -241,14 +241,14 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     const userId = authStore.userId;
 
     if (!userId) {
-      console.error(
-        "No hay un usuario autenticado. No se puede eliminar la cita."
-      );
+      // console.error(
+      //   "No hay un usuario autenticado. No se puede eliminar la cita."
+      // );
       error.value = "Usuario no autenticado.";
       return;
     }
 
-    console.log("Eliminando cita con ID:", id);
+    // console.log("Eliminando cita con ID:", id);
 
     loading.value = true;
     error.value = null;
@@ -266,7 +266,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       } else {
         appointments.value = appointments.value.filter((app) => app.id !== id);
         calculateAppointmentsTrend();
-        console.log("Appointment deleted locally. ID:", id);
+        // console.log("Appointment deleted locally. ID:", id);
       }
     } catch (err) {
       console.error("Error al eliminar la cita:", err.message);
@@ -312,9 +312,9 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       diffPercentage =
         ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
     }
-    console.log("% MES ANTERIOR: ", prevMonthCount);
-    console.log("% MES ACTUAL: ", currentMonthCount);
-    console.log("% de diferencia ", diffPercentage);
+    // console.log("% MES ANTERIOR: ", prevMonthCount);
+    // console.log("% MES ACTUAL: ", currentMonthCount);
+    // console.log("% de diferencia ", diffPercentage);
     return { currentMonthCount, prevMonthCount, diffPercentage };
   };
 

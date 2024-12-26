@@ -9,15 +9,15 @@
           </div>
           <div>
             <q-btn
-              label="Nuevo contacto"
+              label="Nuevo paciente"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="handleNuevoContacto"
             />
           </div>
         </div>
       </div>
-      <div class="styleModal">
+      <div>
         <q-dialog
           class="styleModal"
           v-model="dialogNuevoContacto"
@@ -132,7 +132,7 @@
                 </ul>
               </div>
 
-              <div class="col-12 col-md-10">
+              <div class="col-12 col-md-9 q-ml-xl">
                 <q-tab-panels v-model="subTabFichaIdentificacion" animated>
                   <!-- Información Técnica -->
                   <q-tab-panel name="infoTecnica">
@@ -163,69 +163,122 @@
                           </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Tipo de pacientes</label>
-                          <q-select
+                        <!-- <div class="col-md-6 mb-3">
+                          <label class="form-label" for="tipoPacienteSelect"
+                            >Tipo de Paciente</label
+                          >
+                          <select
+                            id="tipoPacienteSelect"
                             v-model="pacienteSeleccionado.tipoId"
-                            :options="tpacientes"
-                            option-value="id"
-                            option-label="descripcion"
-                            placeholder="Seleccione un tipo de paciente"
-                            dense
+                            class="form-select custom-select-height"
                             required
-                            class="w-100"
-                            :error="!validaciones.tipo"
-                            error-message="Debe seleccionar un tipo de paciente"
-                            emit-value
-                            map-options
-                          />
-                        </div>
+                            @blur="validateTipoPaciente"
+                          >
+                            <option disabled value="">
+                              Seleccione un tipo de paciente
+                            </option>
+                            <option
+                              v-for="tipo in tpacientes"
+                              :key="tipo.id"
+                              :value="tipo.id"
+                            >
+                              {{ tipo.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.tipo"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un tipo de paciente
+                          </div>
+                        </div> -->
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Médico</label>
-                          <q-select
+                          <label for="medicoSelect" class="form-label"
+                            >Médico</label
+                          >
+                          <select
+                            id="medicoSelect"
                             v-model="pacienteSeleccionado.medicoId"
-                            :options="medicos"
-                            option-value="id"
-                            option-label="nombre"
-                            dense
-                            class="form-select"
-                            :error="!validaciones.medico"
-                            error-message="Debe seleccionar un médico"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateMedico"
+                          >
+                            <option disabled value="">
+                              Seleccione un médico
+                            </option>
+                            <option
+                              v-for="medico in medicos"
+                              :key="medico.id"
+                              :value="medico.id"
+                            >
+                              {{ medico.nombre }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.medico"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un médico
+                          </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Médico de Cabecera</label>
-                          <q-select
+                          <label for="medicoCabeceraSelect" class="form-label"
+                            >Médico de Cabecera</label
+                          >
+                          <select
+                            id="medicoCabeceraSelect"
                             v-model="pacienteSeleccionado.medicoCabecera"
-                            :options="medicos"
-                            option-value="id"
-                            option-label="nombre"
-                            dense
-                            class="form-select"
-                            :error="!validaciones.medicoCabecera"
-                            error-message="Debe seleccionar un médico de cabecera"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateMedicoCabecera"
+                          >
+                            <option disabled value="">
+                              Seleccione un médico de cabecera
+                            </option>
+                            <option
+                              v-for="medico in medicos"
+                              :key="medico.id"
+                              :value="medico.id"
+                            >
+                              {{ medico.nombre }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.medicoCabecera"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un médico de cabecera
+                          </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
-                          <label class="form-label"
+                          <label for="referidoPorSelect" class="form-label"
                             >Referido por (Médico)</label
                           >
-                          <q-select
+                          <select
+                            id="referidoPorSelect"
                             v-model="pacienteSeleccionado.referidoPorId"
-                            :options="medicos"
-                            option-value="id"
-                            option-label="nombre"
-                            dense
-                            class="form-select"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                          >
+                            <option disabled value="">
+                              Seleccione un médico
+                            </option>
+                            <option
+                              v-for="medico in medicos"
+                              :key="medico.id"
+                              :value="medico.id"
+                            >
+                              {{ medico.nombre }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.referidoPorId"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un médico
+                          </div>
                         </div>
                       </q-form>
                     </div>
@@ -290,20 +343,35 @@
                           />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Estado Civil</label>
-                          <q-select
+                          <label for="estadoCivilSelect" class="form-label"
+                            >Estado Civil</label
+                          >
+                          <select
+                            id="estadoCivilSelect"
                             v-model="pacienteSeleccionado.estadoCivilId"
-                            :options="estadosCiviles"
-                            option-value="id"
-                            option-label="descripcion"
-                            dense
-                            class="form-select"
-                            :error="!validaciones.estadoCivil"
-                            error-message="Debe seleccionar un estado civil"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateEstadoCivil"
+                          >
+                            <option disabled value="">
+                              Seleccione un estado civil
+                            </option>
+                            <option
+                              v-for="estado in estadosCiviles"
+                              :key="estado.id"
+                              :value="estado.id"
+                            >
+                              {{ estado.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.estadoCivil"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un estado civil
+                          </div>
                         </div>
+
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Observaciones</label>
                           <q-input
@@ -361,35 +429,65 @@
                           />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Departamento</label>
-                          <q-select
+                          <label for="departamentoSelect" class="form-label"
+                            >Departamento</label
+                          >
+                          <select
+                            id="departamentoSelect"
                             v-model="pacienteSeleccionado.departamentoId"
-                            :options="departamentos"
-                            option-value="id"
-                            option-label="descripcion"
-                            dense
-                            class="form-select"
-                            :error="!validaciones.departamentoId"
-                            error-message="Debe seleccionar un departamento"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateDepartamento"
+                          >
+                            <option disabled value="">
+                              Seleccione un departamento
+                            </option>
+                            <option
+                              v-for="departamento in departamentos"
+                              :key="departamento.id"
+                              :value="departamento.id"
+                            >
+                              {{ departamento.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.departamentoId"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un departamento
+                          </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Municipio</label>
-                          <q-select
+                          <label for="municipioSelect" class="form-label"
+                            >Municipio</label
+                          >
+                          <select
+                            id="municipioSelect"
                             v-model="pacienteSeleccionado.municipioId"
-                            :options="filteredMunicipios"
-                            option-value="id"
-                            option-label="descripcion"
-                            dense
-                            class="form-select"
-                            :error="!validaciones.municipio"
-                            error-message="Debe seleccionar un municipio"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateMunicipio"
+                          >
+                            <option disabled value="">
+                              Seleccione un municipio
+                            </option>
+                            <option
+                              v-for="municipio in filteredMunicipios"
+                              :key="municipio.id"
+                              :value="municipio.id"
+                            >
+                              {{ municipio.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.municipio"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un municipio
+                          </div>
                         </div>
+
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Organización</label>
                           <q-input
@@ -445,18 +543,35 @@
                       </div>
                       <q-form class="row">
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Escolaridad</label>
-                          <q-select
+                          <label for="escolaridadSelect" class="form-label"
+                            >Escolaridad</label
+                          >
+                          <select
+                            id="escolaridadSelect"
                             v-model="pacienteSeleccionado.escolaridadId"
-                            :options="escolaridades"
-                            option-value="id"
-                            option-label="descripcion"
-                            dense
-                            class="form-select"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateEscolaridad"
+                          >
+                            <option disabled value="">
+                              Seleccione una escolaridad
+                            </option>
+                            <option
+                              v-for="escolaridad in escolaridades"
+                              :key="escolaridad.id"
+                              :value="escolaridad.id"
+                            >
+                              {{ escolaridad.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.escolaridadId"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar la escolaridad
+                          </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Ocupación</label>
                           <q-input
@@ -466,18 +581,35 @@
                           />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Grupo Sanguíneo</label>
-                          <q-select
+                          <label for="grupoSanguineoSelect" class="form-label"
+                            >Grupo Sanguíneo</label
+                          >
+                          <select
+                            id="grupoSanguineoSelect"
                             v-model="pacienteSeleccionado.grupoSanguineoId"
-                            :options="gruposSanguineos"
-                            option-value="id"
-                            option-label="descripcion"
-                            dense
-                            class="form-select"
-                            emit-value
-                            map-options
-                          />
+                            class="form-select custom-select-height"
+                            required
+                            @blur="validateGrupoSanguineo"
+                          >
+                            <option disabled value="">
+                              Seleccione un grupo sanguíneo
+                            </option>
+                            <option
+                              v-for="grupo in gruposSanguineos"
+                              :key="grupo.id"
+                              :value="grupo.id"
+                            >
+                              {{ grupo.descripcion }}
+                            </option>
+                          </select>
+                          <div
+                            v-if="!validaciones.grupoSanguineoId"
+                            class="text-danger mt-1"
+                          >
+                            Debe seleccionar un grupo sanguíneo
+                          </div>
                         </div>
+
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Alergias</label>
                           <q-input
@@ -566,12 +698,12 @@
           :min-width="120"
           :visible="true"
         />
-        <DxColumn
+        <!-- <DxColumn
           data-field="tipoDescripcion"
           caption="Tipo"
           :min-width="100"
           :visible="true"
-        />
+        /> -->
         <DxColumn
           data-field="nombres"
           caption="Nombre"
@@ -682,7 +814,7 @@ const EscolaridadStore = useEscolaridadStore();
 const MedicoStore = useMedicoStore();
 
 const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
-const { tpacientes } = storeToRefs(TiposPacientesStore);
+// const { tpacientes } = storeToRefs(TiposPacientesStore);
 const { medicos } = storeToRefs(MedicoStore);
 const { estadosCiviles } = storeToRefs(EstadoCivilStore);
 const { departamentos } = storeToRefs(DepartamentoStore);
@@ -692,7 +824,7 @@ const { escolaridades } = storeToRefs(EscolaridadStore);
 
 onMounted(async () => {
   await MedicoStore.cargarMedicos();
-  await TiposPacientesStore.cargarPacientes();
+  // await TiposPacientesStore.cargarPacientes();
   await fichaIdentificacionStore.cargarDatos();
   await EstadoCivilStore.cargarEstadosCiviles();
   await DepartamentoStore.cargarDepartamentos();
@@ -705,7 +837,7 @@ const pacienteSeleccionado = reactive({
   fechaRegistro: "",
   codigo: "",
   activo: false,
-  tipoId: null,
+  // tipoId: null,
   medicoId: null,
   medicoCabecera: null,
   referidoPorId: null,
@@ -743,7 +875,7 @@ const filteredMunicipios = computed(() => {
 
 const validaciones = reactive({
   codigo: true,
-  tipo: true,
+  // tipo: true,
   medico: true,
   medicoCabecera: true,
   dni: true,
@@ -756,11 +888,14 @@ const validaciones = reactive({
   telPersonal: true,
   departamentoId: true,
   municipio: true,
+  referidoPorId: true,
+  escolaridadId: true,
+  grupoSanguineoId: true,
 });
 
 const validarFormulario = () => {
   validaciones.codigo = !!pacienteSeleccionado.codigo?.trim();
-  validaciones.tipo = !!pacienteSeleccionado.tipoId;
+  // validaciones.tipo = !!pacienteSeleccionado.tipoId;
   validaciones.medico = !!pacienteSeleccionado.medicoId;
   validaciones.dni = !!pacienteSeleccionado.dni?.trim();
   validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
@@ -772,6 +907,9 @@ const validarFormulario = () => {
   validaciones.sexo = !!pacienteSeleccionado.sexo?.trim();
   validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
   validaciones.municipio = !!pacienteSeleccionado.municipioId;
+  validaciones.referidoPorId = !!pacienteSeleccionado.referidoPorId;
+  validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
+  validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
 
   return Object.values(validaciones).every((valido) => valido);
 };
@@ -787,7 +925,7 @@ const limpiarFormulario = () => {
     }
   });
   // Poner los campos numéricos en null
-  pacienteSeleccionado.tipoId = null;
+  // pacienteSeleccionado.tipoId = null;
   pacienteSeleccionado.medicoId = null;
   pacienteSeleccionado.medicoCabecera = null;
   pacienteSeleccionado.referidoPorId = null;
@@ -816,9 +954,9 @@ const pacientesConDetalles = computed(() => {
     const referidoPorEncontrado = (medicos.value || []).find(
       (medic) => medic.id === Number(paciente.referidoPorId)
     );
-    const tipoPacienteEncontrado = (tpacientes.value || []).find(
-      (tipo) => tipo.id === Number(paciente.tipoId)
-    );
+    // const tipoPacienteEncontrado = (tpacientes.value || []).find(
+    //   (tipo) => tipo.id === Number(paciente.tipoId)
+    // );
 
     return {
       ...paciente,
@@ -831,9 +969,9 @@ const pacientesConDetalles = computed(() => {
       referidoPorNombre: referidoPorEncontrado
         ? referidoPorEncontrado.nombre
         : "No asignado",
-      tipoDescripcion: tipoPacienteEncontrado
-        ? tipoPacienteEncontrado.descripcion
-        : "Tipo no encontrado",
+      // tipoDescripcion: tipoPacienteEncontrado
+      //   ? tipoPacienteEncontrado.descripcion
+      //   : "Tipo no encontrado",
     };
   });
 });
@@ -853,7 +991,7 @@ const guardarDatosFormulario = () => {
       pacienteSeleccionado.fechaRegistro || new Date().toISOString(),
     codigo: pacienteSeleccionado.codigo,
     activo: pacienteSeleccionado.activo,
-    tipoId: pacienteSeleccionado.tipoId,
+    // tipoId: pacienteSeleccionado.tipoId,
     medicoId: pacienteSeleccionado.medicoId,
     medicoCabecera: pacienteSeleccionado.medicoCabecera,
     referidoPorId: pacienteSeleccionado.referidoPorId,
@@ -1018,25 +1156,64 @@ const handleNuevoContacto = () => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
 }
-
-.styleModal {
-  max-width: 90%;
-  max-height: 90%;
+/* Usar ::v-deep para aplicar estilos globales desde un componente scoped */
+::v-deep .vertical-tabs-2 .nav-link {
+  min-width: 12rem; /* Nuevo ancho mínimo */
+  max-width: 10rem; /* Nuevo ancho máximo */
 }
 
+/* Opcional: ajustar el ancho en pantallas más pequeñas */
+@media (max-width: 768px) {
+  ::v-deep .vertical-tabs-2 .nav-link {
+    min-width: 8rem;
+    max-width: 8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  ::v-deep .vertical-tabs-2 .nav-link {
+    min-width: 100%; /* Ocupa todo el ancho disponible */
+    max-width: 100%;
+  }
+}
+.styleModal {
+  min-width: 1200px;
+  min-height: 750px;
+}
+.separarTabs {
+  margin-left: 100px;
+}
 .main-modal-container {
   background-color: #ffffff;
   padding: 20px;
+}
+.custom-select-height {
+  height: 3rem; /* Ajusta este valor según tus necesidades */
+  padding: 0.5rem 1rem; /* Ajusta el padding para alinear el texto */
+  font-size: 1rem; /* Opcional: Ajusta el tamaño de la fuente */
+}
+
+/* Estilo de flecha personalizada (opcional) */
+.custom-select-height {
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="none" stroke="%23333" stroke-width="1.5" d="M1 1l4 3 4-3"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 10px 5px;
+  cursor: pointer;
 }
 
 /* Mantener las clases existentes y globales sin q-card */
 .card.card-body {
   padding: 20px !important;
+  position: relative;
+  /* left: 100px; */
 }
 
 .form-container {
   max-width: 800px;
   margin: 0 25px;
+  position: relative;
 }
 
 h6.text-primary {
@@ -1080,9 +1257,9 @@ h6.text-primary {
   margin-top: 20px;
 }
 
-.vertical-tabs-2 {
+/* .vertical-tabs-2 {
   margin-right: 20px;
-}
+} */
 .paciente-info-panel {
   position: fixed;
   top: 0px;

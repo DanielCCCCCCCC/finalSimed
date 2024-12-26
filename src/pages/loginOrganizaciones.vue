@@ -23,7 +23,7 @@
               <div class="mt-5 pt-4 p-2 position-absolute">
                 <router-link :to="{ name: 'dashboard' }">
                   <img
-                    src="../../public/logo2.jpeg"
+                    src="../assets/icons/asistencia-medica (1).png"
                     class="header-brand-img mb-4 tamano"
                     alt="logo"
                   />
@@ -95,6 +95,12 @@
                     <div class="text-start mt-5 ms-0">
                       <div class="mb-1">
                         <!-- Eliminado el enlace "Forgot password?" por ahora -->
+                      </div>
+                      <div>
+                        He olvidado la contraseña,
+                        <router-link :to="{ name: 'RecoverPassword' }"
+                          >has clic aqui!!
+                        </router-link>
                       </div>
                       <div>
                         No tienes una cuenta?

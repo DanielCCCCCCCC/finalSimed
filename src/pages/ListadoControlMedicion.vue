@@ -14,7 +14,7 @@
             <q-btn
               label="Nuevo Control"
               flat
-              class="btn btn-primary btn-sm btn-wave right-content fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirDialogoNuevoControl"
             />
           </div>

@@ -203,7 +203,7 @@
           {{ form.referidoPor?.nombre || "Sin asignar" }}
         </div>
 
-        <q-select
+        <!-- <q-select
           v-if="isEditable"
           v-model="form.tipo"
           :options="tpacientes"
@@ -217,7 +217,7 @@
         <div v-else class="detail-text">
           <span class="label">Tipo de Paciente:</span>
           {{ form.tipo?.descripcion || "Sin asignar" }}
-        </div>
+        </div> -->
       </div>
 
       <!-- Información Técnica -->
@@ -310,15 +310,15 @@
       </div>
 
       <!-- Footer -->
-      <div class="modal-footer espacioEntreBtn">
+      <div class="modal-footer">
         <button
-          class="btn btn-primary espacioEntreBtn"
+          class="btn btn-primary q-ml-xl espacioEntreBtn"
           @click="handleCloseConfirmation"
         >
-          Save changes
+          Guardar Cambios
         </button>
         <button class="btn btn-secondary" @click="showCloseDialog = false">
-          Close
+          Cerrar
         </button>
       </div>
     </div>
@@ -362,7 +362,7 @@ export default {
       fechaRegistro: "",
       codigo: "",
       activo: false,
-      tipo: null,
+      // tipo: null,
       medico: null,
       medicoCabecera: null,
       referidoPor: null,
@@ -440,9 +440,9 @@ export default {
       form.observaciones = props.paciente.observaciones || "";
 
       // Asignar objetos seleccionados
-      form.tipo =
-        tpacientes.value.find((tipo) => tipo.id === props.paciente.tipoId) ||
-        null;
+      // form.tipo =
+      //   tpacientes.value.find((tipo) => tipo.id === props.paciente.tipoId) ||
+      //   null;
 
       form.medico =
         medicos.value.find((medico) => medico.id === props.paciente.medicoId) ||
@@ -514,7 +514,7 @@ export default {
         form.departamento &&
         form.municipio &&
         form.medico &&
-        form.tipo &&
+        // form.tipo &&
         form.grupoSanguineo
       );
     });
@@ -525,7 +525,7 @@ export default {
         fechaRegistro: form.fechaRegistro,
         codigo: form.codigo,
         activo: form.activo,
-        tipoId: form.tipo?.id || null,
+        // tipoId: form.tipo?.id || null,
         medicoId: form.medico?.id || null,
         medicoCabecera: form.medicoCabecera?.id || null,
         referidoPorId: form.referidoPor?.id || null,

@@ -1,6 +1,5 @@
-<!-- src/pages/ResetPassword.vue -->
 <template>
-  <q-page class="flex flex-center">
+  <div class="flex flex-center">
     <q-card class="q-pa-md" style="width: 400px">
       <q-card-section>
         <div class="text-h6">Restablecer Contraseña</div>
@@ -16,10 +15,13 @@
             label="Nueva Contraseña"
             type="password"
             required
-            :rules="[
-              (val) => (val && val.length >= 6) || 'Mínimo 6 caracteres',
-            ]"
           />
+          <div
+            v-if="password.value && password.value.length < 6"
+            class="text-red q-mt-sm"
+          >
+            La contraseña debe tener al menos 6 caracteres.
+          </div>
 
           <div class="q-mt-md">
             <q-btn type="submit" label="Restablecer" color="primary" />
@@ -39,12 +41,11 @@
         </div>
       </q-card-section>
     </q-card>
-  </q-page>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useQuasar } from "quasar";
 import { supabase } from "../supabaseClient";
 
 const password = ref("");
@@ -52,11 +53,17 @@ const success = ref(false);
 const error = ref("");
 const accessToken = ref("");
 
-const $q = useQuasar();
-
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   accessToken.value = urlParams.get("access_token");
+
+  // Si no está en la cadena de consulta, buscar en el fragmento de hash
+  if (!accessToken.value) {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1)); // Eliminar el '#'
+    accessToken.value = hashParams.get("access_token");
+  }
+
+  console.log("Access Token Capturado:", accessToken.value);
 
   if (!accessToken.value) {
     error.value = "Enlace inválido o expirado.";
@@ -64,18 +71,20 @@ onMounted(() => {
 });
 
 const handleReset = async () => {
+  if (password.value.length < 6) {
+    error.value = "La contraseña debe tener al menos 6 caracteres.";
+    return;
+  }
+
   if (!accessToken.value) {
     error.value = "Enlace inválido o expirado.";
     return;
   }
 
   try {
-    const { data, error: supabaseError } = await supabase.auth.updateUser(
-      {
-        password: password.value,
-      },
-      accessToken.value
-    );
+    const { error: supabaseError } = await supabase.auth.updateUser({
+      password: password.value,
+    });
 
     if (supabaseError) throw supabaseError;
 
@@ -87,7 +96,3 @@ const handleReset = async () => {
   }
 };
 </script>
-
-<style scoped>
-/* Agrega estilos personalizados si es necesario */
-</style>

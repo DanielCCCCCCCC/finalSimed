@@ -10,9 +10,9 @@
           </div>
           <div>
             <q-btn
-              label="Agregar"
+              label="Nuevo Municipio o Departamento"
               flat
-              class="btn btn-primary btn-sm btn-wave fsButton fe fe-plus"
+              class="btn btn-primary"
               @click="abrirDialogoAgregar"
             />
           </div>

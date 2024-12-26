@@ -60,19 +60,6 @@
         <!-- Start::header-content-right -->
         <div class="header-content-right">
           <!-- Start::header-element -->
-          <!-- <div class="header-element q-mt-xs header-theme-mode">
-            <a href="javascript:void(0);" class="header-link layout-setting">
-              <span class="light-layout" @click="colorthemeFn('dark')">
-                <i class="fe fe-moon header-link-icon lh-2"></i>
-              </span>
-              <span class="dark-layout" @click="colorthemeFn('light')">
-                <i class="fe fe-sun header-link-icon lh-2"></i>
-              </span>
-            </a>
-          </div> -->
-          <!-- End::header-element -->
-
-          <!-- Start::header-element -->
           <div
             class="header-element header-fullscreen q-mt-xs d-xl-flex d-none"
           >
@@ -155,7 +142,7 @@
                 <li>
                   <router-link
                     class="dropdown-item d-flex border-bottom"
-                    :to="`${url}pages/settings`"
+                    :to="`${url}configuraciones`"
                   >
                     <i class="fe fe-settings fs-16 align-middle me-2"></i
                     >Settings
