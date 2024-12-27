@@ -27,6 +27,13 @@ export let menuData = [
         active: false,
         defaultActive: false,
       },
+      {
+        path: "/pacientesCitas",
+        title: " Pacientes citas",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
     ],
   },
   // Sección de pacientes

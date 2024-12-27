@@ -54,31 +54,41 @@
                       </p>
                       <div class="form-group text-start">
                         <label for="email">Email</label>
-                        <q-input
-                          id="email"
-                          v-model="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          dense
-                          required
-                          :error="!!error"
-                          error-message="Correo inválido"
-                          class="form-control"
-                        />
+                        <div class="input-group">
+                          <span class="input-group-text">
+                            <i class="ri-mail-line"></i>
+                          </span>
+                          <q-input
+                            id="email"
+                            v-model="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            dense
+                            required
+                            :error="!!error"
+                            error-message="Correo inválido"
+                            class="form-control"
+                          />
+                        </div>
                       </div>
                       <div class="form-group text-start">
                         <label for="password">Password</label>
-                        <q-input
-                          id="password"
-                          v-model="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          dense
-                          required
-                          :error="!!error"
-                          error-message="Contraseña inválida"
-                          class="form-control"
-                        />
+                        <div class="input-group">
+                          <div class="input-group-text">
+                            <i class="ri-lock-line"></i>
+                          </div>
+                          <q-input
+                            id="password"
+                            v-model="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            dense
+                            required
+                            :error="!!error"
+                            error-message="Contraseña inválida"
+                            class="form-control"
+                          />
+                        </div>
                       </div>
                       <div class="flex justify-center q-mt-lg">
                         <q-btn

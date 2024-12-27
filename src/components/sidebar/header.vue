@@ -175,6 +175,8 @@
 <script>
 import { QLayout, QHeader, QMenu, QPageContainer } from "quasar";
 import { useAuthStore } from "src/stores/auth";
+import { useOrganizacionStore } from "../../stores/organizacionStore";
+
 import { Notify } from "quasar";
 export default {
   name: "Header",

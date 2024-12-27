@@ -15,7 +15,7 @@
               :aria-selected="activeTab === 'crearUsuarios'"
             >
               <i class="ri-user-add-line me-2"></i>
-              <span>Crear Usuarios </span>
+              <span>Crear Usuarios</span>
             </a>
           </li>
           <li class="nav-item">
@@ -30,6 +30,21 @@
             >
               <i class="ri-buildings-line me-2"></i>
               <span>Organización</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link d-flex align-items-center"
+              :class="{ active: activeTab === 'perfilMedico' }"
+              href="#perfilMedico-tab"
+              @click.prevent="activeTab = 'perfilMedico'"
+              role="tab"
+              aria-current="page"
+              :aria-selected="activeTab === 'perfilMedico'"
+            >
+              <i class="ri-medical-line me-2"></i>
+              <!-- Cambiado el icono -->
+              <span>Perfil Médico</span>
             </a>
           </li>
         </ul>
@@ -54,13 +69,14 @@
                 </div>
               </q-card-section>
               <q-card-section>
+                <!-- DxDataGrid Component -->
                 <DxDataGrid
                   :data-source="users"
                   :allow-column-reordering="true"
                   :row-alternation-enabled="true"
                   :show-borders="true"
                   key-expr="id"
-                  :column-auto-width="false"
+                  :column-auto-width="true"
                   :column-min-width="90"
                   class="custom-data-grid"
                   :column-resizing-mode="'widget'"
@@ -83,21 +99,21 @@
                       (data) => formatDate(data.created_at)
                     "
                     :allow-sorting="true"
-                    width="250px"
                     :allow-editing="false"
+                    min-width="150"
                   />
                   <DxColumn
                     data-field="id"
                     caption="ID"
                     :allow-sorting="true"
-                    width="300px"
                     :allow-editing="false"
+                    min-width="100"
                   />
                   <DxColumn
                     data-field="email"
                     caption="Correo Electrónico"
                     min-width="150"
-                    width="395px"
+                    :allow-sorting="true"
                   >
                     <DxRequiredRule />
                     <DxEmailRule />
@@ -106,7 +122,8 @@
                     data-field="password"
                     caption="Contraseña"
                     min-width="150"
-                    width="200px"
+                    :allow-sorting="false"
+                    :allow-editing="false"
                     data-type="string"
                     :visible="false"
                   >
@@ -117,7 +134,6 @@
                     data-field="role"
                     caption="Rol"
                     min-width="150"
-                    width="250px"
                     data-type="string"
                   >
                     <DxLookup
@@ -128,7 +144,7 @@
                     <DxRequiredRule />
                   </DxColumn>
                   <DxColumn type="buttons" width="120">
-                    <DxButton name="edit" icon="edit" hint="Editar" />
+                    <!-- <DxButton name="edit" icon="edit" hint="Editar" /> -->
                     <DxButton name="delete" icon="trash" hint="Eliminar" />
                   </DxColumn>
                 </DxDataGrid>
@@ -150,6 +166,7 @@
                 <div class="text-h6">Organización</div>
               </q-card-section>
               <q-card-section>
+                <CodeQr />
                 <div v-if="organizaciones.length">
                   <q-list dense bordered separator>
                     <q-item>
@@ -187,6 +204,19 @@
               </q-card-section>
             </q-card>
           </div>
+
+          <!-- Pestaña Perfil Médico -->
+          <div
+            :class="[
+              'tab-pane',
+              activeTab === 'perfilMedico' ? 'show active' : '',
+            ]"
+            id="perfilMedico-tab"
+            role="tabpanel"
+          >
+            <!-- Solo se muestra PerfilMedico cuando la pestaña está activa -->
+            <PerfilMedico class="hsize" v-if="activeTab === 'perfilMedico'" />
+          </div>
         </div>
       </div>
     </div>
@@ -199,6 +229,8 @@ import { useQuasar } from "quasar";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios"; // Asegúrate de que la ruta sea correcta
 import { useAuthStore } from "../stores/auth"; // Importa la store de autenticación
 import { useOrganizacionStore } from "../stores/organizacionStore"; // Importa la store de organización
+import PerfilMedico from "./PerfilMedico.vue";
+import CodeQr from "../components/CodeQR.vue";
 import {
   DxDataGrid,
   DxEditing,
@@ -382,7 +414,9 @@ onMounted(async () => {
   left: 135px;
   height: 90vb;
 }
-
+.custom-data-grid {
+  width: 100%;
+}
 .menu-container {
   background: #f8f9fa;
   border-radius: 8px;
@@ -419,7 +453,11 @@ onMounted(async () => {
   height: 400px;
   margin-top: 10px;
 }
-
+.hsize {
+  height: 600px;
+  position: relative;
+  top: -10px;
+}
 .q-btn {
   width: 100%;
 }

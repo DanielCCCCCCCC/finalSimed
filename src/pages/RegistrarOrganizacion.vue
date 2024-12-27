@@ -107,31 +107,39 @@
                       <h5 class="text-start mt-4">Datos del Administrador</h5>
                       <div class="form-group text-start">
                         <label>Email del Administrador</label>
-                        <q-input
-                          v-model="admin_email"
-                          placeholder="Ingrese el email del administrador"
-                          type="email"
-                          outlined
-                          dense
-                          class="form-control"
-                          required
-                          :rules="emailRules"
-                          lazy-rules
-                        />
+                        <div class="input-group">
+                          <span class="input-group-text">
+                            <i class="ri-mail-line"></i>
+                          </span>
+                          <q-input
+                            v-model="admin_email"
+                            placeholder="Ingrese el email del administrador"
+                            type="email"
+                            outlined
+                            dense
+                            class="form-control"
+                            required
+                            :rules="emailRules"
+                            lazy-rules
+                          />
+                        </div>
                       </div>
                       <div class="form-group text-start">
                         <label>Contraseña del Administrador</label>
-                        <q-input
-                          v-model="admin_password"
-                          placeholder="Ingrese la contraseña"
-                          type="password"
-                          outlined
-                          dense
-                          class="form-control"
-                          required
-                          :rules="passwordRules"
-                          lazy-rules
-                        />
+                        <div class="input-group">
+                          <div class="input-group-text">
+                            <i class="ri-lock-line"></i>
+                          </div>
+                          <input
+                            type="password"
+                            id="admin_password"
+                            v-model="admin_password"
+                            class="form-control"
+                            placeholder="Ingrese la contraseña"
+                            required
+                            @input="validatePassword"
+                          />
+                        </div>
                       </div>
 
                       <div class="d-grid mt-4">

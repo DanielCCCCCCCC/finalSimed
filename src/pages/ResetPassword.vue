@@ -17,10 +17,10 @@
             required
           />
           <div
-            v-if="password.value && password.value.length < 6"
+            v-if="password.value && password.length < 8"
             class="text-red q-mt-sm"
           >
-            La contraseña debe tener al menos 6 caracteres.
+            La contraseña debe tener al menos 8 caracteres.
           </div>
 
           <div class="q-mt-md">
@@ -72,7 +72,7 @@ onMounted(() => {
 
 const handleReset = async () => {
   if (password.value.length < 6) {
-    error.value = "La contraseña debe tener al menos 6 caracteres.";
+    error.value = "La contraseña debe tener al menos 8 caracteres.";
     return;
   }
 

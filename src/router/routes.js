@@ -35,7 +35,8 @@ import pacientesPrueba from "../pages/pacientesPrueba.vue";
 import Configuraciones from "../pages/Configuraciones.vue";
 import ResetPassword from "../pages/ResetPassword.vue";
 import RecoverPassword from "../pages/RecoverPassword.vue";
-
+import PerfilMedico from "../pages/PerfilMedico.vue";
+import PacientesScheduleAppointment from "../pages/PacientesScheduleAppointment.vue";
 const routes = [
   {
     path: "/",
@@ -69,6 +70,7 @@ const routes = [
         component: ListadoMedicos,
         meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
+
       {
         path: "listadomedicamentos",
         name: "listadomedicamentos",
@@ -136,6 +138,7 @@ const routes = [
         component: pacientesPrueba,
         meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
+
       {
         path: "listadotiposcitas",
         name: "listadotiposcitas",
@@ -202,6 +205,12 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
+  },
+  {
+    path: "/schedule/:tenant_id",
+    name: "PublicScheduleAppointment",
+    component: PacientesScheduleAppointment,
+    meta: { requiresAuth: false },
   },
   {
     path: "/recover-password",
