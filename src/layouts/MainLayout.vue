@@ -23,7 +23,7 @@ import { useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useOrganizacionStore } from "../stores/organizacionStore";
 import { useThemeStore } from "../stores/themeStore"; // Importar el themeStore
-
+import { useAppointmentsStore } from "../stores/AppointmentsStore";
 // Referencias reactivas para el Drawer
 const leftDrawerOpen = ref(false);
 const drawerWidth = ref(2);

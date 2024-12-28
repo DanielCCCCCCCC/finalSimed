@@ -28,12 +28,6 @@
                     alt="logo"
                   />
                 </router-link>
-                <div class="clearfix"></div>
-                <!-- <img
-                  src="/images/svgs/user.svg"
-                  class="ht-100 mb-0"
-                  alt="user"
-                /> -->
                 <h5 class="mt-4 text-fixed-white">Inicia Sesión tu cuenta</h5>
                 <span class="fs-white-6 fs-13 mb-5 mt-xl-0">
                   Inicia Sesión para adminisitrar tu centro médico.
@@ -46,88 +40,98 @@
               <div class="main-container container-fluid">
                 <div class="row row-sm">
                   <div class="card-body mt-2 mb-2">
-                    <div class="clearfix"></div>
                     <q-form @submit.prevent="handleLogin">
                       <h5 class="text-start mb-2">Inicia Sesión</h5>
                       <p class="mb-4 text-muted fs-13 ms-0 text-start">
                         Inicia sesión para adminisitrar tu centro médico.
                       </p>
+                      <!-- Email Input -->
                       <div class="form-group text-start">
                         <label for="email">Email</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="ri-mail-line"></i>
                           </span>
-                          <q-input
+                          <input
                             id="email"
                             v-model="email"
                             type="email"
                             placeholder="Enter your email"
-                            dense
-                            required
-                            :error="!!error"
-                            error-message="Correo inválido"
                             class="form-control"
+                            :class="{ 'is-invalid': !!error }"
+                            required
                           />
                         </div>
+                        <div v-if="!!error" class="invalid-feedback">
+                          Correo inválido
+                        </div>
                       </div>
+
+                      <!-- Password Input -->
                       <div class="form-group text-start">
                         <label for="password">Password</label>
                         <div class="input-group">
-                          <div class="input-group-text">
+                          <span class="input-group-text">
                             <i class="ri-lock-line"></i>
-                          </div>
-                          <q-input
+                          </span>
+                          <input
                             id="password"
                             v-model="password"
-                            type="password"
+                            :type="showPassword ? 'text' : 'password'"
                             placeholder="Enter your password"
-                            dense
-                            required
-                            :error="!!error"
-                            error-message="Contraseña inválida"
                             class="form-control"
+                            :class="{ 'is-invalid': !!error }"
+                            required
                           />
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            @click="togglePasswordVisibility"
+                          >
+                            <i
+                              :class="
+                                showPassword ? 'ri-eye-off-line' : 'ri-eye-line'
+                              "
+                            ></i>
+                          </button>
+                        </div>
+                        <div v-if="!!error" class="invalid-feedback">
+                          Contraseña inválida
                         </div>
                       </div>
+
+                      <!-- Submit Button -->
                       <div class="flex justify-center q-mt-lg">
-                        <q-btn
+                        <button
                           type="submit"
-                          :label="cargando ? 'Iniciando...' : 'Iniciar Sesión'"
-                          color="primary"
-                          :disable="cargando"
-                          unelevated
-                          rounded
                           class="btn ripple btn-primary d-grid"
-                        />
+                          :disabled="cargando"
+                        >
+                          {{ cargando ? "Iniciando..." : "Iniciar Sesión" }}
+                        </button>
                       </div>
                     </q-form>
+
+                    <!-- Links and Messages -->
                     <div class="text-start mt-5 ms-0">
-                      <div class="mb-1">
-                        <!-- Eliminado el enlace "Forgot password?" por ahora -->
-                      </div>
                       <div>
                         He olvidado la contraseña,
                         <router-link :to="{ name: 'RecoverPassword' }"
-                          >has clic aqui!!
-                        </router-link>
+                          >has clic aqui!!</router-link
+                        >
                       </div>
                       <div>
                         No tienes una cuenta?
                         <router-link :to="{ name: 'registrarOrganizacion' }"
-                          >Registrate aqui
-                        </router-link>
+                          >Registrate aqui</router-link
+                        >
                       </div>
                     </div>
                     <div v-if="error" class="error-message">
-                      <q-banner class="bg-negative text-white" dense>
-                        {{ error }}
-                      </q-banner>
+                      <div class="alert alert-danger">{{ error }}</div>
                     </div>
                     <div v-if="mensajeExito" class="success-message">
-                      <q-banner class="bg-positive text-white" dense>
-                        {{ mensajeExito }}
-                      </q-banner>
+                      <div class="alert alert-success">{{ mensajeExito }}</div>
                     </div>
                   </div>
                 </div>
@@ -141,7 +145,6 @@
       <!-- Fin de col-md-12 -->
     </div>
     <!-- Fin de row signpages -->
-    <!-- End Row Principal -->
   </div>
   <!-- Fin de main-signin-wrapper -->
 </template>
@@ -151,13 +154,10 @@ import { ref } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
-import { onMounted } from "vue";
-import { useThemeStore } from "../stores/themeStore"; // Asegúrate de que la ruta es correcta
-const themeStore = useThemeStore();
 
 const email = ref("");
 const password = ref("");
-
+const showPassword = ref(false); // Estado para alternar visibilidad
 const cargando = ref(false);
 const error = ref(null);
 const mensajeExito = ref(null);
@@ -209,17 +209,18 @@ const validarCampos = () => {
   return true;
 };
 
-onMounted(() => {
-  // Definir el tema light
-  themeStore.colorThemeFn("light");
-  themeStore.layoutStylesFn("icon-overlay");
-
-  // Establecer el color naranja para --primary-rgb
-  document.documentElement.style.setProperty("--primary-rgb", "223, 90, 90"); // RGB para naranja
-});
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 </script>
 
 <style scoped>
+input {
+  height: 50px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
 .tamano {
   width: 50%;
   height: 50%;

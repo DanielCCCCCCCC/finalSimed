@@ -43,7 +43,6 @@
               :aria-selected="activeTab === 'perfilMedico'"
             >
               <i class="ri-medical-line me-2"></i>
-              <!-- Cambiado el icono -->
               <span>Perfil Médico</span>
             </a>
           </li>
@@ -90,8 +89,10 @@
                     :allow-deleting="true"
                     mode="form"
                   />
+
                   <DxPaging :enabled="true" :page-size="10" />
 
+                  <!-- Fecha de creación -->
                   <DxColumn
                     data-field="created_at"
                     caption="Creado en"
@@ -102,39 +103,44 @@
                     :allow-editing="false"
                     min-width="150"
                   />
-                  <DxColumn
+                  <!-- ID del usuario -->
+                  <!-- <DxColumn
                     data-field="id"
                     caption="ID"
                     :allow-sorting="true"
                     :allow-editing="false"
                     min-width="100"
-                  />
+                  /> -->
+
+                  <!-- Correo (NO editable) -->
                   <DxColumn
                     data-field="email"
                     caption="Correo Electrónico"
-                    min-width="150"
                     :allow-sorting="true"
+                    :allow-editing="true"
+                    min-width="150"
                   >
                     <DxRequiredRule />
                     <DxEmailRule />
                   </DxColumn>
+
+                  <!-- Contraseña (NO editable, oculto) -->
                   <DxColumn
                     data-field="password"
                     caption="Contraseña"
-                    min-width="150"
                     :allow-sorting="false"
-                    :allow-editing="false"
+                    :allow-editing="true"
                     data-type="string"
                     :visible="false"
-                  >
-                    <DxRequiredRule />
-                  </DxColumn>
+                  />
 
+                  <!-- Rol (NO editable) -->
                   <DxColumn
                     data-field="role"
                     caption="Rol"
-                    min-width="150"
+                    min-width="100"
                     data-type="string"
+                    :allow-editing="true"
                   >
                     <DxLookup
                       :data-source="rolesOptions"
@@ -143,8 +149,37 @@
                     />
                     <DxRequiredRule />
                   </DxColumn>
+
+                  <!-- Campos nuevos: alias, direccion, telefono, observaciones -->
+                  <DxColumn
+                    data-field="alias"
+                    caption="Alias"
+                    data-type="string"
+                    :allow-sorting="true"
+                  />
+                  <DxColumn
+                    data-field="direccion"
+                    caption="Dirección"
+                    data-type="string"
+                    :allow-sorting="true"
+                  />
+                  <DxColumn
+                    data-field="telefono"
+                    caption="Teléfono"
+                    data-type="string"
+                    :allow-sorting="true"
+                    width="80px"
+                  />
+                  <DxColumn
+                    data-field="observaciones"
+                    caption="Observaciones"
+                    data-type="string"
+                    :allow-sorting="true"
+                  />
+
+                  <!-- Botones de acción -->
                   <DxColumn type="buttons" width="120">
-                    <!-- <DxButton name="edit" icon="edit" hint="Editar" /> -->
+                    <DxButton name="edit" icon="edit" hint="Editar" />
                     <DxButton name="delete" icon="trash" hint="Eliminar" />
                   </DxColumn>
                 </DxDataGrid>
@@ -226,11 +261,18 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useQuasar } from "quasar";
-import { useCrearUsuariosStore } from "../stores/crearUsuarios"; // Asegúrate de que la ruta sea correcta
-import { useAuthStore } from "../stores/auth"; // Importa la store de autenticación
-import { useOrganizacionStore } from "../stores/organizacionStore"; // Importa la store de organización
+import { storeToRefs } from "pinia";
+
+// **Stores**
+import { useCrearUsuariosStore } from "../stores/crearUsuarios"; // Ajusta la ruta si es necesario
+import { useAuthStore } from "../stores/auth";
+import { useOrganizacionStore } from "../stores/organizacionStore";
+
+// **Componentes**
 import PerfilMedico from "./PerfilMedico.vue";
 import CodeQr from "../components/CodeQR.vue";
+
+// **DevExtreme DataGrid**
 import {
   DxDataGrid,
   DxEditing,
@@ -241,9 +283,8 @@ import {
   DxLookup,
   DxButton,
 } from "devextreme-vue/data-grid";
-import { format } from "date-fns";
 
-import { storeToRefs } from "pinia";
+import { format } from "date-fns";
 
 // Emitir eventos (si se necesita cerrar el modal desde un componente padre)
 const emit = defineEmits(["cerrar"]);
@@ -254,26 +295,25 @@ const $q = useQuasar();
 // Estado reactivo para la pestaña activa
 const activeTab = ref("crearUsuarios");
 
-// Importa y utiliza las stores
+// Usar las stores
 const crearUsuariosStore = useCrearUsuariosStore();
 const organizacionStore = useOrganizacionStore();
 const authStore = useAuthStore();
 
 // Desestructurar propiedades reactivas de las stores
-const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
 const { users } = storeToRefs(crearUsuariosStore);
 const { organizaciones } = storeToRefs(organizacionStore);
+const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
 
-// Opciones para los roles en el DataGrid
+// Opciones para los roles (aunque estarán deshabilitados para edición)
 const rolesOptions = ref([
   { value: "admin", text: "Admin" },
   { value: "medico", text: "Médico" },
   { value: "secretario", text: "Secretario(a)" },
   { value: "paciente", text: "Paciente" },
-  // Agrega más roles según sea necesario
 ]);
 
-// Estado reactivo para el formulario de Organización
+// Estado reactivo para el formulario de Organización (no se usa mucho aquí)
 const formOrganizacion = reactive({
   nombre: "",
   email: "",
@@ -283,7 +323,8 @@ const formOrganizacion = reactive({
 
 // Estado reactivo para los errores del formulario de Organización
 const errorsOrganizacion = reactive({});
-// Función para convertir el formato de la fecha
+
+// Función para formatear fechas
 const formatDate = (dateString) => {
   try {
     return format(new Date(dateString), "dd/MM/yyyy hh:mm a");
@@ -291,31 +332,25 @@ const formatDate = (dateString) => {
     return "Fecha no válida";
   }
 };
-/**
- * Función para actualizar la organización.
- * Implementa la lógica para actualizar en tu backend aquí.
- */
+
+/** Actualizar la organización (ejemplo, si lo necesitas) */
 const actualizarOrganizacion = async () => {
   try {
     await organizacionStore.actualizarOrganizacion(formOrganizacion);
-    // Mostrar notificación de éxito
     $q.notify({
       type: "positive",
       message: "Organización actualizada exitosamente.",
     });
-    // Limpiar el formulario
     formOrganizacion.nombre = "";
     formOrganizacion.email = "";
     formOrganizacion.password = "";
     formOrganizacion.role = "";
   } catch (err) {
-    // Manejar errores de validación
     if (err.errors) {
       err.errors.forEach((error) => {
         errorsOrganizacion[error.field] = error.message;
       });
     }
-    // Mostrar notificación de error
     $q.notify({
       type: "negative",
       message: err.message || "Error al actualizar la organización.",
@@ -324,22 +359,21 @@ const actualizarOrganizacion = async () => {
 };
 
 /**
- * Función para manejar la inserción de una fila (Agregar Usuario) en el DataGrid
+ * Crear usuario (cuando se presiona "Agregar" en el DataGrid)
  */
 const onRowInserting = async (e) => {
   const { data } = e;
   try {
+    // data contendrá { email, password, role, alias, direccion, telefono, observaciones }
     await crearUsuariosStore.crearUsuario(data);
     e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();
-    // Mostrar notificación de éxito
     $q.notify({
       type: "positive",
       message: "Usuario creado exitosamente.",
     });
   } catch (err) {
     e.cancel = true;
-    // Mostrar notificación de error
     $q.notify({
       type: "negative",
       message: err.message || "Error al crear el usuario.",
@@ -348,13 +382,15 @@ const onRowInserting = async (e) => {
 };
 
 /**
- * Función para manejar la actualización de una fila (Editar Usuario) en el DataGrid
+ * Actualizar usuario (cuando se presiona "Guardar" en edición en el DataGrid)
  */
 const onRowUpdating = async (e) => {
   const { key, newData } = e;
   try {
+    // key es el 'id' del usuario
+    // newData contendrá SOLO los campos modificados
     await crearUsuariosStore.actualizarUsuario({ id: key, ...newData });
-    e.cancel = true; // Evita que DevExtreme maneje la actualización automáticamente
+    e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();
     $q.notify({
       type: "positive",
@@ -362,7 +398,6 @@ const onRowUpdating = async (e) => {
     });
   } catch (err) {
     e.cancel = true;
-    // Mostrar notificación de error
     $q.notify({
       type: "negative",
       message: err.message || "Error al actualizar el usuario.",
@@ -371,23 +406,20 @@ const onRowUpdating = async (e) => {
 };
 
 /**
- * Función para manejar la eliminación de una fila (Eliminar Usuario) en el DataGrid
+ * Eliminar usuario (cuando se presiona el botón "Eliminar" en el DataGrid)
  */
 const onRowDeleting = async (e) => {
   const { key } = e;
   try {
     await crearUsuariosStore.eliminarUsuario(key);
-    e.cancel = true; // Evita que DevExtreme maneje la eliminación automáticamente
-    // Refrescar la lista de usuarios
+    e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();
-    // Mostrar notificación de éxito
     $q.notify({
       type: "positive",
       message: "Usuario eliminado exitosamente.",
     });
   } catch (err) {
     e.cancel = true;
-    // Mostrar notificación de error
     $q.notify({
       type: "negative",
       message: err.message || "Error al eliminar el usuario.",
@@ -395,11 +427,11 @@ const onRowDeleting = async (e) => {
   }
 };
 
-// Obtener la lista de usuarios y organizaciones al montar el componente
+// Al montar el componente, cargamos los usuarios y las organizaciones
 onMounted(async () => {
   await crearUsuariosStore.cargarUsuarios();
   await organizacionStore.cargarOrganizaciones();
-  console.log(user.value?.email);
+  console.log("User Auth:", user.value?.email);
   console.log("Organizaciones: ", organizaciones.value);
 });
 </script>
@@ -412,7 +444,7 @@ onMounted(async () => {
   width: 90%;
   position: relative;
   left: 135px;
-  height: 90vb;
+  height: 90vh; /* Ajusta según tu preferencia */
 }
 .custom-data-grid {
   width: 100%;
@@ -420,7 +452,7 @@ onMounted(async () => {
 .menu-container {
   background: #f8f9fa;
   border-radius: 8px;
-  height: 86vb;
+  height: 86vh;
 }
 
 .vertical-tabs .nav-link {

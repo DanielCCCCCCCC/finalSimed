@@ -95,6 +95,29 @@
                     required
                   />
                 </div>
+                <!-- Color Picker -->
+                <div class="col-12 col-md-12 mb-3 corridoInput">
+                  <label>Color</label>
+                  <q-color
+                    v-model="citaSeleccionada.color"
+                    format="hex"
+                    default-view="spectrum"
+                    style="max-width: 100px"
+                    :palette="[
+                      '#FF0000',
+                      '#00FF00',
+                      '#0000FF',
+                      '#f66',
+                      '#0f0',
+                      'brown',
+                      'cyan',
+                      'magenta',
+                      'yellow',
+                      '#b87333',
+                    ]"
+                  />
+                  <div>Color seleccionado: {{ color }}</div>
+                </div>
               </div>
 
               <div class="flex justify-center q-mt-sm">
@@ -126,6 +149,7 @@ import {
   DxSearchPanel,
   DxGroupPanel,
   DxGrouping,
+  DxSorting,
   DxSummary,
   DxGroupItem,
   DxLoadPanel,
@@ -147,12 +171,14 @@ const isEditMode = ref(false);
 const citaSeleccionada = ref({
   id: null,
   descripcion: "",
+  color: "#FFFFFF", // default
 });
 
 // Errores del formulario
 const errores = ref({
   descripcion: "",
 });
+// const color = ref("#FF0000");
 
 // Función para cargar citas al montar el componente
 const cargarDatos = async () => {
@@ -195,7 +221,7 @@ const abrirFormularioEdicion = (e) => {
 
 // Guardar los cambios del formulario (agregar o actualizar)
 const guardarCambios = async () => {
-  const { id, descripcion } = citaSeleccionada.value;
+  const { id, descripcion, color } = citaSeleccionada.value;
 
   // Resetear errores
   errores.value = {
@@ -221,7 +247,7 @@ const guardarCambios = async () => {
   try {
     if (isEditMode.value) {
       // Actualizar cita
-      await citasStore.actualizarCita(id, descripcion.trim());
+      await citasStore.actualizarCita(id, descripcion.trim(), color);
       Notify.create({
         type: "positive",
         message: "Cita actualizada con éxito",
@@ -229,7 +255,7 @@ const guardarCambios = async () => {
       });
     } else {
       // Agregar nueva cita
-      await citasStore.agregarCita(descripcion.trim());
+      await citasStore.agregarCita(descripcion.trim(), color);
       Notify.create({
         type: "positive",
         message: "Cita agregada con éxito",

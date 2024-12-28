@@ -1,3 +1,4 @@
+// /src/stores/AppointmentsStore.js
 import { defineStore } from "pinia";
 import { supabase } from "../supabaseClient";
 import { useAuthStore } from "./auth";
@@ -10,10 +11,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   const error = ref(null);
 
   const authStore = useAuthStore();
-
-  // Definir una variable 'role' para evitar errores en la consola.
-  // Puedes reemplazar 'null' con el valor adecuado si es necesario.
-  const role = ref(null);
+  const role = ref(null); // si lo necesitas para algo extra
 
   /**
    * Calcula la tendencia de citas por semana en el mes actual.
@@ -25,7 +23,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     const groupedData = [];
 
-    // Obtiene el primer día del mes actual para cada semana
+    // Obtener el primer día del mes actual para cada semana (máx. 5)
     for (let i = 0; i < 5; i++) {
       const startOfWeek = new Date(currentYear, currentMonth, 1 + i * 7);
       const endOfWeek = new Date(currentYear, currentMonth, 1 + i * 7 + 6);
@@ -37,8 +35,9 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       });
     }
 
-    appointments.value.forEach((appointment) => {
-      const date = new Date(appointment.startDate);
+    // Contar cuántas citas caen en cada rango semanal
+    appointments.value.forEach((appt) => {
+      const date = new Date(appt.startDate);
       if (
         date.getMonth() === currentMonth &&
         date.getFullYear() === currentYear
@@ -56,228 +55,10 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       period: `${week.start.toLocaleDateString()} - ${week.end.toLocaleDateString()}`,
       count: week.count,
     }));
-
-    // console.log("Tendencia de citas:", appointmentsTrend.value);
   };
 
   /**
-   * Obtiene las citas del usuario autenticado desde la tabla appointments.
-   */
-  const fetchAppointments = async () => {
-    const userId = authStore?.userId;
-    const tenant_id = authStore?.tenant_id;
-
-    if (!userId) {
-      console.warn("No hay un usuario autenticado. No se cargarán citas.");
-      appointments.value = [];
-      appointmentsTrend.value = [];
-      return;
-    }
-
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { data, error: fetchError } = await supabase
-        .from("appointments")
-        .select(
-          "id, title, startDate, endDate, allDay, repeat, description, nombre, medico, tipoCita, userId"
-        )
-        .eq("userId", userId);
-
-      // console.log("Data fetched from Supabase:", data);
-
-      if (fetchError) {
-        console.error("Error al obtener las citas:", fetchError);
-        error.value = fetchError.message;
-      } else {
-        appointments.value = data || [];
-        // console.log("Appointments cargadas:", appointments.value);
-        calculateAppointmentsTrend();
-      }
-    } catch (err) {
-      console.error("Error al obtener las citas:", err.message);
-      error.value = err.message;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  watch(
-    () => authStore.userId,
-    (newUserId) => {
-      if (newUserId) {
-        fetchAppointments();
-      } else {
-        appointments.value = [];
-        appointmentsTrend.value = [];
-      }
-    },
-    { immediate: true }
-  );
-
-  /**
-   * Agrega una nueva cita.
-   */
-  const addAppointment = async (appointment) => {
-    const tenant_id = authStore.tenant_id;
-    const userId = authStore.userId;
-
-    // console.log("Estado de autenticación actualizado:", {
-    //   tenant_id: tenant_id,
-    //   role: role.value,
-    //   userId: userId,
-    // });
-
-    if (!userId) {
-      console.error(
-        "No hay un usuario autenticado. No se puede agregar la cita."
-      );
-      error.value = "Usuario no autenticado.";
-      return;
-    }
-
-    const appointmentWithUser = {
-      ...appointment,
-    };
-
-    // console.log("Adding appointment:", appointmentWithUser);
-
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { data, error: insertError } = await supabase
-        .from("appointments")
-        .insert([appointmentWithUser])
-        .select();
-
-      // console.log("Inserted appointment data:", data);
-
-      if (insertError) {
-        console.error("Error inserting appointment:", insertError);
-        error.value = insertError.message;
-        throw insertError;
-      }
-
-      if (data && data.length > 0) {
-        appointments.value.push(data[0]);
-        calculateAppointmentsTrend();
-        // console.log("Appointment added:", data[0]);
-        return data[0];
-      } else {
-        console.error(
-          "No se recibieron datos de Supabase después de insertar la cita."
-        );
-        error.value = "No data returned from Supabase.";
-        throw new Error("No data returned from Supabase.");
-      }
-    } catch (err) {
-      console.error("Error en addAppointment:", err);
-      error.value = err.message;
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  /**
-   * Actualiza una cita específica.
-   */
-  const updateAppointment = async (id, updates) => {
-    const userId = authStore.userId;
-
-    if (!userId) {
-      console.error(
-        "No hay un usuario autenticado. No se puede actualizar la cita."
-      );
-      error.value = "Usuario no autenticado.";
-      return;
-    }
-
-    // console.log("Actualizando cita con ID:", id, "y datos:", updates);
-
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { data, error: updateError } = await supabase
-        .from("appointments")
-        .update(updates)
-        .eq("id", id)
-        .eq("userId", userId);
-
-      // console.log("Updated appointment data:", data);
-
-      if (updateError) {
-        console.error("Error al actualizar la cita en Supabase:", updateError);
-        error.value = updateError.message;
-      } else if (data && data.length > 0) {
-        const index = appointments.value.findIndex((app) => app.id === id);
-        if (index !== -1) {
-          appointments.value[index] = {
-            ...appointments.value[index],
-            ...updates,
-          };
-          // console.log(
-          //   "Appointment updated locally:",
-          //   appointments.value[index]
-          // );
-        }
-        calculateAppointmentsTrend();
-      }
-    } catch (err) {
-      console.error("Error al actualizar la cita:", err.message);
-      error.value = err.message;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  /**
-   * Elimina una cita específica.
-   */
-  const deleteAppointment = async (id) => {
-    const userId = authStore.userId;
-
-    if (!userId) {
-      // console.error(
-      //   "No hay un usuario autenticado. No se puede eliminar la cita."
-      // );
-      error.value = "Usuario no autenticado.";
-      return;
-    }
-
-    // console.log("Eliminando cita con ID:", id);
-
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { error: deleteError } = await supabase
-        .from("appointments")
-        .delete()
-        .eq("id", id)
-        .eq("userId", userId);
-
-      if (deleteError) {
-        console.error("Error al eliminar la cita en Supabase:", deleteError);
-        error.value = deleteError.message;
-      } else {
-        appointments.value = appointments.value.filter((app) => app.id !== id);
-        calculateAppointmentsTrend();
-        // console.log("Appointment deleted locally. ID:", id);
-      }
-    } catch (err) {
-      console.error("Error al eliminar la cita:", err.message);
-      error.value = err.message;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  /**
-   * Calcula estadísticas mensuales.
+   * Calcula estadísticas mensuales (para tu dashboard).
    */
   const calculateMonthlyStats = () => {
     const now = new Date();
@@ -312,21 +93,376 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       diffPercentage =
         ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
     }
-    // console.log("% MES ANTERIOR: ", prevMonthCount);
-    // console.log("% MES ACTUAL: ", currentMonthCount);
-    // console.log("% de diferencia ", diffPercentage);
     return { currentMonthCount, prevMonthCount, diffPercentage };
   };
 
+  /**
+   * Obtiene TODAS las citas del usuario autenticado (independientemente de su status).
+   * Verás 'Pendiente', 'Aceptada', 'Rechazada', etc., siempre y cuando userId = authStore.userId.
+   */
+  const fetchAppointments = async () => {
+    const userId = authStore?.userId;
+    console.group("fetchAppointments");
+    console.log("[fetchAppointments] Inicio de la función");
+
+    if (!userId) {
+      console.warn(
+        "[fetchAppointments] No hay un usuario autenticado. No se cargarán citas."
+      );
+      appointments.value = [];
+      appointmentsTrend.value = [];
+      console.groupEnd();
+      return;
+    }
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      console.log(
+        `[fetchAppointments] Consultando citas para userId: ${userId}`
+      );
+
+      const { data, error: fetchError } = await supabase
+        .from("appointments")
+        .select("*")
+        .eq("userId", userId);
+
+      if (fetchError) {
+        console.error(
+          "[fetchAppointments] Error al obtener las citas desde Supabase:",
+          fetchError
+        );
+        error.value = fetchError.message;
+      } else {
+        console.log("[fetchAppointments] Citas obtenidas exitosamente:", data);
+        appointments.value = data || [];
+
+        console.log("[fetchAppointments] Calculando tendencias de citas...");
+        calculateAppointmentsTrend();
+        console.log(
+          "[fetchAppointments] Tendencias calculadas:",
+          appointmentsTrend.value
+        );
+      }
+    } catch (err) {
+      console.error(
+        "[fetchAppointments] Excepción capturada durante la ejecución:",
+        err.message
+      );
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+      console.log(
+        "[fetchAppointments] Finalizando ejecución, loading:",
+        loading.value
+      );
+      console.groupEnd();
+    }
+  };
+
+  // Si el userId cambia (login/logout), recargamos las citas
+  watch(
+    () => authStore.userId,
+    (newUserId) => {
+      if (newUserId) {
+        fetchAppointments();
+      } else {
+        appointments.value = [];
+        appointmentsTrend.value = [];
+      }
+    },
+    { immediate: true }
+  );
+
+  /**
+   * Agrega una nueva cita. (MÉTODO 2: El médico la agenda desde el Scheduler)
+   */
+  const addAppointment = async (appointment) => {
+    const userId = authStore.userId;
+
+    if (!userId) {
+      console.error(
+        "No hay un usuario autenticado. No se puede agregar la cita."
+      );
+      error.value = "Usuario no autenticado.";
+      return;
+    }
+
+    // Asignar userId (el ID del médico actual)
+    const appointmentWithUser = {
+      ...appointment,
+      userId: userId,
+    };
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data, error: insertError } = await supabase
+        .from("appointments")
+        .insert([appointmentWithUser])
+        .select(); // Retorna la fila insertada (Supabase v2)
+
+      if (insertError) {
+        console.error("Error inserting appointment:", insertError);
+        error.value = insertError.message;
+        throw insertError;
+      }
+
+      if (data && data.length > 0) {
+        // Añadimos localmente
+        appointments.value.push(data[0]);
+        calculateAppointmentsTrend();
+        return data[0];
+      } else {
+        console.error("No data returned from Supabase after insertion.");
+        error.value = "No data returned from Supabase.";
+        throw new Error("No data returned from Supabase.");
+      }
+    } catch (err) {
+      console.error("Error en addAppointment:", err);
+      error.value = err.message;
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Actualiza una cita específica.
+   */
+  const updateAppointment = async (id, updates) => {
+    const userId = authStore.userId;
+
+    if (!userId) {
+      console.error(
+        "No hay un usuario autenticado. No se puede actualizar la cita."
+      );
+      error.value = "Usuario no autenticado.";
+      return;
+    }
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data, error: updateError } = await supabase
+        .from("appointments")
+        .update(updates)
+        .eq("id", id)
+        .eq("userId", userId); // Por RLS, si userId no coincide, no actualizará nada
+
+      if (updateError) {
+        console.error("Error al actualizar la cita en Supabase:", updateError);
+        error.value = updateError.message;
+      } else if (data && data.length > 0) {
+        // Actualizamos localmente
+        const index = appointments.value.findIndex((app) => app.id === id);
+        if (index !== -1) {
+          appointments.value[index] = {
+            ...appointments.value[index],
+            ...updates,
+          };
+        }
+        calculateAppointmentsTrend();
+      }
+    } catch (err) {
+      console.error("Error al actualizar la cita:", err.message);
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Elimina una cita específica.
+   */
+  const deleteAppointment = async (id) => {
+    const userId = authStore.userId;
+
+    if (!userId) {
+      error.value = "Usuario no autenticado.";
+      return;
+    }
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { error: deleteError } = await supabase
+        .from("appointments")
+        .delete()
+        .eq("id", id)
+        .eq("userId", userId);
+
+      if (deleteError) {
+        console.error("Error al eliminar la cita en Supabase:", deleteError);
+        error.value = deleteError.message;
+      } else {
+        appointments.value = appointments.value.filter((app) => app.id !== id);
+        calculateAppointmentsTrend();
+      }
+    } catch (err) {
+      console.error("Error al eliminar la cita:", err.message);
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * (OPCIONAL) Trae solo las pendientes, por si en otra vista quieres mostrar 'Pendiente'.
+   */
+  const fetchAutoAppointments = async () => {
+    loading.value = true; // Inicia la carga
+    error.value = null;
+
+    try {
+      const userId = authStore.userId;
+
+      if (!userId) {
+        console.warn("[fetchAutoAppointments] No hay un usuario autenticado.");
+        appointments.value = []; // Asegúrate de limpiar las citas
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from("appointments")
+        .select("*")
+        .eq("userId", userId)
+        .eq("autoCita", true);
+
+      if (fetchError) {
+        console.error(
+          "[fetchAutoAppointments] Error al realizar la consulta:",
+          fetchError
+        );
+        error.value = fetchError.message;
+      } else {
+        appointments.value = data || []; // Solo guarda citas filtradas
+      }
+    } catch (err) {
+      console.error("[fetchAutoAppointments] Excepción capturada:", err);
+      error.value = err.message;
+    } finally {
+      loading.value = false; // Finaliza la carga
+    }
+  };
+
+  // NUEVO: Función para enviar correo
+  async function sendWhatsAppNotification(appointmentId, status) {
+    try {
+      // 1. Obtener la cita para ver el 'patientphone' u otros datos
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("patientphone, title, startDate, nombre")
+        .eq("id", appointmentId)
+        .single();
+      if (error || !data) {
+        console.error("Error al obtener cita:", error);
+        return;
+      }
+
+      const { patientphone, title, startDate, nombre } = data;
+
+      // 2. Llamar a tu API / servicio de WhatsApp
+      //    Por ejemplo: 'http://localhost:9000/sendwhatsapp'
+      //    donde tengas la lógica de Twilio, WhatsApp Cloud API, etc.
+      const response = await fetch("http://localhost:9000/sendwhatsapp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: patientphone, // número del paciente
+          message: `Hola, la cita "${title}" para ${nombre} a las ${startDate} ha sido ${status}.`,
+        }),
+      });
+      const result = await response.json();
+      console.log("WhatsApp result:", result);
+    } catch (err) {
+      console.error("Error al enviar notificación por WhatsApp:", err);
+    }
+  }
+
+  /**
+   * Aceptar cita (status = 'Aceptada').
+   */
+  const acceptAppointment = async (id) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const userId = authStore.userId;
+      if (!userId) {
+        throw new Error("Usuario no autenticado.");
+      }
+
+      const { error: updateError } = await supabase
+        .from("appointments")
+        .update({ status: "Aceptada" })
+        .eq("id", id)
+        .eq("userId", userId);
+
+      if (updateError) {
+        throw updateError;
+      }
+      // Llamada a tu función de envío de WhatsApp
+      await sendWhatsAppNotification(id, "APROBADA");
+      await fetchAutoAppointments();
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Rechazar cita (status = 'Rechazada').
+   */
+  const rejectAppointment = async (id) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const userId = authStore.userId;
+      if (!userId) {
+        throw new Error("Usuario no autenticado.");
+      }
+
+      const { error: updateError } = await supabase
+        .from("appointments")
+        .update({ status: "Rechazada" })
+        .eq("id", id)
+        .eq("userId", userId);
+
+      if (updateError) {
+        throw updateError;
+      }
+      // Llamada a tu función de envío de WhatsApp
+      await sendWhatsAppNotification(id, "RECHAZADA");
+      await fetchAutoAppointments();
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
+    // State
     appointments,
     appointmentsTrend,
     loading,
     error,
+
+    // Actions / getters
     fetchAppointments,
+    fetchAutoAppointments,
     addAppointment,
     updateAppointment,
     deleteAppointment,
+    acceptAppointment,
+    rejectAppointment,
+
+    // Utils / stats
     calculateAppointmentsTrend,
     calculateMonthlyStats,
   };

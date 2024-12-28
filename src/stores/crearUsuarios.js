@@ -1,10 +1,10 @@
 // src/stores/crearUsuarios.js
 
 import { defineStore } from "pinia";
-import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta sea correcta
+import { supabase } from "../supabaseClient"; // Ajusta la ruta a tu configuración de Supabase
 import { ref } from "vue";
-import { useAuthStore } from "./auth"; // Importa la store de autenticación
-import axios from "axios"; // Para llamadas al backend (para operaciones admin)
+import { useAuthStore } from "./auth";
+import axios from "axios"; // Para llamadas a tu backend en la eliminación
 
 export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   // Accede a la store de autenticación para obtener el tenant_id
@@ -17,23 +17,22 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   const users = ref([]);
 
   /**
-   * Obtiene la lista de usuarios desde la tabla `users`.
+   * Obtiene la lista de usuarios desde la tabla `users`, filtrando por tenant_id.
    */
   const cargarUsuarios = async () => {
     loading.value = true;
     error.value = null;
-
     try {
       const { data, error: fetchError } = await supabase
-        .from("users") // Asegúrate de que la tabla sea 'users'
+        .from("users")
         .select("*")
-        .eq("tenant_id", authStore.tenant_id); // Filtra por tenant_id
+        .eq("tenant_id", authStore.tenant_id);
 
       if (fetchError) {
         throw fetchError;
       }
 
-      users.value = data;
+      users.value = data || [];
       console.log("Usuarios: ", users.value);
     } catch (err) {
       console.error("Error al obtener usuarios:", err.message);
@@ -44,32 +43,27 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   };
 
   /**
-   * Crea un nuevo usuario utilizando Supabase Auth y sincroniza en la tabla `users`.
-   * @param {Object} payload - Datos del nuevo usuario.
-   * @param {string} payload.email - Correo electrónico del usuario.
-   * @param {string} payload.password - Contraseña del usuario.
-   * @param {string} payload.role - Rol del usuario.
-   * @returns {Object} - Datos del usuario creado.
+   * Crea un nuevo usuario con Supabase Auth + inserción en tabla `users`.
+   * payload: { email, password, role, alias?, direccion?, telefono?, observaciones? }
    */
-  const crearUsuario = async ({ email, password, role }) => {
+  const crearUsuario = async (payload) => {
     loading.value = true;
     error.value = null;
     success.value = null;
+
+    const { email, password, role, alias, direccion, telefono, observaciones } =
+      payload;
 
     try {
       // Validaciones básicas
       if (!email || !password || !role) {
         throw new Error("Email, contraseña y rol son obligatorios.");
       }
-
-      // Validar formato de email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         throw new Error("Formato de email inválido.");
       }
-
-      // Validar longitud de contraseña
-      if (password.length < 8) {
+      if (password.length < 6) {
         throw new Error("La contraseña debe tener al menos 6 caracteres.");
       }
 
@@ -88,32 +82,35 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
           password,
         }
       );
-
       if (signUpError) {
         throw signUpError;
       }
 
       const userId = authData.user.id;
 
-      // Insertar la información adicional en la tabla `users`
+      // Insertar en tabla `users`
       const { data, error: insertError } = await supabase.from("users").insert([
         {
-          id: userId, // Sincronizar el ID con Supabase Auth
+          id: userId,
           email,
           role,
           tenant_id,
+          alias: alias || null,
+          direccion: direccion || null,
+          telefono: telefono || null,
+          observaciones: observaciones || null,
         },
       ]);
 
       if (insertError) {
-        // Si falla la inserción en `users`, elimina el usuario de Auth para mantener la consistencia
+        // Si falla la inserción, eliminamos el usuario de Supabase Auth (rollback)
         await supabase.auth.admin.deleteUser(userId);
         throw insertError;
       }
 
       success.value = "Usuario creado exitosamente.";
-      users.value.push(data[0]); // Agrega el nuevo usuario a la lista
-      return data;
+      users.value.push(data[0]);
+      return data[0];
     } catch (err) {
       console.error("Error al crear el usuario:", err.message);
       error.value = err.message;
@@ -124,25 +121,31 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   };
 
   /**
-   * Actualiza un usuario existente en la tabla `users` y en Supabase Auth si es necesario.
-   * @param {Object} payload - Datos del usuario a actualizar.
-   * @param {string} payload.id - ID del usuario (UUID).
-   * @param {string} [payload.email] - Nuevo correo electrónico.
-   * @param {string} [payload.password] - Nueva contraseña.
-   * @param {string} [payload.role] - Nuevo rol.
+   * Actualiza un usuario en la tabla `users` (y en Supabase Auth si cambia email/password).
+   * payload: { id, email?, password?, role?, alias?, direccion?, telefono?, observaciones? }
    */
-  const actualizarUsuario = async ({ id, email, password, role }) => {
+  const actualizarUsuario = async (payload) => {
     loading.value = true;
     error.value = null;
     success.value = null;
 
+    const {
+      id,
+      email,
+      password,
+      role,
+      alias,
+      direccion,
+      telefono,
+      observaciones,
+    } = payload;
+
     try {
-      // Validaciones básicas
       if (!id) {
         throw new Error("ID del usuario es obligatorio.");
       }
 
-      // Construir objeto de actualización para la tabla `users`
+      // Construir el objeto de actualización para la tabla `users`
       const updates = {};
       if (email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -154,8 +157,20 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       if (role) {
         updates.role = role;
       }
+      if (alias !== undefined) {
+        updates.alias = alias;
+      }
+      if (direccion !== undefined) {
+        updates.direccion = direccion;
+      }
+      if (telefono !== undefined) {
+        updates.telefono = telefono;
+      }
+      if (observaciones !== undefined) {
+        updates.observaciones = observaciones;
+      }
 
-      // Actualizar la tabla `users`
+      // Actualizar en la tabla `users`
       const { data: userData, error: updateError } = await supabase
         .from("users")
         .update(updates)
@@ -165,14 +180,11 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
         throw updateError;
       }
 
-      // Actualizar el correo electrónico en Supabase Auth si se proporcionó
+      // Actualizar en Supabase Auth si se proporcionó email
       if (email) {
-        const { data: updateAuthData, error: updateAuthError } =
-          await supabase.auth.updateUser({
-            id,
-            email,
-          });
-
+        const { error: updateAuthError } = await supabase.auth.updateUser({
+          email,
+        });
         if (updateAuthError) {
           throw updateAuthError;
         }
@@ -180,22 +192,20 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
       // Actualizar la contraseña en Supabase Auth si se proporcionó
       if (password) {
-        const { data: updateAuthData, error: updateAuthError } =
-          await supabase.auth.updateUser({
-            id,
-            password,
-          });
-
+        const { error: updateAuthError } = await supabase.auth.updateUser({
+          password,
+        });
         if (updateAuthError) {
           throw updateAuthError;
         }
       }
 
       success.value = "Usuario actualizado exitosamente.";
-      // Actualizar la lista local
-      const index = users.value.findIndex((u) => u.id === id);
-      if (index !== -1) {
-        users.value[index] = { ...users.value[index], ...updates };
+
+      // Refrescar localmente la lista "users"
+      const idx = users.value.findIndex((u) => u.id === id);
+      if (idx !== -1) {
+        users.value[idx] = { ...users.value[idx], ...updates };
       }
     } catch (err) {
       console.error("Error al actualizar el usuario:", err.message);
@@ -207,8 +217,8 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   };
 
   /**
-   * Elimina un usuario de Supabase Auth y de la tabla `users`.
-   * @param {string} id - ID del usuario a eliminar (UUID).
+   * Elimina un usuario de Supabase Auth (vía backend) y de la tabla `users`.
+   * @param {string} id - ID del usuario (UUID).
    */
   const eliminarUsuario = async (id) => {
     loading.value = true;
@@ -220,7 +230,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
         throw new Error("ID del usuario es obligatorio.");
       }
 
-      // Eliminar el usuario de la tabla `users`
+      // Eliminar primero de la tabla `users`
       const { data, error: deleteError } = await supabase
         .from("users")
         .delete()
@@ -231,22 +241,16 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       }
 
       // Eliminar el usuario de Supabase Auth
-      // **Este método requiere privilegios administrativos que no deben usarse en el frontend**
-      // Por lo tanto, debes implementar esta operación en un backend seguro.
-
-      // Aquí, en lugar de llamar directamente, llamaremos a un endpoint de tu backend.
-      // Supongamos que tienes un backend corriendo en 'http://localhost:3000'
-
+      // IMPORTANTE: requiere privilegios admin => hazlo a través de tu backend
       const response = await axios.delete(
         `http://localhost:3000/delete-user/${id}`
       );
-
-      if (response.data.error) {
+      if (response.data?.error) {
         throw new Error(response.data.error);
       }
 
       success.value = "Usuario eliminado exitosamente.";
-      // Eliminar el usuario de la lista local
+      // Remover localmente
       users.value = users.value.filter((u) => u.id !== id);
     } catch (err) {
       console.error("Error al eliminar el usuario:", err.message);

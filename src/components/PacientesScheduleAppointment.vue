@@ -2,7 +2,6 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <!-- SI encontramos la org, mostramos el formulario -->
         <div v-if="organization" class="card shadow-sm p-4">
           <div class="card-header bg-secondary text-white">
             <h5 class="card-title mb-0">Agendar Nueva Cita Médica</h5>
@@ -11,21 +10,13 @@
             <!-- Información de la Organización -->
             <div class="mb-4">
               <h5>{{ organization.name }}</h5>
-              <p>
-                <i class="ri-map-pin-line"></i>
-                {{ organization.address }}
-              </p>
-              <p>
-                <i class="ri-phone-line"></i>
-                {{ organization.phone }}
-              </p>
+              <p><i class="ri-map-pin-line"></i> {{ organization.address }}</p>
+              <p><i class="ri-phone-line"></i> {{ organization.phone }}</p>
               <p v-if="organization.email">
-                <i class="ri-mail-line"></i>
-                {{ organization.email }}
+                <i class="ri-mail-line"></i> {{ organization.email }}
               </p>
             </div>
 
-            <!-- FORM -->
             <form @submit.prevent="handleSubmit">
               <div class="row">
                 <!-- Nombre del Paciente -->
@@ -112,26 +103,6 @@
                   </div>
                 </div>
               </div>
-              <!-- NUEVO: Teléfono -->
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="phone" class="form-label"
-                    >Número de Teléfono</label
-                  >
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="ri-phone-line"></i>
-                    </span>
-                    <input
-                      type="tel"
-                      id="phone"
-                      v-model="form.phone"
-                      class="form-control"
-                      placeholder="Ingrese su teléfono"
-                    />
-                  </div>
-                </div>
-              </div>
 
               <!-- Descripción -->
               <div class="mb-3">
@@ -140,7 +111,7 @@
                   id="description"
                   v-model="form.description"
                   class="form-control"
-                  placeholder="Detalles adicionales (opcional)"
+                  placeholder="Ingrese detalles adicionales (opcional)"
                   rows="3"
                 ></textarea>
               </div>
@@ -155,8 +126,7 @@
 
             <!-- Mensaje de Éxito -->
             <div v-if="success" class="alert alert-success mt-3" role="alert">
-              La cita ha sido enviada para su aprobación, se le notificará por
-              medio de Whatsapp.
+              La cita ha sido agendada exitosamente.
             </div>
 
             <!-- Mensaje de Error -->
@@ -170,7 +140,7 @@
           </div>
         </div>
 
-        <!-- Mensaje de Cargando o No encontrada -->
+        <!-- Mensaje de Cargando o Organización No Encontrada -->
         <div v-else-if="loading" class="text-center">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Cargando...</span>
@@ -183,6 +153,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -192,10 +163,11 @@ export default {
   name: "PublicScheduleAppointment",
   setup() {
     const route = useRoute();
-
-    // Capturamos dos parámetros: organizationId y doctorId
-    const organizationId = ref(route.params.organizationId);
-    const doctorId = ref(route.params.doctorId);
+    const tenantId = ref(
+      route.params.tenant_id.startsWith(":")
+        ? route.params.tenant_id.slice(1)
+        : route.params.tenant_id
+    );
 
     // Estado del formulario
     const form = ref({
@@ -204,20 +176,17 @@ export default {
       date: "",
       time: "",
       description: "",
-      phone: "",
     });
 
-    // Errores
+    // Errores de validación
     const errors = ref({
       email: "",
       date: "",
       time: "",
     });
 
-    // Bandera de éxito para controlar validaciones en watchers
+    // Mensajes de éxito y error
     const success = ref(false);
-
-    // Para mostrar error de servidor
     const errorMsg = ref("");
 
     // Horarios disponibles
@@ -250,7 +219,7 @@ export default {
       "17:00",
     ];
 
-    // Formatea hora en AM/PM
+    // Formatear hora para mostrar en formato AM/PM
     const formatTime = (time) => {
       const [hour, minute] = time.split(":").map(Number);
       const period = hour >= 12 ? "PM" : "AM";
@@ -269,6 +238,7 @@ export default {
         errors.value.email = "";
       }
     };
+
     const validateDate = () => {
       const date = form.value.date;
       if (!date) {
@@ -277,6 +247,7 @@ export default {
         errors.value.date = "";
       }
     };
+
     const validateTime = () => {
       const time = form.value.time;
       if (!time) {
@@ -286,36 +257,44 @@ export default {
       }
     };
 
-    // Obtener info de la Organización
+    // Obtener información de la organización
     const fetchOrganizationInfo = async () => {
       try {
+        console.log("Fetching organization info for tenantId:", tenantId.value);
         const { data, error } = await supabase
           .from("organizacion")
           .select("*")
-          .eq("id", organizationId.value)
+          .eq("id", tenantId.value)
           .single();
 
-        if (error || !data) {
+        console.log("Organization fetch response:", data, error);
+
+        if (error) {
+          console.error("Error fetching organization info:", error);
           organization.value = null;
         } else {
+          // Mapear los campos de la organización a nombres en inglés
           organization.value = {
             id: data.id,
             name: data.nombre,
             address: data.direccion,
             phone: data.numero_telefono,
-            email: data.email || "",
+            email: data.email || "", // Asegúrate de manejar si el email no existe
+            // Agrega otros campos si es necesario
           };
+          console.log("Organization fetched:", organization.value);
         }
       } catch (err) {
+        console.error("Error fetching organization info:", err);
         organization.value = null;
       } finally {
         loading.value = false;
       }
     };
 
-    // Obtener horarios ocupados
+    // Obtener horas ocupadas
     const fetchOccupiedTimes = async () => {
-      if (!form.value.date || !doctorId.value) {
+      if (!form.value.date) {
         availableTimes.value = [];
         return;
       }
@@ -325,25 +304,41 @@ export default {
       nextDate.setDate(nextDate.getDate() + 1);
       const nextDateStr = nextDate.toISOString().split("T")[0];
 
+      console.log(
+        "Fetching appointments for Tenant ID:",
+        tenantId.value,
+        selectedDate
+      );
+
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("appointments")
           .select("startDate")
-          .eq("userId", doctorId.value)
+          .eq("tenant_id", tenantId.value)
           .gte("startDate", `${selectedDate}T00:00:00`)
           .lt("startDate", `${nextDateStr}T00:00:00`);
 
-        if (error) {
+        console.log("Fetched data:", data);
+
+        if (fetchError) {
+          console.error("Error fetching appointments:", fetchError);
           errorMsg.value = "Error al obtener las citas existentes.";
           return;
         }
 
+        // Obtener las horas ocupadas
         const occupiedTimes = data.map((appt) => appt.startDate.slice(11, 16));
 
+        console.log("Occupied times:", occupiedTimes);
+
+        // Determinar las horas disponibles excluyendo las ocupadas
         availableTimes.value = allTimes.filter(
-          (t) => !occupiedTimes.includes(t)
+          (time) => !occupiedTimes.includes(time)
         );
 
+        console.log("Available times after filtering:", availableTimes.value);
+
+        // Si no hay horarios disponibles
         if (availableTimes.value.length === 0) {
           errorMsg.value =
             "No hay horarios disponibles para la fecha seleccionada.";
@@ -351,119 +346,109 @@ export default {
           errorMsg.value = "";
         }
       } catch (err) {
+        console.error("Error al obtener las citas:", err);
         errorMsg.value = "Error al obtener las citas existentes.";
       }
     };
 
-    //
-    // WATCHERS: Solo validamos si success.value es false
-    //
-
+    // Observadores
     watch(
       () => form.value.date,
       () => {
-        if (!success.value) {
-          fetchOccupiedTimes();
-          validateDate();
-          // Si la hora actual no está disponible, reset
-          if (
-            form.value.time &&
-            !availableTimes.value.includes(form.value.time)
-          ) {
-            form.value.time = "";
-            errors.value.time = "Hora ya ocupada";
-          }
-        }
-      }
-    );
-    watch(
-      () => form.value.email,
-      () => {
-        if (!success.value) {
-          validateEmail();
-        }
-      }
-    );
-    watch(
-      () => form.value.time,
-      () => {
-        if (!success.value) {
-          validateTime();
+        fetchOccupiedTimes();
+        validateDate();
+        // Resetear la hora seleccionada si ya no está disponible
+        if (
+          form.value.time &&
+          !availableTimes.value.includes(form.value.time)
+        ) {
+          form.value.time = "";
+          errors.value.time = "Hora ya ocupada";
         }
       }
     );
 
-    // Detectar cambios en la ruta
     watch(
-      () => route.params,
-      async (params) => {
-        organizationId.value = params.organizationId;
-        doctorId.value = params.doctorId;
-        // Resetear el formulario
+      () => form.value.email,
+      () => {
+        validateEmail();
+      }
+    );
+
+    watch(
+      () => form.value.time,
+      () => {
+        validateTime();
+      }
+    );
+
+    watch(
+      () => route.params.tenant_id, // Usar 'tenant_id' según la definición de la ruta
+      async (newId) => {
+        tenantId.value = newId.startsWith(":") ? newId.slice(1) : newId;
+        console.log("New tenantId received:", tenantId.value);
+        // Resetear el formulario y estados
         form.value = {
           patientName: "",
           email: "",
           date: "",
           time: "",
           description: "",
-          phone: "",
         };
         availableTimes.value = [];
-        errors.value = { email: "", date: "", time: "" };
-        success.value = false; // Resetear bandera de éxito
+        errors.value = {
+          email: "",
+          date: "",
+          time: "",
+        };
+        success.value = false;
         errorMsg.value = "";
         organization.value = null;
         loading.value = true;
-
         await fetchOrganizationInfo();
         await fetchOccupiedTimes();
       },
       { immediate: true }
     );
 
-    // Calcular la fecha/hora de fin
-    const calculateEndDate = (date, time, durationMinutes) => {
-      const [hour, minute] = time.split(":").map(Number);
-      const start = new Date(`${date}T${time}:00`);
-      start.setMinutes(start.getMinutes() + durationMinutes);
-      return start.toISOString().slice(0, 16);
-    };
-
-    // Manejar el envío
+    // Manejar el envío del formulario
     const handleSubmit = async () => {
-      // Forzamos validaciones
+      // Validar todos los campos antes de enviar
       validateEmail();
       validateDate();
       validateTime();
 
-      // Si hay errores, no continuamos
       if (errors.value.email || errors.value.date || errors.value.time) {
+        console.log("Validation errors:", errors.value);
         return;
       }
 
+      // Preparar los datos de la cita
       const newAppointment = {
         title: `Cita con ${form.value.patientName}`,
         startDate: `${form.value.date}T${form.value.time}:00`,
-        endDate: calculateEndDate(form.value.date, form.value.time, 30),
-        allDay: false,
-        repeat: false,
+        endDate: calculateEndDate(form.value.date, form.value.time, 30), // Duración de 30 minutos
+        allDay: false, // Ajusta según sea necesario
+        repeat: false, // Ajusta según sea necesario
         description: form.value.description,
         nombre: form.value.patientName,
         tipoCita: "Consulta",
-        userId: doctorId.value,
-        tenant_id: organizationId.value,
-        patientemail: form.value.email,
-        patientphone: form.value.phone,
-        status: "Pendiente",
-        autoCita: true,
+        userId: "65b48afb-8543-4939-b2e4-77f4daa6d03e", // ID proporcionado
+        tenant_id: tenantId.value, // Usar 'tenant_id' dinámicamente
+        patientemail: form.value.email, // Nombre correcto del campo
       };
 
+      console.log("Inserting new appointment:", newAppointment);
+
       try {
-        const { error: insertError } = await supabase
+        const { data, error: insertError } = await supabase
           .from("appointments")
           .insert([newAppointment]);
 
+        console.log("Insert response:", data, insertError);
+
         if (insertError) {
+          console.error("Error inserting appointment:", insertError);
           errorMsg.value =
             insertError.message ||
             "Error al agendar la cita. Inténtalo de nuevo.";
@@ -471,25 +456,39 @@ export default {
         } else {
           success.value = true;
           errorMsg.value = "";
-
-          // Reset form
+          // Resetear el formulario
           form.value = {
             patientName: "",
             email: "",
             date: "",
             time: "",
             description: "",
-            phone: "",
           };
           availableTimes.value = [];
-          errors.value = { email: "", date: "", time: "" };
+          // Resetear los errores
+          errors.value = {
+            email: "",
+            date: "",
+            time: "",
+          };
         }
       } catch (err) {
+        console.error("Error al agendar la cita:", err);
         errorMsg.value = "Error al agendar la cita. Inténtalo de nuevo.";
         success.value = false;
       }
     };
 
+    // Calcular la fecha de fin basada en la fecha de inicio y la duración en minutos
+    const calculateEndDate = (date, time, durationMinutes) => {
+      const [hour, minute] = time.split(":").map(Number);
+      const start = new Date(`${date}T${time}:00`);
+      start.setMinutes(start.getMinutes() + durationMinutes);
+      const end = start.toISOString().slice(0, 16);
+      return end;
+    };
+
+    // Cargar la información de la organización al montar el componente
     onMounted(() => {
       fetchOrganizationInfo();
     });

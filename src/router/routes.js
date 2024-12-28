@@ -37,6 +37,7 @@ import ResetPassword from "../pages/ResetPassword.vue";
 import RecoverPassword from "../pages/RecoverPassword.vue";
 import PerfilMedico from "../pages/PerfilMedico.vue";
 import PacientesScheduleAppointment from "../pages/PacientesScheduleAppointment.vue";
+import SolicitudesCitasPendientes from "../pages/SolicitudesCitasPendientes.vue";
 const routes = [
   {
     path: "/",
@@ -59,10 +60,19 @@ const routes = [
         },
       },
       {
+        path: "solicitudesCitasPendientes",
+        name: "solicitudesCitasPendientes",
+        component: SolicitudesCitasPendientes,
+        meta: {
+          requiresAuth: true,
+          roles: ["admin", "medico", "secretario"],
+        },
+      },
+      {
         path: "listadoContactos",
         name: "listadoContactos",
         component: ListadoContactos,
-        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
+        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
       {
         path: "listamedicos",
@@ -149,7 +159,7 @@ const routes = [
         path: "listadopacientes",
         name: "listadopacientes",
         component: ListadoPacientes,
-        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
+        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
       {
         path: "datosGenerales",
@@ -185,7 +195,7 @@ const routes = [
         path: "configuraciones",
         name: "configuraciones",
         component: Configuraciones,
-        meta: { requiresAuth: true, roles: ["admin", "secretario", "medico"] },
+        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
       {
         path: "admin",
@@ -207,11 +217,12 @@ const routes = [
     component: Login,
   },
   {
-    path: "/schedule/:tenant_id",
+    path: "/schedule/:organizationId/:doctorId",
     name: "PublicScheduleAppointment",
     component: PacientesScheduleAppointment,
     meta: { requiresAuth: false },
   },
+
   {
     path: "/recover-password",
     name: "RecoverPassword",

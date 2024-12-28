@@ -90,7 +90,11 @@ export const useFichaIdentificacionStore = defineStore(
         return false;
       }
 
-      if (authStore.role?.toLowerCase() !== "admin") {
+      if (
+        !["admin", "medico", "secretaria"].includes(
+          authStore.role?.toLowerCase()
+        )
+      ) {
         console.error(
           "El usuario no tiene permisos para actualizar pacientes."
         );

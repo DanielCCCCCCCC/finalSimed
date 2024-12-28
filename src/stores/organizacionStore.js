@@ -22,7 +22,7 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
         .from("organizacion")
         .select("*")
         .eq("id", tenant_id);
-      console.log("ORGANIZACIONES: ", organizaciones);
+      console.log("ORGANIZACIONES: ", organizaciones.value);
       if (fetchError) {
         throw new Error(
           `Error al cargar organizaciones: ${fetchError.message}`

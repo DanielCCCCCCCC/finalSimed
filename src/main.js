@@ -10,7 +10,7 @@ import esMessages from "devextreme/localization/messages/es.json";
 import VueApexCharts from "vue3-apexcharts";
 import "font-awesome/css/font-awesome.min.css";
 import "feather-icons/dist/feather.min.js";
-
+import "quasar/dist/quasar.css";
 loadMessages(esMessages);
 locale("es");
 

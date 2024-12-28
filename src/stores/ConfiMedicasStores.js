@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import { supabase } from "../supabaseClient";
 import { useAuthStore } from "./auth";
+// import { verificarRolAdmin } from "../helpers/roles"; // Ajusta si tu helper para roles está en otro lugar
 
 // Helper para validar roles y tenant_id
 function verificarRolAdmin(authStore) {
@@ -430,6 +431,7 @@ export const useTiposCitasStore = defineStore("tiposCitas", () => {
   const citas = ref([]);
   const authStore = useAuthStore();
 
+  // Cargar todas las citas (tipos de citas) al iniciar
   async function cargarCitas() {
     try {
       const { data, error } = await supabase
@@ -443,49 +445,78 @@ export const useTiposCitasStore = defineStore("tiposCitas", () => {
     }
   }
 
-  async function agregarCita(descripcion) {
+  /**
+   * Agregar un nuevo tipo de cita.
+   * @param {string} descripcion - descripción de la cita
+   * @param {string} color - color en formato hex/rgb/etc.
+   */
+  async function agregarCita(descripcion, color) {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
         .from("tiposCitas")
-        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+        .insert([
+          {
+            descripcion,
+            color, // <-- Nuevo campo para guardar color
+            tenant_id: authStore.tenant_id,
+          },
+        ])
+        .select();
       if (error) throw error;
-      if (data && data[0]) citas.value.push(data[0]);
+
+      if (data && data[0]) {
+        citas.value.push(data[0]);
+      }
     } catch (error) {
       console.error("Error al agregar cita:", error.message);
     }
   }
 
+  /**
+   * Eliminar un tipo de cita.
+   * @param {number} id - ID del registro a eliminar
+   */
   async function eliminarCita(id) {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { error } = await supabase.from("tiposCitas").delete().eq("id", id);
       if (error) throw error;
+
       citas.value = citas.value.filter((cita) => cita.id !== id);
     } catch (error) {
       console.error("Error al eliminar cita:", error.message);
     }
   }
 
-  // Función para actualizar un tipo de cita
-  const actualizarCita = async (id, descripcion) => {
+  /**
+   * Actualizar un tipo de cita existente.
+   * @param {number} id - ID del registro
+   * @param {string} descripcion - nueva descripción
+   * @param {string} color - color en formato hex/rgb/etc.
+   */
+  const actualizarCita = async (id, descripcion, color) => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
         .from("tiposCitas")
-        .update({ descripcion })
-        .eq("id", id);
+        .update({ descripcion, color }) // <-- Incluimos color
+        .eq("id", id)
+        .select();
 
       if (error) throw error;
+
+      // Actualizamos el arreglo local
       const index = citas.value.findIndex((c) => c.id === id);
       if (index !== -1 && data && data[0]) {
         citas.value[index] = data[0];
       }
     } catch (error) {
-      console.error("Error al actualizar grupo:", error.message);
+      console.error("Error al actualizar cita:", error.message);
     }
   };
 
+  // Cuando cambia el tenant_id, recargamos citas
   watch(
     () => authStore.tenant_id,
     (newTenantId, oldTenantId) => {
@@ -501,6 +532,6 @@ export const useTiposCitasStore = defineStore("tiposCitas", () => {
     cargarCitas,
     agregarCita,
     eliminarCita,
-    actualizarCita, // Agregamos la función al return
+    actualizarCita,
   };
 });

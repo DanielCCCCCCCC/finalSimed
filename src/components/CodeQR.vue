@@ -53,7 +53,8 @@ import { useAuthStore } from "../stores/auth"; // Ajusta la ruta según tu estru
 
 // Acceder a la store de autenticación
 const authStore = useAuthStore();
-const tenantId = ref(authStore.tenant_id); // Asegúrate de que 'tenant_id' está disponible
+const organizationId = ref(authStore.tenant_id);
+const doctorId = ref(authStore.userId);
 
 // Estado para el código QR
 const qrCodeUrl = ref("");
@@ -64,105 +65,77 @@ const errorMsg = ref("");
 const copySuccess = ref(false);
 
 // Definir la base URL
-const baseUrl = "http://localhost:9000/schedule/"; // Cambia esto en producción
+const baseUrl = "http://localhost:9000/schedule"; // Cambia esto en producción
 
-// Computar la URL completa
-const fullUrl = ref(`${baseUrl}${tenantId.value}`);
-
-// Función para generar el código QR
-const generateQRCode = async () => {
+// URL completa: /schedule/:organizationId/:doctorId
+const fullUrl = ref(`${baseUrl}/${organizationId.value}/${doctorId.value}`);
+// Genera el QR
+async function generateQRCode() {
   try {
-    const fullUrlString = `${baseUrl}${tenantId.value}`;
-    fullUrl.value = fullUrlString;
-    console.log("Generando QR para:", fullUrlString);
+    const urlString = fullUrl.value;
+    console.log("Generando QR para:", urlString);
 
-    // Generar el código QR como Data URL
-    qrCodeUrl.value = await QRCode.toDataURL(fullUrlString, {
-      width: 300, // Tamaño del QR
-      margin: 2, // Margen
+    qrCodeUrl.value = await QRCode.toDataURL(urlString, {
+      width: 300,
+      margin: 2,
       color: {
-        dark: "#000000", // Color de los módulos
-        // light: "#df5a5a",
-        light: "ffffff",
+        dark: "#000000",
+        light: "#ffffff",
       },
     });
-    console.log("QR generado:", qrCodeUrl.value);
   } catch (err) {
     console.error("Error al generar el código QR:", err);
     errorMsg.value = "No se pudo generar el código QR. Inténtalo de nuevo.";
   } finally {
     loading.value = false;
   }
-};
+}
 
-// Función para copiar el URL al portapapeles
-const copyToClipboard = async () => {
-  if (!navigator.clipboard) {
-    // Fallback para navegadores que no soportan la Clipboard API
-    const textArea = document.createElement("textarea");
-    textArea.value = fullUrl.value;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand("copy");
-      copySuccess.value = true;
-      console.log("URL copiado:", fullUrl.value);
-
-      // Ocultar el mensaje de éxito después de 3 segundos
-      setTimeout(() => {
-        copySuccess.value = false;
-      }, 3000);
-    } catch (err) {
-      console.error("Error al copiar el URL:", err);
-      errorMsg.value = "No se pudo copiar el URL. Inténtalo de nuevo.";
-    }
-    document.body.removeChild(textArea);
-    return;
-  }
-
-  // Usar la Clipboard API si está disponible
+// Copiar portapapeles
+async function copyToClipboard() {
   try {
     await navigator.clipboard.writeText(fullUrl.value);
     copySuccess.value = true;
-    console.log("URL copiado:", fullUrl.value);
-
-    // Ocultar el mensaje de éxito después de 3 segundos
     setTimeout(() => {
       copySuccess.value = false;
     }, 3000);
   } catch (err) {
-    console.error("Error al copiar el URL:", err);
+    console.error("Error al copiar:", err);
     errorMsg.value = "No se pudo copiar el URL. Inténtalo de nuevo.";
   }
-};
+}
 
-// Función para descargar el código QR
-const downloadQRCode = () => {
+// Descargar
+function downloadQRCode() {
   if (!qrCodeUrl.value) {
     errorMsg.value = "No hay código QR para descargar.";
     return;
   }
-
-  // Crear un elemento de enlace temporal
   const link = document.createElement("a");
   link.href = qrCodeUrl.value;
-  link.download = `codigo_qr_${tenantId.value}.png`; // Nombre del archivo descargado
+  link.download = `codigo_qr_${doctorId.value}.png`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-};
-
+}
 // Ejecutar la generación del QR al montar el componente
 onMounted(() => {
   generateQRCode();
 });
-
-// Vigilar cambios en tenant_id y regenerar el QR si cambia
+// Si cambia tenant_id o userId en la store, regeneramos el QR
 watch(
   () => authStore.tenant_id,
-  (newTenantId) => {
-    tenantId.value = newTenantId;
-    fullUrl.value = `${baseUrl}${tenantId.value}`;
+  (newOrg) => {
+    organizationId.value = newOrg;
+    fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
+    generateQRCode();
+  }
+);
+watch(
+  () => authStore.userId,
+  (newDoc) => {
+    doctorId.value = newDoc;
+    fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
     generateQRCode();
   }
 );

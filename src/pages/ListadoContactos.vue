@@ -54,6 +54,7 @@
           :visible="true"
           placeholder="Buscar Contacto"
         />
+
         <!-- Columnas de datos -->
         <DxColumn
           data-field="nombreContacto"
@@ -67,19 +68,6 @@
           :allow-sorting="true"
           :min-width="180"
         />
-        <!-- <DxColumn
-          data-field="organizacionContacto"
-          caption="Organización"
-          :allow-sorting="true"
-          :min-width="140"
-        /> -->
-        <!-- <DxColumn
-          data-field="grupoDescripcion"
-          caption="Grupo de Contacto"
-          :allow-sorting="true"
-          :visible="true"
-          :min-width="120"
-        /> -->
         <DxColumn
           data-field="departamentoDescripcion"
           caption="Departamento"
@@ -129,7 +117,7 @@
         </DxColumn>
       </DxDataGrid>
 
-      <!-- Diálogo modal para Nuevo Contacto -->
+      <!-- Diálogo modal para Nuevo/Editar Contacto -->
       <q-dialog v-model="dialogNuevoContacto" persistent max-width="800px">
         <q-card class="form-card shadow-2 rounded-borders">
           <q-card-section>
@@ -146,151 +134,187 @@
               />
             </div>
             <div class="q-ml-md">
-              <q-form @submit.prevent="guardarcontact">
+              <!-- Formulario con elementos HTML nativos -->
+              <form @submit.prevent="guardarcontact">
                 <!-- Información Personal -->
                 <div class="row">
+                  <!-- Nombre -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Nombre</label>
-                    <q-input
+                    <input
                       v-model="formData.nombreContacto"
-                      placeholder="Nombre"
-                      dense
-                      required
+                      type="text"
                       class="form-control"
-                      :error="!!formErrors.nombreContacto"
-                      :error-message="formErrors.nombreContacto"
+                      :class="{ 'is-invalid': formErrors.nombreContacto }"
+                      placeholder="Nombre"
+                      required
                     />
+                    <div
+                      v-if="formErrors.nombreContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.nombreContacto }}
+                    </div>
                   </div>
 
+                  <!-- Dirección -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Dirección</label>
-                    <q-input
+                    <input
                       v-model="formData.direccionContacto"
-                      placeholder="Dirección"
-                      dense
-                      required
+                      type="text"
                       class="form-control"
-                      :error="!!formErrors.direccionContacto"
-                      :error-message="formErrors.direccionContacto"
+                      :class="{ 'is-invalid': formErrors.direccionContacto }"
+                      placeholder="Dirección"
+                      required
                     />
+                    <div
+                      v-if="formErrors.direccionContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.direccionContacto }}
+                    </div>
                   </div>
 
-                  <!-- <div class="col-md-6 mb-3">
-        <label class="form-label">Grupo</label>
-        <q-select
-          v-model="formData.grupoIdContacto"
-          :options="grupos"
-          option-value="id"
-          option-label="descripcion"
-          required
-          dense
-          class="form-select no-arrow"
-          :error="!!formErrors.grupoIdContacto"
-          :error-message="formErrors.grupoIdContacto"
-        />
-      </div> -->
-
+                  <!-- Departamento -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Departamento</label>
-                    <q-select
+                    <select
                       v-model="formData.departamentoIdContacto"
-                      :options="departamentos"
-                      option-value="id"
-                      option-label="descripcion"
-                      placeholder="Seleccione un departamento"
-                      dense
-                      required
                       class="form-select"
-                      @update:model-value="onDepartamentoChange"
-                      :error="!!formErrors.departamentoIdContacto"
-                      :error-message="formErrors.departamentoIdContacto"
-                    />
+                      @change="onDepartamentoChange($event.target.value)"
+                      :class="{
+                        'is-invalid': formErrors.departamentoIdContacto,
+                      }"
+                      required
+                    >
+                      <option disabled value="">
+                        Seleccione un departamento
+                      </option>
+                      <option
+                        v-for="dep in departamentos"
+                        :key="dep.id"
+                        :value="dep.id"
+                      >
+                        {{ dep.descripcion }}
+                      </option>
+                    </select>
+                    <div
+                      v-if="formErrors.departamentoIdContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.departamentoIdContacto }}
+                    </div>
                   </div>
 
+                  <!-- Municipio -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Municipio</label>
-                    <q-select
+                    <select
                       v-model="formData.municipioIdContacto"
-                      :options="filteredMunicipios"
-                      option-value="id"
-                      option-label="descripcion"
-                      placeholder="Seleccione un municipio"
-                      dense
-                      required
                       class="form-select"
-                      :disable="!formData.departamentoIdContacto"
-                      :error="!!formErrors.municipioIdContacto"
-                      :error-message="formErrors.municipioIdContacto"
-                    />
+                      :class="{ 'is-invalid': formErrors.municipioIdContacto }"
+                      :disabled="!formData.departamentoIdContacto"
+                      required
+                    >
+                      <option disabled value="">Seleccione un municipio</option>
+                      <option
+                        v-for="mun in filteredMunicipios"
+                        :key="mun.id"
+                        :value="mun.id"
+                      >
+                        {{ mun.descripcion }}
+                      </option>
+                    </select>
+                    <div
+                      v-if="formErrors.municipioIdContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.municipioIdContacto }}
+                    </div>
                   </div>
 
+                  <!-- Email -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Email</label>
-                    <q-input
+                    <input
                       v-model="formData.emailContacto"
                       type="email"
-                      placeholder="Email"
-                      dense
-                      required
                       class="form-control"
-                      :error="!!formErrors.emailContacto"
-                      :error-message="formErrors.emailContacto"
+                      :class="{ 'is-invalid': formErrors.emailContacto }"
+                      placeholder="Email"
+                      required
                     />
+                    <div
+                      v-if="formErrors.emailContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.emailContacto }}
+                    </div>
                   </div>
 
+                  <!-- Teléfono Casa -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Teléfono Casa</label>
-                    <q-input
+                    <input
                       v-model="formData.telefonoCasaContacto"
-                      placeholder="Teléfono Casa"
-                      dense
-                      mask="####-####"
+                      type="text"
                       class="form-control"
-                      :error="!!formErrors.telefonoCasaContacto"
-                      :error-message="formErrors.telefonoCasaContacto"
+                      :class="{ 'is-invalid': formErrors.telefonoCasaContacto }"
+                      placeholder="Teléfono Casa"
                     />
+                    <div
+                      v-if="formErrors.telefonoCasaContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.telefonoCasaContacto }}
+                    </div>
                   </div>
 
+                  <!-- Teléfono Personal -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Teléfono Personal</label>
-                    <q-input
+                    <input
                       v-model="formData.telefonoPersonalContacto"
-                      placeholder="Teléfono Personal"
-                      dense
-                      mask="####-####"
+                      type="text"
                       class="form-control"
-                      :error="!!formErrors.telefonoPersonalContacto"
-                      :error-message="formErrors.telefonoPersonalContacto"
+                      :class="{
+                        'is-invalid': formErrors.telefonoPersonalContacto,
+                      }"
+                      placeholder="Teléfono Personal"
                     />
+                    <div
+                      v-if="formErrors.telefonoPersonalContacto"
+                      class="invalid-feedback"
+                    >
+                      {{ formErrors.telefonoPersonalContacto }}
+                    </div>
                   </div>
 
+                  <!-- Observación -->
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Observación</label>
-                    <q-input
+                    <textarea
                       v-model="formData.observacionContacto"
-                      type="textarea"
-                      placeholder="Observación"
-                      dense
-                      maxlength="500"
-                      counter
                       class="form-control"
-                    />
+                      placeholder="Observación"
+                      maxlength="500"
+                    ></textarea>
                   </div>
 
-                  <div class="col-md-12">
-                    <q-btn
-                      :label="
-                        isEditMode ? 'Actualizar Contacto' : 'Guardar Contacto'
-                      "
-                      color="primary"
+                  <!-- Botón de Guardar -->
+                  <div class="flex justify-center q-mt-sm">
+                    <button
+                      :class="['btn', 'btn-primary', 'd-grid']"
                       type="submit"
-                      unelevated
-                      rounded
-                      class="btn btn-primary d-grid"
-                    />
+                    >
+                      {{
+                        isEditMode ? "Actualizar Contacto" : "Guardar Contacto"
+                      }}
+                    </button>
                   </div>
                 </div>
-              </q-form>
+              </form>
             </div>
           </q-card-section>
         </q-card>
@@ -313,12 +337,11 @@ import {
   DxSearchPanel,
   DxButton,
   DxSelection,
-  DxScrolling,
 } from "devextreme-vue/data-grid";
+
 import { ref, onMounted, onUnmounted, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useContactStore } from "../stores/ContacStores";
-import { useGruposContactosStore } from "../stores/ConfiMedicasStores";
 import {
   useDepartamentoStore,
   useMunicipioStore,
@@ -326,29 +349,22 @@ import {
 import { Notify } from "quasar";
 import { storeToRefs } from "pinia";
 
-// **Instancias de las tiendas**
-// const gruposContactosStore = useGruposContactosStore();
+// ----------------- STORES --------------------
 const departamentoStore = useDepartamentoStore();
 const municipioStore = useMunicipioStore();
 const contactStore = useContactStore();
 
-// **Referencias a los datos de las tiendas**
-// const { grupos } = storeToRefs(gruposContactosStore);
+// Referencias a datos de las tiendas
 const { departamentos } = storeToRefs(departamentoStore);
 const { municipios } = storeToRefs(municipioStore);
 const { contactos } = storeToRefs(contactStore);
 
-// **Router y Route**
-const route = useRoute();
-const router = useRouter();
-
-// **Variables y funciones reactivas**
+// ----------------- REFS y VARIABLES --------------------
 const dialogNuevoContacto = ref(false);
 const formData = ref({
   nombreContacto: "",
   direccionContacto: "",
   organizacionContacto: "",
-  // grupoIdContacto: null,
   departamentoIdContacto: null,
   municipioIdContacto: null,
   emailContacto: "",
@@ -359,13 +375,21 @@ const formData = ref({
 const formErrors = ref({});
 const isEditMode = ref(false);
 const contactId = ref(null);
+const route = useRoute();
 
-// **Computed properties**
+// Para el DataGrid
+const focusedRowKey = ref(null);
+
+// Responsividad del DataGrid
+const responsiveWidth = ref(window.innerWidth < 600 ? "100%" : "auto");
+const updateWidth = () => {
+  responsiveWidth.value = window.innerWidth < 600 ? "100%" : "auto";
+};
+
+// ----------------- COMPUTED --------------------
+// Se mapean los contactos para mostrar "Departamento" y "Municipio" por su descripción
 const contactosConDetalles = computed(() => {
   return (contactos.value || []).map((contacto) => {
-    // const grupo = (grupos.value || []).find(
-    //   (grp) => grp.id === Number(contacto.grupoIdContacto)
-    // );
     const departamento = (departamentos.value || []).find(
       (dept) => dept.id === Number(contacto.departamentoIdContacto)
     );
@@ -374,7 +398,6 @@ const contactosConDetalles = computed(() => {
     );
     return {
       ...contacto,
-      // grupoDescripcion: grupo ? grupo.descripcion : "Grupo no encontrado",
       departamentoDescripcion: departamento
         ? departamento.descripcion
         : "Departamento no encontrado",
@@ -385,31 +408,52 @@ const contactosConDetalles = computed(() => {
   });
 });
 
-const responsiveWidth = ref(window.innerWidth < 600 ? "100%" : "auto");
-const updateWidth = () => {
-  responsiveWidth.value = window.innerWidth < 600 ? "100%" : "auto";
-};
+// Filtra los municipios en base al departamento seleccionado
+const filteredMunicipios = computed(() => {
+  if (!formData.value.departamentoIdContacto) return [];
+  return municipios.value.filter(
+    (municipio) =>
+      municipio.departamentoId === Number(formData.value.departamentoIdContacto)
+  );
+});
 
-// **Funciones**
-// Función para abrir el diálogo para nuevo contacto
+// ----------------- LIFECYCLE --------------------
+onMounted(async () => {
+  await contactStore.cargarContactos();
+  await departamentoStore.cargarDepartamentos();
+  await municipioStore.cargarMunicipios();
+  window.addEventListener("resize", updateWidth);
+
+  // Verificar si se está editando desde la ruta (por ejemplo "/contactos/:id")
+  const contactoIdParam = route.params.id;
+  if (contactoIdParam) {
+    await cargarContactoParaEditar(contactoIdParam);
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateWidth);
+});
+
+// ----------------- MÉTODOS --------------------
+// Abrir modal para nuevo contacto
 const handleNuevoContacto = () => {
   isEditMode.value = false;
   resetForm();
   dialogNuevoContacto.value = true;
 };
 
-// Función para cerrar el diálogo
+// Cerrar modal
 const closeDialog = () => {
   dialogNuevoContacto.value = false;
 };
 
-// Función para restablecer el formulario
+// Resetear formulario
 const resetForm = () => {
   formData.value = {
     nombreContacto: "",
     direccionContacto: "",
     organizacionContacto: "",
-    // grupoIdContacto: null,
     departamentoIdContacto: null,
     municipioIdContacto: null,
     emailContacto: "",
@@ -420,27 +464,42 @@ const resetForm = () => {
   formErrors.value = {};
 };
 
-// Fetch de datos al montar el componente
-onMounted(async () => {
-  await contactStore.cargarContactos();
-  // await gruposContactosStore.cargarGrupos();
-  await departamentoStore.cargarDepartamentos();
-  await municipioStore.cargarMunicipios();
-  window.addEventListener("resize", updateWidth);
-
-  // Verificar si se está editando desde una ruta específica
-  const contactoIdParam = route.params.id;
-  if (contactoIdParam) {
-    await cargarContactoParaEditar(contactoIdParam);
+// Cargar contacto para edición
+async function cargarContactoParaEditar(id) {
+  try {
+    const contacto = await contactStore.obtenerContacto(id);
+    if (contacto) {
+      isEditMode.value = true;
+      contactId.value = contacto.id;
+      formData.value = {
+        nombreContacto: contacto.nombreContacto,
+        direccionContacto: contacto.direccionContacto,
+        organizacionContacto: contacto.organizacionContacto,
+        departamentoIdContacto: contacto.departamentoIdContacto,
+        municipioIdContacto: contacto.municipioIdContacto,
+        emailContacto: contacto.emailContacto,
+        telefonoCasaContacto: contacto.telefonoCasaContacto,
+        telefonoPersonalContacto: contacto.telefonoPersonalContacto,
+        observacionContacto: contacto.observacionContacto,
+      };
+      dialogNuevoContacto.value = true;
+    }
+  } catch (error) {
+    console.error("Error al cargar el contacto para editar:", error);
+    Notify.create({
+      message: "No se pudo cargar el contacto para editar.",
+      color: "negative",
+      position: "top-right",
+    });
   }
-});
+}
 
-// Limpieza al desmontar el componente
-onUnmounted(() => {
-  window.removeEventListener("resize", updateWidth);
-});
+// Manejar clic en Editar (desde la columna de botones de DxDataGrid)
+const onEditButtonClick = (e) => {
+  handleEdit(e.row.data);
+};
 
-// Función para manejar la edición de un contacto
+// Asignar datos al formulario para edición
 const handleEdit = (contacto) => {
   if (contacto && contacto.id) {
     isEditMode.value = true;
@@ -449,7 +508,6 @@ const handleEdit = (contacto) => {
       nombreContacto: contacto.nombreContacto,
       direccionContacto: contacto.direccionContacto,
       organizacionContacto: contacto.organizacionContacto,
-      // grupoIdContacto: contacto.grupoIdContacto,
       departamentoIdContacto: contacto.departamentoIdContacto,
       municipioIdContacto: contacto.municipioIdContacto,
       emailContacto: contacto.emailContacto,
@@ -463,16 +521,21 @@ const handleEdit = (contacto) => {
   }
 };
 
-// Función para manejar la eliminación de un contacto
-const handleDelete = async (contactoId) => {
+// Manejar clic en Eliminar
+const onDeleteButtonClick = async (e) => {
+  await handleDelete(e.row.data.id);
+};
+
+// Eliminar un contacto
+const handleDelete = async (id) => {
   try {
-    await contactStore.eliminarContacto(contactoId);
+    await contactStore.eliminarContacto(id);
     Notify.create({
       message: "Contacto eliminado exitosamente",
       color: "green",
       position: "top-right",
     });
-    // Actualizar la lista de contactos
+    // Refrescar
     await contactStore.cargarContactos();
   } catch (error) {
     console.error("Error al eliminar el contacto:", error);
@@ -484,22 +547,18 @@ const handleDelete = async (contactoId) => {
   }
 };
 
-// Función para guardar o actualizar el contacto
+// Guardar o actualizar el contacto
 async function guardarcontact() {
+  // Reconstruir el payload
   const contactData = {
     ...formData.value,
-    // grupoIdContacto:
-    //   formData.value.grupoIdContacto?.id || formData.value.grupoIdContacto,
     departamentoIdContacto:
-      formData.value.departamentoIdContacto?.id ||
-      formData.value.departamentoIdContacto,
-    municipioIdContacto:
-      formData.value.municipioIdContacto?.id ||
-      formData.value.municipioIdContacto,
+      Number(formData.value.departamentoIdContacto) || null,
+    municipioIdContacto: Number(formData.value.municipioIdContacto) || null,
   };
 
   // Validaciones básicas
-  formErrors.value = {}; // Resetear errores
+  formErrors.value = {};
 
   if (!contactData.nombreContacto) {
     formErrors.value.nombreContacto = "El nombre es obligatorio.";
@@ -507,9 +566,6 @@ async function guardarcontact() {
   if (!contactData.direccionContacto) {
     formErrors.value.direccionContacto = "La dirección es obligatoria.";
   }
-  // if (!contactData.grupoIdContacto) {
-  //   formErrors.value.grupoIdContacto = "El grupo es obligatorio.";
-  // }
   if (!contactData.departamentoIdContacto) {
     formErrors.value.departamentoIdContacto = "El departamento es obligatorio.";
   }
@@ -520,7 +576,7 @@ async function guardarcontact() {
     formErrors.value.emailContacto = "El email es obligatorio.";
   }
 
-  // Verificar si hay errores
+  // Si hay errores, detener
   if (Object.keys(formErrors.value).length > 0) {
     Notify.create({
       message: "Por favor, corrige los errores en el formulario.",
@@ -546,7 +602,7 @@ async function guardarcontact() {
         position: "top-right",
       });
     }
-    // Actualizar la lista de contactos
+    // Refrescar lista
     await contactStore.cargarContactos();
     dialogNuevoContacto.value = false;
   } catch (error) {
@@ -559,67 +615,26 @@ async function guardarcontact() {
   }
 }
 
-// Función para cargar contacto en modo edición desde una ruta específica
-async function cargarContactoParaEditar(contactoId) {
-  try {
-    const contacto = await contactStore.obtenerContacto(contactoId);
-    if (contacto) {
-      formData.value = {
-        nombreContacto: contacto.nombreContacto,
-        direccionContacto: contacto.direccionContacto,
-        organizacionContacto: contacto.organizacionContacto,
-        // grupoIdContacto: contacto.grupoIdContacto,
-        departamentoIdContacto: contacto.departamentoIdContacto,
-        municipioIdContacto: contacto.municipioIdContacto,
-        emailContacto: contacto.emailContacto,
-        telefonoCasaContacto: contacto.telefonoCasaContacto,
-        telefonoPersonalContacto: contacto.telefonoPersonalContacto,
-        observacionContacto: contacto.observacionContacto,
-      };
-      contactId.value = contacto.id;
-      isEditMode.value = true;
-      dialogNuevoContacto.value = true;
-    }
-  } catch (error) {
-    console.error("Error al cargar el contacto para editar:", error);
-    Notify.create({
-      message: "No se pudo cargar el contacto para editar.",
-      color: "negative",
-      position: "top-right",
-    });
-  }
-}
-
-// Función para manejar el cambio de departamento y filtrar municipios
+// Actualizar departamento y resetear municipio al cambiar de departamento
 function onDepartamentoChange(departamentoId) {
   formData.value.departamentoIdContacto = departamentoId;
-  formData.value.municipioIdContacto = null; // Resetear el municipio al cambiar de departamento
+  formData.value.municipioIdContacto = null;
 }
 
-// **Definición Correcta de `filteredMunicipios`**
-const filteredMunicipios = computed(() => {
-  if (!formData.value.departamentoIdContacto) return [];
-  const deptId =
-    formData.value.departamentoIdContacto.id ||
-    formData.value.departamentoIdContacto;
-  return municipios.value.filter(
-    (municipio) => municipio.departamentoId === deptId
-  );
-});
+// Para abrir panel lateral al hacer click en una fila (si lo tuvieras implementado)
+const rowClick = (e) => {
+  focusedRowKey.value = e.key;
+  // Aquí podrías abrir un panel lateral o hacer cualquier otra acción.
+};
 </script>
 
 <style scoped>
-/* src/styles/sharedStyles.css */
-
 #app-container {
   padding: 20px;
   background-color: #f9f9f9;
   margin: 0 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* position: relative;
-  margin-left: 100px;
-  margin-right: 100px; */
   width: 93%;
 }
 
@@ -631,18 +646,29 @@ const filteredMunicipios = computed(() => {
   border-radius: 20px 0px 0px 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 .fsButton {
   font-size: 16px;
 }
+
 .btnCerrarModal {
   font-size: 16px;
 }
-.no-arrow .q-select__dropdown-icon {
-  display: none;
+
+/* Ejemplo de clase para marcar inputs con error (Bootstrap-like) */
+.is-invalid {
+  border: 1px solid #dc3545;
 }
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
 .espaciadoLateral {
   margin-left: 70px;
 }
+
 .right-content {
   justify-self: end;
 }

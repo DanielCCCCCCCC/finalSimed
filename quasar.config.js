@@ -22,6 +22,7 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: [
+      // "quasar/dist/quasar.css",
       "~bootstrap/dist/css/bootstrap.css",
       "~simplebar/dist/simplebar.min.css",
       "icons.css",

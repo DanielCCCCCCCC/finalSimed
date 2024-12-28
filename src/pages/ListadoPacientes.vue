@@ -17,6 +17,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Modal Ficha de Identificación -->
       <div>
         <q-dialog
           class="styleModal"
@@ -27,6 +29,7 @@
         >
           <div class="styleModal main-modal-container">
             <div class="row">
+              <!-- Menú lateral de tabs -->
               <div class="col-md-2">
                 <ul
                   class="q-ml-md q-mt-md nav nav-tabs flex-column vertical-tabs-2"
@@ -132,6 +135,7 @@
                 </ul>
               </div>
 
+              <!-- Contenido de cada tab -->
               <div class="col-12 col-md-9 q-ml-xl">
                 <q-tab-panels v-model="subTabFichaIdentificacion" animated>
                   <!-- Información Técnica -->
@@ -143,55 +147,30 @@
                       <q-form class="row">
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Código</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.codigo"
-                            dense
                             class="form-control"
-                            :error="!validaciones.codigo"
-                            error-message="El código es obligatorio"
+                            :class="{ 'is-invalid': !validaciones.codigo }"
+                            placeholder="Ingresa código"
                           />
+                          <!--
+                          <div v-if="!validaciones.codigo" class="text-danger mt-1">
+                            El código es obligatorio
+                          </div>
+                          -->
                         </div>
 
+                        <!-- Paciente activo? -->
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Paciente activo?</label>
                           <div class="form-check">
-                            <q-checkbox
+                            <input
+                              type="checkbox"
                               v-model="pacienteSeleccionado.activo"
-                              dense
                               class="form-check-input"
                             />
                           </div>
                         </div>
-
-                        <!-- <div class="col-md-6 mb-3">
-                          <label class="form-label" for="tipoPacienteSelect"
-                            >Tipo de Paciente</label
-                          >
-                          <select
-                            id="tipoPacienteSelect"
-                            v-model="pacienteSeleccionado.tipoId"
-                            class="form-select custom-select-height"
-                            required
-                            @blur="validateTipoPaciente"
-                          >
-                            <option disabled value="">
-                              Seleccione un tipo de paciente
-                            </option>
-                            <option
-                              v-for="tipo in tpacientes"
-                              :key="tipo.id"
-                              :value="tipo.id"
-                            >
-                              {{ tipo.descripcion }}
-                            </option>
-                          </select>
-                          <div
-                            v-if="!validaciones.tipo"
-                            class="text-danger mt-1"
-                          >
-                            Debe seleccionar un tipo de paciente
-                          </div>
-                        </div> -->
 
                         <div class="col-md-6 mb-3">
                           <label for="medicoSelect" class="form-label"
@@ -293,55 +272,82 @@
                       <q-form class="row">
                         <div class="col-md-6 mb-3">
                           <label class="form-label">DNI</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.dni"
-                            dense
                             class="form-control"
-                            :error="!validaciones.dni"
-                            error-message="El DNI es obligatorio"
+                            :class="{ 'is-invalid': !validaciones.dni }"
+                            placeholder="Ingrese DNI"
                           />
+                          <div
+                            v-if="!validaciones.dni"
+                            class="text-danger mt-1"
+                          >
+                            El DNI es obligatorio
+                          </div>
                         </div>
+                        <!-- Nombres -->
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Nombres</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.nombres"
-                            dense
                             class="form-control"
-                            :error="!validaciones.nombres"
-                            error-message="Los nombres son obligatorios"
+                            :class="{ 'is-invalid': !validaciones.nombres }"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Apellidos</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.apellidos"
-                            dense
                             class="form-control"
-                            :error="!validaciones.apellidos"
-                            error-message="Los apellidos son obligatorios"
+                            :class="{ 'is-invalid': !validaciones.apellidos }"
+                            placeholder="Ingrese los apellidos"
                           />
+                          <div
+                            v-if="!validaciones.apellidos"
+                            class="invalid-feedback"
+                          >
+                            Los apellidos son obligatorios
+                          </div>
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Fecha de Nacimiento</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.fechaNacimiento"
                             type="date"
-                            dense
                             class="form-control"
-                            :error="!validaciones.fechaNacimiento"
-                            error-message="Debe ingresar una fecha válida"
+                            :class="{
+                              'is-invalid': !validaciones.fechaNacimiento,
+                            }"
                           />
+                          <div
+                            v-if="!validaciones.fechaNacimiento"
+                            class="invalid-feedback"
+                          >
+                            Debe ingresar una fecha válida
+                          </div>
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Sexo</label>
-                          <q-input
+                          <select
                             v-model="pacienteSeleccionado.sexo"
-                            dense
-                            class="form-control"
-                            :error="!validaciones.sexo"
-                            error-message="Debe seleccionar un sexo"
-                          />
+                            class="form-select custom-select-height"
+                            :class="{ 'is-invalid': !validaciones.sexo }"
+                          >
+                            <option disabled value="">
+                              Seleccione el sexo
+                            </option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                          </select>
+                          <div
+                            v-if="!validaciones.sexo"
+                            class="invalid-feedback"
+                          >
+                            Debe seleccionar un sexo
+                          </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
                           <label for="estadoCivilSelect" class="form-label"
                             >Estado Civil</label
@@ -374,14 +380,20 @@
 
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Observaciones</label>
-                          <q-input
+                          <textarea
                             v-model="pacienteSeleccionado.observaciones"
-                            type="textarea"
-                            dense
                             class="form-control"
-                            :error="!validaciones.observaciones"
-                            error-message="Debe ingresar observaciones"
-                          />
+                            :class="{
+                              'is-invalid': !validaciones.observaciones,
+                            }"
+                            placeholder="Ingrese observaciones"
+                          ></textarea>
+                          <div
+                            v-if="!validaciones.observaciones"
+                            class="invalid-feedback"
+                          >
+                            Debe ingresar observaciones
+                          </div>
                         </div>
                       </q-form>
                     </div>
@@ -396,36 +408,42 @@
                       <q-form class="row">
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Dirección</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.direccion"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese la dirección"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Teléfono Hogar</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.telCasa"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese el teléfono del hogar"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Teléfono Personal</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.telPersonal"
-                            dense
                             class="form-control"
-                            :error="!validaciones.telPersonal"
-                            error-message="Debe ingresar un número de teléfono"
+                            :class="{ 'is-invalid': !validaciones.telPersonal }"
+                            placeholder="Ingrese el teléfono personal"
                           />
+                          <div
+                            v-if="!validaciones.telPersonal"
+                            class="invalid-feedback"
+                          >
+                            Debe ingresar un número de teléfono
+                          </div>
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Email</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.email"
-                            dense
+                            type="email"
                             class="form-control"
+                            placeholder="Ingrese el correo electrónico"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
@@ -490,10 +508,10 @@
 
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Organización</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.organizacion"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese la organización"
                           />
                         </div>
                       </q-form>
@@ -509,26 +527,26 @@
                       <q-form class="row">
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Cónyuge</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.conyugue"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese el nombre del cónyuge"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Madre</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.madre"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese el nombre de la madre"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Padre</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.padre"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese el nombre del padre"
                           />
                         </div>
                       </q-form>
@@ -574,10 +592,10 @@
 
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Ocupación</label>
-                          <q-input
+                          <input
                             v-model="pacienteSeleccionado.ocupacion"
-                            dense
                             class="form-control"
+                            placeholder="Ingrese la ocupación"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
@@ -612,21 +630,21 @@
 
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Alergias</label>
-                          <q-input
+                          <textarea
                             v-model="pacienteSeleccionado.alergias"
-                            type="textarea"
-                            dense
                             class="form-control"
-                          />
+                            placeholder="Ingrese las alergias del paciente"
+                          ></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                           <label class="form-label">VIH</label>
                           <div class="form-check">
-                            <q-checkbox
+                            <input
+                              type="checkbox"
                               v-model="pacienteSeleccionado.vih"
-                              dense
                               class="form-check-input"
                             />
+                            <label class="form-check-label">Positivo</label>
                           </div>
                         </div>
                       </q-form>
@@ -698,12 +716,6 @@
           :min-width="120"
           :visible="true"
         />
-        <!-- <DxColumn
-          data-field="tipoDescripcion"
-          caption="Tipo"
-          :min-width="100"
-          :visible="true"
-        /> -->
         <DxColumn
           data-field="nombres"
           caption="Nombre"
@@ -758,12 +770,15 @@
             />
           </template>
         </DxColumn>
+
+        <!-- Botones de Editar y Eliminar -->
         <DxColumn type="buttons">
           <DxButton name="edit" icon="edit" @click="onEditButtonClick" />
           <DxButton name="delete" icon="trash" @click="onDeleteButtonClick" />
         </DxColumn>
       </DxDataGrid>
     </div>
+
     <transition name="slide-fade">
       <div v-if="isPanelOpened" class="paciente-info-panel">
         <button class="close-button" @click="onClose">&times;</button>
@@ -772,6 +787,7 @@
     </transition>
   </div>
 </template>
+
 <script setup>
 import {
   DxDataGrid,
@@ -798,12 +814,14 @@ import {
   useEscolaridadStore,
 } from "../stores/DatosGeneralesStores";
 import PacientePanel from "./PacientePanel.vue";
-import { ref, reactive, onMounted, computed, watch } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
 
+// Para emitir eventos (si fuera necesario)
 const emit = defineEmits(["cambiar-tab"]);
 
+// Almacenes Pinia
 const fichaIdentificacionStore = useFichaIdentificacionStore();
 const TiposPacientesStore = useTiposPacientesStore();
 const EstadoCivilStore = useEstadoCivilStore();
@@ -813,6 +831,7 @@ const GrupoSanguineoStore = useGrupoSanguineoStore();
 const EscolaridadStore = useEscolaridadStore();
 const MedicoStore = useMedicoStore();
 
+// Referencias de los stores
 const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
 // const { tpacientes } = storeToRefs(TiposPacientesStore);
 const { medicos } = storeToRefs(MedicoStore);
@@ -822,6 +841,7 @@ const { municipios } = storeToRefs(MunicipioStore);
 const { gruposSanguineos } = storeToRefs(GrupoSanguineoStore);
 const { escolaridades } = storeToRefs(EscolaridadStore);
 
+// Lifecycle
 onMounted(async () => {
   await MedicoStore.cargarMedicos();
   // await TiposPacientesStore.cargarPacientes();
@@ -833,11 +853,12 @@ onMounted(async () => {
   await EscolaridadStore.cargarEscolaridades();
 });
 
+// Modelo reactivo para el paciente seleccionado
 const pacienteSeleccionado = reactive({
+  id: null, // Se recomienda llevar un "id" para saber si estamos editando
   fechaRegistro: "",
   codigo: "",
   activo: false,
-  // tipoId: null,
   medicoId: null,
   medicoCabecera: null,
   referidoPorId: null,
@@ -865,6 +886,11 @@ const pacienteSeleccionado = reactive({
   vih: false,
 });
 
+const dialogNuevoContacto = ref(false);
+const tab = ref("Pacientes");
+const subTabFichaIdentificacion = ref("infoTecnica");
+
+// Computed para filtrar municipios en base al departamento seleccionado
 const filteredMunicipios = computed(() => {
   if (!pacienteSeleccionado.departamentoId) return [];
   return municipios.value.filter(
@@ -873,9 +899,9 @@ const filteredMunicipios = computed(() => {
   );
 });
 
+// Validaciones
 const validaciones = reactive({
   codigo: true,
-  // tipo: true,
   medico: true,
   medicoCabecera: true,
   dni: true,
@@ -884,7 +910,7 @@ const validaciones = reactive({
   fechaNacimiento: true,
   sexo: true,
   estadoCivil: true,
-  observaciones: true,
+  observaciones: true, // si decides hacer obligatorio "observaciones"
   telPersonal: true,
   departamentoId: true,
   municipio: true,
@@ -893,9 +919,38 @@ const validaciones = reactive({
   grupoSanguineoId: true,
 });
 
+// Cambio de sub tab en el modal
+const updateSubTab = (tabName) => {
+  subTabFichaIdentificacion.value = tabName;
+};
+
+// Limpiar formulario
+const limpiarFormulario = () => {
+  Object.keys(pacienteSeleccionado).forEach((key) => {
+    if (typeof pacienteSeleccionado[key] === "boolean") {
+      pacienteSeleccionado[key] = false;
+    } else if (Array.isArray(pacienteSeleccionado[key])) {
+      pacienteSeleccionado[key] = [];
+    } else {
+      pacienteSeleccionado[key] = "";
+    }
+  });
+  // Campos numéricos en null
+  pacienteSeleccionado.id = null;
+  pacienteSeleccionado.medicoId = null;
+  pacienteSeleccionado.medicoCabecera = null;
+  pacienteSeleccionado.referidoPorId = null;
+  pacienteSeleccionado.estadoCivilId = null;
+  pacienteSeleccionado.departamentoId = null;
+  pacienteSeleccionado.municipioId = null;
+  pacienteSeleccionado.escolaridadId = null;
+  pacienteSeleccionado.grupoSanguineoId = null;
+  pacienteSeleccionado.vih = false;
+};
+
+// Validación del formulario
 const validarFormulario = () => {
   validaciones.codigo = !!pacienteSeleccionado.codigo?.trim();
-  // validaciones.tipo = !!pacienteSeleccionado.tipoId;
   validaciones.medico = !!pacienteSeleccionado.medicoId;
   validaciones.dni = !!pacienteSeleccionado.dni?.trim();
   validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
@@ -910,72 +965,12 @@ const validarFormulario = () => {
   validaciones.referidoPorId = !!pacienteSeleccionado.referidoPorId;
   validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
   validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
+  // Aquí podrías agregar validaciones específicas para cada campo requerido
 
   return Object.values(validaciones).every((valido) => valido);
 };
 
-const limpiarFormulario = () => {
-  Object.keys(pacienteSeleccionado).forEach((key) => {
-    if (typeof pacienteSeleccionado[key] === "boolean") {
-      pacienteSeleccionado[key] = false;
-    } else if (Array.isArray(pacienteSeleccionado[key])) {
-      pacienteSeleccionado[key] = [];
-    } else {
-      pacienteSeleccionado[key] = "";
-    }
-  });
-  // Poner los campos numéricos en null
-  // pacienteSeleccionado.tipoId = null;
-  pacienteSeleccionado.medicoId = null;
-  pacienteSeleccionado.medicoCabecera = null;
-  pacienteSeleccionado.referidoPorId = null;
-  pacienteSeleccionado.estadoCivilId = null;
-  pacienteSeleccionado.departamentoId = null;
-  pacienteSeleccionado.municipioId = null;
-  pacienteSeleccionado.escolaridadId = null;
-  pacienteSeleccionado.grupoSanguineoId = null;
-  pacienteSeleccionado.vih = false;
-};
-
-const tab = ref("Pacientes");
-const subTabFichaIdentificacion = ref("infoTecnica");
-const updateSubTab = (tabName) => {
-  subTabFichaIdentificacion.value = tabName;
-};
-
-const pacientesConDetalles = computed(() => {
-  return (formIdentificacion.value || []).map((paciente) => {
-    const medicoEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.medicoId)
-    );
-    const medicoCabeceraEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.medicoCabecera)
-    );
-    const referidoPorEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.referidoPorId)
-    );
-    // const tipoPacienteEncontrado = (tpacientes.value || []).find(
-    //   (tipo) => tipo.id === Number(paciente.tipoId)
-    // );
-
-    return {
-      ...paciente,
-      medicoNombre: medicoEncontrado
-        ? medicoEncontrado.nombre
-        : "Médico no encontrado",
-      medicoCabeceraNombre: medicoCabeceraEncontrado
-        ? medicoCabeceraEncontrado.nombre
-        : "No asignado",
-      referidoPorNombre: referidoPorEncontrado
-        ? referidoPorEncontrado.nombre
-        : "No asignado",
-      // tipoDescripcion: tipoPacienteEncontrado
-      //   ? tipoPacienteEncontrado.descripcion
-      //   : "Tipo no encontrado",
-    };
-  });
-});
-
+// Guardar / Actualizar Paciente
 const guardarDatosFormulario = () => {
   if (!validarFormulario()) {
     Notify.create({
@@ -987,11 +982,11 @@ const guardarDatosFormulario = () => {
   }
 
   const payload = {
+    id: pacienteSeleccionado.id,
     fechaRegistro:
       pacienteSeleccionado.fechaRegistro || new Date().toISOString(),
     codigo: pacienteSeleccionado.codigo,
     activo: pacienteSeleccionado.activo,
-    // tipoId: pacienteSeleccionado.tipoId,
     medicoId: pacienteSeleccionado.medicoId,
     medicoCabecera: pacienteSeleccionado.medicoCabecera,
     referidoPorId: pacienteSeleccionado.referidoPorId,
@@ -1019,9 +1014,10 @@ const guardarDatosFormulario = () => {
     vih: pacienteSeleccionado.vih,
   };
 
+  // Si tiene id, es edición
   if (pacienteSeleccionado.id) {
     fichaIdentificacionStore
-      .actualizarPaciente({ ...payload, id: pacienteSeleccionado.id })
+      .actualizarPaciente(payload)
       .then(() => {
         Notify.create({
           message: "Paciente actualizado",
@@ -1040,6 +1036,7 @@ const guardarDatosFormulario = () => {
         console.error("Error actualizando el paciente:", error);
       });
   } else {
+    // Nuevo registro
     fichaIdentificacionStore
       .guardarDatos(payload)
       .then(() => {
@@ -1062,56 +1059,54 @@ const guardarDatosFormulario = () => {
   }
 };
 
+// Computed con datos adicionales (nombres de médicos, etc.)
+const pacientesConDetalles = computed(() => {
+  return (formIdentificacion.value || []).map((paciente) => {
+    const medicoEncontrado = (medicos.value || []).find(
+      (medic) => medic.id === Number(paciente.medicoId)
+    );
+    const medicoCabeceraEncontrado = (medicos.value || []).find(
+      (medic) => medic.id === Number(paciente.medicoCabecera)
+    );
+    const referidoPorEncontrado = (medicos.value || []).find(
+      (medic) => medic.id === Number(paciente.referidoPorId)
+    );
+
+    return {
+      ...paciente,
+      medicoNombre: medicoEncontrado
+        ? medicoEncontrado.nombre
+        : "Médico no encontrado",
+      medicoCabeceraNombre: medicoCabeceraEncontrado
+        ? medicoCabeceraEncontrado.nombre
+        : "No asignado",
+      referidoPorNombre: referidoPorEncontrado
+        ? referidoPorEncontrado.nombre
+        : "No asignado",
+    };
+  });
+});
+
+// Para mostrar el panel lateral (no afecta el modal)
 const focusedRowKey = ref(null);
 const isPanelOpened = ref(false);
 const panelData = ref(null);
-
 const openPanel = (paciente) => {
   panelData.value = paciente;
   isPanelOpened.value = true;
 };
-
-const onEditButtonClick = (e) => {
-  emit("cambiar-tab", { tab: "FichaIdentificacion", paciente: e.row.data });
+const onClose = () => {
+  isPanelOpened.value = false;
 };
 
-const onDeleteButtonClick = async (e) => {
-  const id = e.row.data.id;
-  try {
-    const success = await fichaIdentificacionStore.eliminarPaciente(id);
-    if (success) {
-      Notify.create({
-        message: "Paciente eliminado exitosamente",
-        color: "positive",
-        position: "top-right",
-      });
-    } else {
-      Notify.create({
-        message: "Error al eliminar el paciente",
-        color: "negative",
-        position: "top-right",
-      });
-    }
-  } catch (error) {
-    console.error("Error al eliminar el paciente:", error);
-    Notify.create({
-      message: "Error al eliminar el paciente",
-      color: "negative",
-      position: "top-right",
-    });
-  }
-};
-
+// Eventos del grid
 const rowClick = (e) => {
   focusedRowKey.value = e.key;
   panelData.value = e.data;
   isPanelOpened.value = true;
 };
 
-const onClose = () => {
-  isPanelOpened.value = false;
-};
-
+// Checkbox para actualizar el estado "activo"
 const onCheckboxChange = async (data) => {
   try {
     const success = await fichaIdentificacionStore.actualizarPaciente({
@@ -1141,12 +1136,63 @@ const onCheckboxChange = async (data) => {
   }
 };
 
-const dialogNuevoContacto = ref(false);
+// Botón para crear nuevo paciente (abrir modal en blanco)
 const handleNuevoContacto = () => {
   limpiarFormulario();
   dialogNuevoContacto.value = true;
 };
+
+// Llenar el formulario para edición
+const llenarFormulario = (data) => {
+  // Primero limpiamos para evitar "basura" de otro paciente
+  limpiarFormulario();
+  // Asignamos todos los valores que lleguen en 'data'
+  Object.keys(pacienteSeleccionado).forEach((key) => {
+    if (data.hasOwnProperty(key)) {
+      pacienteSeleccionado[key] = data[key];
+    }
+  });
+};
+
+// Evento click del botón Editar en la columna de acciones
+const onEditButtonClick = (e) => {
+  // Llenar el formulario con la data seleccionada
+  llenarFormulario(e.row.data);
+  // Cambiamos de tab a la información técnica, por ejemplo
+  subTabFichaIdentificacion.value = "infoTecnica";
+  // Abrimos el diálogo
+  dialogNuevoContacto.value = true;
+};
+
+// Evento click del botón Eliminar en la columna de acciones
+const onDeleteButtonClick = async (e) => {
+  const id = e.row.data.id;
+  try {
+    const success = await fichaIdentificacionStore.eliminarPaciente(id);
+    if (success) {
+      Notify.create({
+        message: "Paciente eliminado exitosamente",
+        color: "positive",
+        position: "top-right",
+      });
+    } else {
+      Notify.create({
+        message: "Error al eliminar el paciente",
+        color: "negative",
+        position: "top-right",
+      });
+    }
+  } catch (error) {
+    console.error("Error al eliminar el paciente:", error);
+    Notify.create({
+      message: "Error al eliminar el paciente",
+      color: "negative",
+      position: "top-right",
+    });
+  }
+};
 </script>
+
 <style scoped>
 #app-container {
   padding: 20px;
@@ -1156,45 +1202,42 @@ const handleNuevoContacto = () => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
 }
-/* Usar ::v-deep para aplicar estilos globales desde un componente scoped */
+
+/* Tabs verticales */
 ::v-deep .vertical-tabs-2 .nav-link {
   min-width: 12rem; /* Nuevo ancho mínimo */
   max-width: 10rem; /* Nuevo ancho máximo */
 }
 
-/* Opcional: ajustar el ancho en pantallas más pequeñas */
+/* Opcional: Ajustar el ancho en pantallas más pequeñas */
 @media (max-width: 768px) {
   ::v-deep .vertical-tabs-2 .nav-link {
     min-width: 8rem;
     max-width: 8rem;
   }
 }
-
 @media (max-width: 576px) {
   ::v-deep .vertical-tabs-2 .nav-link {
-    min-width: 100%; /* Ocupa todo el ancho disponible */
+    min-width: 100%;
     max-width: 100%;
   }
 }
+
 .styleModal {
   min-width: 1200px;
-  min-height: 750px;
+  min-height: 500px;
+  background-color: #ffffff;
 }
 .separarTabs {
   margin-left: 100px;
 }
 .main-modal-container {
-  background-color: #ffffff;
   padding: 20px;
 }
 .custom-select-height {
-  height: 3rem; /* Ajusta este valor según tus necesidades */
-  padding: 0.5rem 1rem; /* Ajusta el padding para alinear el texto */
-  font-size: 1rem; /* Opcional: Ajusta el tamaño de la fuente */
-}
-
-/* Estilo de flecha personalizada (opcional) */
-.custom-select-height {
+  height: 3rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   appearance: none;
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="none" stroke="%23333" stroke-width="1.5" d="M1 1l4 3 4-3"/></svg>');
   background-repeat: no-repeat;
@@ -1203,11 +1246,14 @@ const handleNuevoContacto = () => {
   cursor: pointer;
 }
 
-/* Mantener las clases existentes y globales sin q-card */
 .card.card-body {
   padding: 20px !important;
   position: relative;
-  /* left: 100px; */
+}
+input {
+  height: 50px; /* Altura del input */
+  padding: 10px; /* Espaciado interno */
+  font-size: 1rem; /* Tamaño de la fuente */
 }
 
 .form-container {
@@ -1218,10 +1264,6 @@ const handleNuevoContacto = () => {
 
 h6.text-primary {
   margin-bottom: 20px !important;
-}
-
-.row > div {
-  margin-bottom: 15px;
 }
 
 .downCard {
@@ -1244,22 +1286,13 @@ h6.text-primary {
 .no-arrow .q-select__dropdown-icon {
   display: none;
 }
-
-.right-content {
-  justify-self: end;
-}
-
 .q-card-section {
   margin-bottom: 20px;
 }
-
 .q-card-actions {
   margin-top: 20px;
 }
 
-/* .vertical-tabs-2 {
-  margin-right: 20px;
-} */
 .paciente-info-panel {
   position: fixed;
   top: 0px;
@@ -1273,6 +1306,7 @@ h6.text-primary {
   display: flex;
   flex-direction: column;
 }
+
 .close-button {
   position: absolute;
   top: 8px;

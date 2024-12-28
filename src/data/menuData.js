@@ -28,8 +28,8 @@ export let menuData = [
         defaultActive: false,
       },
       {
-        path: "/pacientesCitas",
-        title: " Pacientes citas",
+        path: "/solicitudesCitasPendientes",
+        title: " Solicitudes de citas",
         type: "link",
         active: false,
         defaultActive: false,

@@ -18,8 +18,8 @@
           </div>
         </div>
       </div>
+
       <!-- DataGrid: listado de médicos -->
-      <!-- <div class="app-container q-mb-xl q-px-md q-pa-xs q-py-md"> -->
       <DxDataGrid
         :data-source="medicosConEspecialidad"
         :allow-column-reordering="true"
@@ -99,7 +99,6 @@
         </DxColumn>
       </DxDataGrid>
     </div>
-    <!-- </div> -->
 
     <!-- Diálogo Modal para Agregar/Editar Médico -->
     <q-dialog v-model="dialogoMedico" persistent max-width="600px">
@@ -118,101 +117,130 @@
             />
           </div>
 
-          <q-form @submit.prevent="guardarMedico">
+          <!-- Reemplazamos q-form por form nativo -->
+          <form @submit.prevent="guardarMedico">
             <div class="row q-col-gutter-sm">
+              <!-- Avatar (opcional, no es un input) -->
               <div class="col-12 col-md-3 flex flex-center q-mb-sm">
                 <q-avatar size="96px" class="form-avatar">
                   <q-icon name="person" size="48px" />
                 </q-avatar>
               </div>
 
+              <!-- Campos de la parte superior -->
               <div class="col-12 col-md-9">
-                <q-input
+                <!-- Nombre -->
+                <label class="form-label">Nombre</label>
+                <input
                   v-model="formData.nombre"
-                  label="Nombre"
-                  outlined
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.nombre"
-                  :error-message="formErrors.nombre"
+                  type="text"
+                  class="form-control"
+                  :class="{ 'is-invalid': formErrors.nombre }"
+                  placeholder="Nombre"
                 />
-                <q-input
+                <div v-if="formErrors.nombre" class="invalid-feedback">
+                  {{ formErrors.nombre }}
+                </div>
+
+                <!-- Dirección -->
+                <label class="form-label">Dirección</label>
+                <input
                   v-model="formData.direccion"
-                  label="Dirección"
-                  outlined
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.direccion"
-                  :error-message="formErrors.direccion"
+                  type="text"
+                  class="form-control"
+                  :class="{ 'is-invalid': formErrors.direccion }"
+                  placeholder="Dirección"
                 />
-                <q-select
+                <div v-if="formErrors.direccion" class="invalid-feedback">
+                  {{ formErrors.direccion }}
+                </div>
+
+                <!-- Especialidad -->
+                <label class="form-label">Especialidad</label>
+                <select
                   v-model="formData.especialidadId"
-                  :options="especialidades"
-                  label="Especialidad"
-                  option-value="id"
-                  option-label="descripcion"
-                  map-options
-                  outlined
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.especialidadId"
-                  :error-message="formErrors.especialidadId"
-                />
+                  class="form-select"
+                  :class="{ 'is-invalid': formErrors.especialidadId }"
+                >
+                  <option disabled value="">Seleccione una especialidad</option>
+                  <option
+                    v-for="esp in especialidades"
+                    :key="esp.id"
+                    :value="esp.id"
+                  >
+                    {{ esp.descripcion }}
+                  </option>
+                </select>
+                <div v-if="formErrors.especialidadId" class="invalid-feedback">
+                  {{ formErrors.especialidadId }}
+                </div>
               </div>
             </div>
 
+            <!-- Campos de la parte inferior (Teléfonos y Email) -->
             <div class="row q-col-gutter-sm">
+              <!-- Teléfono Personal -->
               <div class="col-12 col-md-6">
-                <q-input
+                <label class="form-label">Teléfono</label>
+                <input
                   v-model="formData.telefonoPersonal"
-                  label="Teléfono"
-                  outlined
-                  mask="####-####"
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.telefonoPersonal"
-                  :error-message="formErrors.telefonoPersonal"
+                  type="text"
+                  class="form-control"
+                  :class="{ 'is-invalid': formErrors.telefonoPersonal }"
+                  placeholder="####-####"
                 />
+                <div
+                  v-if="formErrors.telefonoPersonal"
+                  class="invalid-feedback"
+                >
+                  {{ formErrors.telefonoPersonal }}
+                </div>
               </div>
+
+              <!-- Teléfono Casa -->
               <div class="col-12 col-md-6">
-                <q-input
+                <label class="form-label">Teléfono Casa</label>
+                <input
                   v-model="formData.telefonoCasa"
-                  label="Teléfono Casa"
-                  outlined
-                  mask="####-####"
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.telefonoCasa"
-                  :error-message="formErrors.telefonoCasa"
+                  type="text"
+                  class="form-control"
+                  :class="{ 'is-invalid': formErrors.telefonoCasa }"
+                  placeholder="####-####"
                 />
+                <div v-if="formErrors.telefonoCasa" class="invalid-feedback">
+                  {{ formErrors.telefonoCasa }}
+                </div>
               </div>
             </div>
 
+            <!-- Email -->
             <div class="row q-col-gutter-sm">
               <div class="col-12 col-md-6">
-                <q-input
+                <label class="form-label">Email</label>
+                <input
                   v-model="formData.email"
-                  label="Email"
                   type="email"
-                  outlined
-                  dense
-                  style="font-size: 14px; height: auto"
-                  :error="!!formErrors.email"
-                  :error-message="formErrors.email"
+                  class="form-control"
+                  :class="{ 'is-invalid': formErrors.email }"
+                  placeholder="Correo electrónico"
                 />
+                <div v-if="formErrors.email" class="invalid-feedback">
+                  {{ formErrors.email }}
+                </div>
               </div>
             </div>
 
+            <!-- Botón de Guardar/Actualizar -->
             <div class="flex justify-center q-mt-sm">
-              <q-btn
-                :label="isEditing ? 'Actualizar Médico' : 'Guardar Médico'"
-                color="primary"
-                type="submit"
-                class="btn-primary"
+              <button
+                class="btn btn-primary"
                 style="font-size: 14px; padding: 8px 16px"
-              />
+                type="submit"
+              >
+                {{ isEditing ? "Actualizar Médico" : "Guardar Médico" }}
+              </button>
             </div>
-          </q-form>
+          </form>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -224,6 +252,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useQuasar, Notify } from "quasar";
 import { storeToRefs } from "pinia";
 
+// DevExtreme DataGrid
 import {
   DxDataGrid,
   DxColumn,
@@ -234,6 +263,7 @@ import {
   DxEditing,
 } from "devextreme-vue/data-grid";
 
+// Stores
 import { useMedicoStore } from "../stores/MedicoStores";
 import { useEspecialidadMedicaStore } from "../stores/ConfiMedicasStores";
 
@@ -249,6 +279,7 @@ const dialogoMedico = ref(false);
 const isEditing = ref(false);
 let selectedMedicoId = null;
 
+// Datos del formulario
 const formData = ref({
   nombre: "",
   direccion: "",
@@ -258,8 +289,10 @@ const formData = ref({
   email: "",
 });
 
+// Errores de validación
 const formErrors = ref({});
 
+// Al montar el componente cargamos datos
 onMounted(async () => {
   try {
     await especialidadMedicaStore.cargarEspecialidades();
@@ -269,6 +302,7 @@ onMounted(async () => {
   }
 });
 
+// Computed para mostrar la especialidad por su descripción
 const medicosConEspecialidad = computed(() => {
   return (medicos.value || []).map((medico) => {
     const esp = (especialidades.value || []).find(
@@ -283,7 +317,7 @@ const medicosConEspecialidad = computed(() => {
   });
 });
 
-// Manejo de responsive en el ancho del DataGrid
+// Responsividad del DataGrid
 const responsiveWidth = ref(window.innerWidth < 600 ? "100%" : "auto");
 const updateWidth = () => {
   responsiveWidth.value = window.innerWidth < 600 ? "100%" : "auto";
@@ -294,7 +328,9 @@ onUnmounted(() => {
   window.removeEventListener("resize", updateWidth);
 });
 
+// ----------------------------------------------------------
 // Funciones para el modal
+// ----------------------------------------------------------
 function abrirDialogoNuevoMedico() {
   isEditing.value = false;
   resetFormulario();
@@ -320,8 +356,11 @@ function resetFormulario() {
   selectedMedicoId = null;
 }
 
-// Cargar datos para editar
+// ----------------------------------------------------------
+// Función para cargar datos y editar
+// ----------------------------------------------------------
 function cargarMedicoParaEditar(medico) {
+  // Verificamos la especialidad
   const espIdNumerico = Number(medico.especialidadId);
   const esp = especialidades.value.find((e) => e.id === espIdNumerico);
 
@@ -348,13 +387,44 @@ function cargarMedicoParaEditar(medico) {
   dialogoMedico.value = true;
 }
 
+// ----------------------------------------------------------
 // Guardar o actualizar médico
+// ----------------------------------------------------------
 async function guardarMedico() {
+  // Puedes agregar validaciones personalizadas
+  formErrors.value = {};
+  if (!formData.value.nombre.trim()) {
+    formErrors.value.nombre = "El nombre es obligatorio";
+  }
+  if (!formData.value.direccion.trim()) {
+    formErrors.value.direccion = "La dirección es obligatoria";
+  }
+  if (!formData.value.especialidadId) {
+    formErrors.value.especialidadId = "La especialidad es obligatoria";
+  }
+  // Teléfonos no siempre son obligatorios, depende de tu lógica
+  // Email también, si lo deseas
+  // if (!formData.value.email.trim()) {
+  //   formErrors.value.email = "El email es obligatorio";
+  // }
+
+  // Si hay errores, mostrarlos y detener
+  if (Object.keys(formErrors.value).length > 0) {
+    $q.notify({
+      type: "negative",
+      message: "Corrige los errores del formulario",
+      position: "top-right",
+    });
+    return;
+  }
+
   const medicoData = {
     nombre: formData.value.nombre,
     direccion: formData.value.direccion,
     especialidadId:
-      formData.value.especialidadId?.id || formData.value.especialidadId,
+      typeof formData.value.especialidadId === "object"
+        ? formData.value.especialidadId.id
+        : formData.value.especialidadId,
     telefonoCasa: formData.value.telefonoCasa,
     telefonoPersonal: formData.value.telefonoPersonal,
     email: formData.value.email,
@@ -362,6 +432,7 @@ async function guardarMedico() {
 
   try {
     if (isEditing.value && selectedMedicoId) {
+      // Actualizar
       await medicoStore.actualizarMedico({
         id: selectedMedicoId,
         ...medicoData,
@@ -372,6 +443,7 @@ async function guardarMedico() {
         position: "top-right",
       });
     } else {
+      // Agregar
       await medicoStore.agregarMedico(medicoData);
       $q.notify({
         type: "positive",
@@ -379,7 +451,7 @@ async function guardarMedico() {
         position: "top-right",
       });
     }
-    await medicoStore.cargarMedicos(); // Actualizar el listado
+    await medicoStore.cargarMedicos(); // Refrescar el listado
     cerrarDialogo();
   } catch (error) {
     console.error("Error al procesar el médico:", error);
@@ -391,7 +463,9 @@ async function guardarMedico() {
   }
 }
 
+// ----------------------------------------------------------
 // Eliminar médico
+// ----------------------------------------------------------
 async function handleDelete(medicoId) {
   try {
     const success = await medicoStore.eliminarMedico(medicoId);
@@ -421,8 +495,6 @@ async function handleDelete(medicoId) {
 </script>
 
 <style scoped>
-/* src/styles/sharedStyles.css */
-
 /* Contenedor principal */
 #app-container {
   padding: 20px;
@@ -430,11 +502,9 @@ async function handleDelete(medicoId) {
   margin: 0 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* position: relative;
-  margin-left: 100px;
-  margin-right: 100px; */
   width: 93%;
 }
+
 .form-card {
   max-width: 800px;
   width: 100%;
@@ -443,19 +513,27 @@ async function handleDelete(medicoId) {
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 .espaciadoLateral {
   margin-left: 70px;
 }
-.fsButton {
-  font-size: 16px;
+
+/* Clases de error estilo Bootstrap */
+.is-invalid {
+  border: 1px solid #dc3545 !important;
+}
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
+/* Responsivo */
 @media (max-width: 1024px) {
   .form-card {
     max-width: 700px;
   }
 }
-
 @media (max-width: 768px) {
   .form-card {
     max-width: 100%;
