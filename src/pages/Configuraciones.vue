@@ -150,10 +150,10 @@
                     <DxRequiredRule />
                   </DxColumn>
 
-                  <!-- Campos nuevos: alias, direccion, telefono, observaciones -->
+                  <!-- Campos nuevos: nombreCompleto, direccion, telefono, observaciones -->
                   <DxColumn
-                    data-field="alias"
-                    caption="Alias"
+                    data-field="nombreCompleto"
+                    caption="Nombre Completo"
                     data-type="string"
                     :allow-sorting="true"
                   />
@@ -364,7 +364,7 @@ const actualizarOrganizacion = async () => {
 const onRowInserting = async (e) => {
   const { data } = e;
   try {
-    // data contendrá { email, password, role, alias, direccion, telefono, observaciones }
+    // data contendrá { email, password, role, nombreCompleto, direccion, telefono, observaciones }
     await crearUsuariosStore.crearUsuario(data);
     e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();

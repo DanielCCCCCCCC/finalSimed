@@ -314,8 +314,10 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   /**
    * (OPCIONAL) Trae solo las pendientes, por si en otra vista quieres mostrar 'Pendiente'.
    */
+  const pendingAppointmentsCount = ref(0);
+
   const fetchAutoAppointments = async () => {
-    loading.value = true; // Inicia la carga
+    loading.value = true;
     error.value = null;
 
     try {
@@ -323,7 +325,8 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
       if (!userId) {
         console.warn("[fetchAutoAppointments] No hay un usuario autenticado.");
-        appointments.value = []; // Asegúrate de limpiar las citas
+        appointments.value = [];
+        pendingAppointmentsCount.value = 0; // Reiniciar el conteo
         return;
       }
 
@@ -340,13 +343,21 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         );
         error.value = fetchError.message;
       } else {
-        appointments.value = data || []; // Solo guarda citas filtradas
+        appointments.value = data || [];
+        // Actualizar el conteo de citas pendientes
+        pendingAppointmentsCount.value = appointments.value.filter(
+          (a) => a.status === "Pendiente"
+        ).length;
+        console.log(
+          "Cantidad de citas pendientes: ",
+          pendingAppointmentsCount.value
+        );
       }
     } catch (err) {
       console.error("[fetchAutoAppointments] Excepción capturada:", err);
       error.value = err.message;
     } finally {
-      loading.value = false; // Finaliza la carga
+      loading.value = false;
     }
   };
 

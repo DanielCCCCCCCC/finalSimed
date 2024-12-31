@@ -30,8 +30,10 @@
         <!-- End::header-content-left -->
 
         <!-- Start::header-content-right -->
-        <div class="header-content-right">
-          <!-- Start::header-element -->
+        <div
+          class="header-content-right bajarIconoFullScreen d-flex align-items-center"
+        >
+          <!-- Start::header-element (Fullscreen) -->
           <div
             class="header-element header-fullscreen q-mt-xs d-xl-flex d-none"
           >
@@ -52,7 +54,98 @@
           </div>
           <!-- End::header-element -->
 
-          <!-- Start::header-element -->
+          <!-- Start::header-element (Notificaciones) -->
+          <div
+            class="header-element bajarIconoNotificaciones notifications-dropdown"
+          >
+            <!-- Trigger para el menú de notificaciones -->
+            <q-btn
+              flat
+              round
+              icon="notifications"
+              @click="toggleNotificationMenu"
+            >
+              <q-badge
+                color="secondary"
+                floating
+                align="top right"
+                :label="pendingAppointmentsCount"
+                v-if="pendingAppointmentsCount > 0"
+              />
+            </q-btn>
+
+            <!-- Menú de Notificaciones -->
+            <q-menu v-model="notificationMenu" anchor="top right" auto-close>
+              <q-card style="min-width: 300px">
+                <q-card-section>
+                  <div class="d-flex justify-between">
+                    <div class="text-h6">Notificaciones</div>
+                    <q-badge
+                      color="secondary"
+                      label="Unread: {{ pendingAppointmentsCount }}"
+                    />
+                  </div>
+                </q-card-section>
+                <q-separator />
+                <q-card-section class="q-pa-none">
+                  <simplebar
+                    data-simplebar-auto-hide="false"
+                    style="max-height: 300px"
+                  >
+                    <q-list v-if="notificationList.length">
+                      <q-item
+                        v-for="item in notificationList"
+                        :key="item.id"
+                        clickable
+                        @click="goToNotification(item)"
+                      >
+                        <q-item-section avatar>
+                          <q-avatar size="40px">
+                            <img :src="item.icon" alt="icon" />
+                          </q-avatar>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ item.title }}</q-item-label>
+                          <q-item-label caption>{{ item.time }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn
+                            flat
+                            icon="close"
+                            @click.stop="removeNotification(item)"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </simplebar>
+                </q-card-section>
+                <q-separator />
+                <q-card-section v-if="notificationList.length" class="q-pa-sm">
+                  <router-link
+                    :to="`${url}advancedui/notifications`"
+                    class="full-width"
+                  >
+                    <q-btn
+                      label="View All"
+                      color="primary"
+                      class="full-width"
+                    />
+                  </router-link>
+                </q-card-section>
+                <q-card-section v-else class="q-pa-sm text-center">
+                  <div class="q-mb-md">
+                    <q-avatar size="80px" class="bg-secondary-transparent">
+                      <i class="ri-notification-off-line fs-2"></i>
+                    </q-avatar>
+                  </div>
+                  <div>No New Notifications</div>
+                </q-card-section>
+              </q-card>
+            </q-menu>
+          </div>
+          <!-- End::header-element (Notificaciones) -->
+
+          <!-- Start::header-element (Perfil) -->
           <div class="header-element">
             <a
               href="javascript:void(0);"
@@ -76,9 +169,7 @@
                      lo puedes poner aquí, pero se mantiene oculto con d-none por ahora -->
                 <div class="d-none">
                   <p class="fw-semibold mb-0">Angelica</p>
-                  <span class="op-7 fw-normal d-block fs-11"
-                    >Web Designerrr</span
-                  >
+                  <span class="op-7 fw-normal d-block fs-11">Web Designer</span>
                 </div>
               </div>
             </a>
@@ -91,9 +182,7 @@
               transition-show="fadeIn-down"
               transition-hide="fadeOut-up"
               no-arrow
-              content-class="main-header-dropdown dropdown-menu pt-0
-              overflow-hidden header-profile-dropdown dropdown-menu-end
-              fixed-width-menu"
+              content-class="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end fixed-width-menu"
             >
               <ul
                 aria-labelledby="mainHeaderProfile"
@@ -102,9 +191,7 @@
                 <li>
                   <div class="header-navheading border-bottom">
                     <!-- Aquí mostramos el nombre dinámico según el rol -->
-                    <h6 class="main-notification-title">
-                      {{ displayName }}
-                    </h6>
+                    <h6 class="main-notification-title">{{ displayName }}</h6>
                     <p class="main-notification-text mb-0">{{ role }}</p>
                   </div>
                 </li>
@@ -156,7 +243,23 @@
  * Imports
  */
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { QLayout, QHeader, QMenu, QPageContainer, Notify } from "quasar";
+import {
+  QLayout,
+  QHeader,
+  QMenu,
+  QPageContainer,
+  Notify,
+  QBtn,
+  QBadge,
+  QCard,
+  QCardSection,
+  QSeparator,
+  QList,
+  QItem,
+  QItemSection,
+  QAvatar,
+  QItemLabel,
+} from "quasar";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
@@ -164,10 +267,12 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "../../stores/auth";
 import { useOrganizacionStore } from "../../stores/organizacionStore";
 import { useCrearUsuariosStore } from "../../stores/crearUsuarios";
+import { useAppointmentsStore } from "../../stores/AppointmentsStore"; // Nuevo store para citas
 
 // Variables reactivas
 const isFullScreen = ref(false);
 const menuVisible = ref(false);
+const notificationMenu = ref(false); // Estado del menú de notificaciones
 
 // Base URL
 const url = import.meta.env.BASE_URL;
@@ -176,11 +281,15 @@ const url = import.meta.env.BASE_URL;
 const authStore = useAuthStore();
 const organizacionStore = useOrganizacionStore();
 const crearUsuariosStore = useCrearUsuariosStore();
+const appointmentsStore = useAppointmentsStore(); // Nuevo store para citas
 
-// De las stores, extraemos propiedades reactivas
+// De las stores, extraemos propiedades reactivas y métodos correctamente
 const { organizaciones } = storeToRefs(organizacionStore);
 const { users } = storeToRefs(crearUsuariosStore);
 const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
+const { appointments, loading, error, fetchAutoAppointments } =
+  storeToRefs(appointmentsStore);
+const { deleteAppointment } = appointmentsStore; // Acceso directo a métodos
 
 // Router
 const router = useRouter();
@@ -188,21 +297,11 @@ const router = useRouter();
 // Emitir evento "toggle-drawer" al padre si es necesario
 const emit = defineEmits(["toggle-drawer"]);
 
-/**
- * Computed: Obtenemos el "currentUser" según el ID de `user.value`,
- * para luego poder acceder a alias, email, etc.
- */
 const currentUser = computed(() => {
   if (!user.value?.id) return null;
   return users.value.find((u) => u.id === user.value.id) || null;
 });
 
-/**
- * Computed: displayName
- * - Si role es 'admin': mostrar organizaciones[0]?.nombre
- * - Si role es 'medico': mostrar alias de currentUser. Si no existe alias, mostrar email
- * - Otros roles: igual que 'medico', alias o email
- */
 const displayName = computed(() => {
   const r = role.value; // rol actual (admin, medico, etc.)
   if (!r) {
@@ -214,24 +313,51 @@ const displayName = computed(() => {
     // Mostrar nombre de la organización
     return organizaciones.value[0]?.nombre ?? "Org. sin nombre";
   } else if (r === "medico") {
-    // Mostrar alias si existe, de lo contrario email
+    // Mostrar nombreCompleto si existe, de lo contrario email
     if (!currentUser.value) {
       // si no tenemos usuario en la lista, fallback
       return user.value?.email ?? "Medico sin datos";
     }
-    return currentUser.value.alias
-      ? currentUser.value.alias
+    return currentUser.value.nombreCompleto
+      ? currentUser.value.nombreCompleto
       : currentUser.value.email;
   } else {
-    // otros roles => alias si existe, sino email
+    // otros roles => nombreCompleto si existe, sino email
     if (!currentUser.value) {
       return user.value?.email ?? "Usuario";
     }
-    return currentUser.value.alias
-      ? currentUser.value.alias
+    return currentUser.value.nombreCompleto
+      ? currentUser.value.nombreCompleto
       : currentUser.value.email;
   }
 });
+
+/**
+ * Computed: pendingAppointmentsCount
+ * Cuenta las citas que están pendientes (asegurando consistencia en el estado)
+ */
+const pendingAppointmentsCount = computed(
+  () =>
+    appointments.value.filter(
+      (appointment) => appointment.status === "Pendiente"
+    ).length
+);
+
+/**
+ * Computed: notificationList
+ * Personaliza la lista de notificaciones según las citas pendientes
+ */
+const notificationList = computed(() =>
+  appointments.value
+    .filter((appointment) => appointment.status === "Pendiente")
+    .map((appointment) => ({
+      id: appointment.id,
+      title: `Cita pendiente: ${appointment.description}`,
+      time: new Date(appointment.created_at).toLocaleString(),
+      icon: "/path/to/icon.png", // Asegúrate de que esta ruta es correcta
+      isOnline: true, // O cualquier lógica que determines
+    }))
+);
 
 /** toggle sidebar */
 function handleToggleMenu() {
@@ -351,6 +477,11 @@ function toggleProfileMenu() {
   menuVisible.value = !menuVisible.value;
 }
 
+/** toggle menu de notificaciones */
+function toggleNotificationMenu() {
+  notificationMenu.value = !notificationMenu.value;
+}
+
 /** Logout */
 async function logout() {
   try {
@@ -371,12 +502,42 @@ async function logout() {
   }
 }
 
+/** Remove Notification */
+function removeNotification(notification) {
+  // Implementa la lógica para eliminar la notificación
+  // Aquí simplemente eliminamos la cita correspondiente
+  deleteAppointment(notification.id)
+    .then(() => {
+      Notify.create({
+        message: "Notificación eliminada",
+        color: "info",
+        position: "top-right",
+      });
+    })
+    .catch((err) => {
+      Notify.create({
+        message: "Error al eliminar la notificación",
+        color: "negative",
+        position: "top-right",
+      });
+      console.error("Error al eliminar la notificación:", err);
+    });
+}
+
+/** Navegar a la página de notificaciones */
+function goToNotification(item) {
+  router.push({ path: `${url}advancedui/notifications` });
+  // Opcionalmente, podrías marcar la notificación como leída aquí
+}
+
 /** onMounted: cargar data y listeners */
 onMounted(async () => {
   await organizacionStore.cargarOrganizaciones();
   await crearUsuariosStore.cargarUsuarios();
+  await appointmentsStore.fetchAutoAppointments(); // Cargar citas al montar
   console.log("Organizaciones: ", organizaciones.value);
   console.log("Users: ", users.value);
+  console.log("Appointments: ", appointments.value);
 });
 
 onMounted(() => {
@@ -403,5 +564,37 @@ onUnmounted(() => {
 /* Fijar un ancho mínimo para el menú desplegable */
 .fixed-width-menu {
   min-width: 220px; /* Ajusta a tu preferencia */
+}
+.bajarIconoNotificaciones {
+  position: relative;
+  top: 10px;
+}
+.bajarIconoFullScreen {
+  position: relative;
+  top: 8px;
+  left: -10px;
+}
+/* Estilos para la animación de pulso */
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* Ajustes adicionales para el menú de notificaciones */
+.main-header-dropdown {
+  width: 300px;
 }
 </style>

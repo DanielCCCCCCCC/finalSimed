@@ -44,15 +44,22 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
   /**
    * Crea un nuevo usuario con Supabase Auth + inserción en tabla `users`.
-   * payload: { email, password, role, alias?, direccion?, telefono?, observaciones? }
+   * payload: { email, password, role, nombreCompleto?, direccion?, telefono?, observaciones? }
    */
   const crearUsuario = async (payload) => {
     loading.value = true;
     error.value = null;
     success.value = null;
 
-    const { email, password, role, alias, direccion, telefono, observaciones } =
-      payload;
+    const {
+      email,
+      password,
+      role,
+      nombreCompleto,
+      direccion,
+      telefono,
+      observaciones,
+    } = payload;
 
     try {
       // Validaciones básicas
@@ -95,7 +102,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
           email,
           role,
           tenant_id,
-          alias: alias || null,
+          nombreCompleto: nombreCompleto || null,
           direccion: direccion || null,
           telefono: telefono || null,
           observaciones: observaciones || null,
@@ -122,7 +129,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
   /**
    * Actualiza un usuario en la tabla `users` (y en Supabase Auth si cambia email/password).
-   * payload: { id, email?, password?, role?, alias?, direccion?, telefono?, observaciones? }
+   * payload: { id, email?, password?, role?, nombreCompleto?, direccion?, telefono?, observaciones? }
    */
   const actualizarUsuario = async (payload) => {
     loading.value = true;
@@ -134,7 +141,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       email,
       password,
       role,
-      alias,
+      nombreCompleto,
       direccion,
       telefono,
       observaciones,
@@ -157,8 +164,8 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       if (role) {
         updates.role = role;
       }
-      if (alias !== undefined) {
-        updates.alias = alias;
+      if (nombreCompleto !== undefined) {
+        updates.nombreCompleto = nombreCompleto;
       }
       if (direccion !== undefined) {
         updates.direccion = direccion;

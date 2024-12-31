@@ -31,9 +31,9 @@
         <IndicadorUltimosCitasAgregadas />
         <!-- <ProximasCincoCitas /> -->
       </div>
-      <div class="card">
+      <!-- <div class="card">
         <graficoPrueba />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

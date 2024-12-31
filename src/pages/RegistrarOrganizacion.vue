@@ -309,9 +309,9 @@ onMounted(() => {
   width: 100%;
 }
 
-.bg-primary {
+/* .bg-primary {
   background: #3f51b5;
-}
+} */
 
 .text-fixed-white {
   color: white;

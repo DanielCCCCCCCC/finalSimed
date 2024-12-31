@@ -152,6 +152,7 @@
                             class="form-control"
                             :class="{ 'is-invalid': !validaciones.codigo }"
                             placeholder="Ingresa código"
+                            readonly
                           />
                           <!--
                           <div v-if="!validaciones.codigo" class="text-danger mt-1">
@@ -167,11 +168,12 @@
                             <input
                               type="checkbox"
                               v-model="pacienteSeleccionado.activo"
-                              class="form-check-input"
+                              class="form-check-input small-checkbox"
                             />
                           </div>
                         </div>
 
+                        <!-- Médico -->
                         <div class="col-md-6 mb-3">
                           <label for="medicoSelect" class="form-label"
                             >Médico</label
@@ -202,6 +204,7 @@
                           </div>
                         </div>
 
+                        <!-- Médico de Cabecera -->
                         <div class="col-md-6 mb-3">
                           <label for="medicoCabeceraSelect" class="form-label"
                             >Médico de Cabecera</label
@@ -232,6 +235,7 @@
                           </div>
                         </div>
 
+                        <!-- Referido por -->
                         <div class="col-md-6 mb-3">
                           <label for="referidoPorSelect" class="form-label"
                             >Referido por (Médico)</label
@@ -270,21 +274,6 @@
                         <h6 class="text-primary">Información Personal</h6>
                       </div>
                       <q-form class="row">
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">DNI</label>
-                          <input
-                            v-model="pacienteSeleccionado.dni"
-                            class="form-control"
-                            :class="{ 'is-invalid': !validaciones.dni }"
-                            placeholder="Ingrese DNI"
-                          />
-                          <div
-                            v-if="!validaciones.dni"
-                            class="text-danger mt-1"
-                          >
-                            El DNI es obligatorio
-                          </div>
-                        </div>
                         <!-- Nombres -->
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Nombres</label>
@@ -292,6 +281,7 @@
                             v-model="pacienteSeleccionado.nombres"
                             class="form-control"
                             :class="{ 'is-invalid': !validaciones.nombres }"
+                            placeholder="Ingrese los nombres"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
@@ -307,6 +297,21 @@
                             class="invalid-feedback"
                           >
                             Los apellidos son obligatorios
+                          </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Identificación</label>
+                          <input
+                            v-model="pacienteSeleccionado.dni"
+                            class="form-control"
+                            :class="{ 'is-invalid': !validaciones.dni }"
+                            placeholder="Ingrese la identificación"
+                          />
+                          <div
+                            v-if="!validaciones.dni"
+                            class="text-danger mt-1"
+                          >
+                            La Identificación es obligatoria.
                           </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -371,7 +376,7 @@
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.estadoCivil"
+                            v-if="!validaciones.estadoCivilId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un estado civil
@@ -499,7 +504,7 @@
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.municipio"
+                            v-if="!validaciones.municipioId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un municipio
@@ -642,7 +647,7 @@
                             <input
                               type="checkbox"
                               v-model="pacienteSeleccionado.vih"
-                              class="form-check-input"
+                              class="form-check-input small-checkbox"
                             />
                             <label class="form-check-label">Positivo</label>
                           </div>
@@ -697,6 +702,7 @@
           placeholder="Buscar Paciente"
         />
 
+        <!-- Definir las columnas aquí -->
         <DxColumn
           data-field="codigo"
           caption="Código"
@@ -712,7 +718,7 @@
         />
         <DxColumn
           data-field="dni"
-          caption="DNI"
+          caption="Identificacíon"
           :min-width="120"
           :visible="true"
         />
@@ -764,6 +770,7 @@
         >
           <template #cell="{ data }">
             <DxCheckBox
+              class="small-checkbox"
               v-model="data.activo"
               :value="data.activo"
               @value-changed="onCheckboxChange(data)"
@@ -787,7 +794,6 @@
     </transition>
   </div>
 </template>
-
 <script setup>
 import {
   DxDataGrid,
@@ -817,6 +823,8 @@ import PacientePanel from "./PacientePanel.vue";
 import { ref, reactive, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
+import { useAuthStore } from "../stores/auth"; // Importa la tienda de autenticación
+import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta es correcta
 
 // Para emitir eventos (si fuera necesario)
 const emit = defineEmits(["cambiar-tab"]);
@@ -830,6 +838,7 @@ const MunicipioStore = useMunicipioStore();
 const GrupoSanguineoStore = useGrupoSanguineoStore();
 const EscolaridadStore = useEscolaridadStore();
 const MedicoStore = useMedicoStore();
+const authStore = useAuthStore(); // Accede a la tienda de autenticación
 
 // Referencias de los stores
 const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
@@ -855,7 +864,7 @@ onMounted(async () => {
 
 // Modelo reactivo para el paciente seleccionado
 const pacienteSeleccionado = reactive({
-  id: null, // Se recomienda llevar un "id" para saber si estamos editando
+  id: null, // Se mantiene para operaciones internas
   fechaRegistro: "",
   codigo: "",
   activo: false,
@@ -884,7 +893,13 @@ const pacienteSeleccionado = reactive({
   grupoSanguineoId: null,
   alergias: "",
   vih: false,
+  userId: "", // Inicializar para evitar undefined
+  tenant_id: "", // Inicializar para evitar undefined
 });
+
+// Inicializar tenant_id y userId desde authStore
+pacienteSeleccionado.userId = authStore.userId;
+pacienteSeleccionado.tenant_id = authStore.tenant_id;
 
 const dialogNuevoContacto = ref(false);
 const tab = ref("Pacientes");
@@ -909,15 +924,149 @@ const validaciones = reactive({
   apellidos: true,
   fechaNacimiento: true,
   sexo: true,
-  estadoCivil: true,
+  estadoCivilId: true,
   observaciones: true, // si decides hacer obligatorio "observaciones"
   telPersonal: true,
   departamentoId: true,
-  municipio: true,
+  municipioId: true,
   referidoPorId: true,
   escolaridadId: true,
   grupoSanguineoId: true,
 });
+
+/**
+ * Extrae las iniciales de un nombre completo.
+ * @param {string} fullName - Nombre completo del usuario.
+ * @returns {string} - Iniciales en mayúsculas.
+ */
+const getInitials = (fullName) => {
+  return fullName
+    .split(" ")
+    .map((name) => name.charAt(0).toUpperCase())
+    .join("");
+};
+
+/**
+ * Genera un código único para el paciente basado en las iniciales del usuario y un número incremental.
+ * @returns {Promise<string>} - Código único del paciente.
+ */
+const generatePatientCode = async () => {
+  try {
+    const nombreUser = authStore.nombreCompleto;
+    if (!nombreUser) {
+      throw new Error("Nombre completo del usuario no disponible.");
+    }
+
+    const initials = getInitials(nombreUser);
+    console.log("Iniciales del usuario:", initials);
+
+    const userId = authStore.userId;
+    if (!userId || userId.length < 8) {
+      throw new Error("userId no disponible o demasiado corto.");
+    }
+
+    const userIdPrefix = userId.substring(0, 8);
+    console.log("Prefijo del userId:", userIdPrefix);
+
+    // Consulta para encontrar el último código con estas iniciales y userIdPrefix en la tabla correcta
+    const { data, error } = await supabase
+      .from("fichaIdentificacion") // Nombre de la tabla
+      .select("codigo")
+      .ilike("codigo", `${initials}-%-${userIdPrefix}`)
+      .order("codigo", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error al consultar la tabla de pacientes:", error.message);
+      throw error;
+    }
+
+    let nextNumber = "01"; // Valor por defecto
+
+    if (data && data.codigo) {
+      console.log("Último código encontrado:", data.codigo);
+      const codeParts = data.codigo.split("-");
+      if (codeParts.length === 3) {
+        const lastNumber = parseInt(codeParts[1], 10); // Ahora el número está en la segunda posición
+        if (!isNaN(lastNumber)) {
+          const incremented = lastNumber + 1;
+          nextNumber = incremented.toString().padStart(2, "0"); // Asegura que tenga al menos 2 dígitos
+          console.log("Número incrementado:", nextNumber);
+        }
+      } else {
+        console.warn("El formato del código no es el esperado.");
+      }
+    } else {
+      console.log(
+        "No se encontró ningún código previo. Se asignará el número inicial 01."
+      );
+    }
+
+    const newCode = `${initials}-${nextNumber}-${userIdPrefix}`;
+    console.log("Nuevo código generado para el paciente:", newCode);
+    return newCode;
+  } catch (err) {
+    console.error("Error generando el código del paciente:", err.message);
+    throw err;
+  }
+};
+
+/**
+ * Verificación de unicidad del código (Opcional)
+ * Esta función verifica si el código generado ya existe en la base de datos.
+ * Retorna true si el código es único, false si ya existe.
+ */
+const isCodeUnique = async (code) => {
+  try {
+    const { data, error } = await supabase
+      .from("fichaIdentificacion") // Nombre de la tabla
+      .select("id")
+      .eq("codigo", code)
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("Error verificando el código del paciente:", error.message);
+      throw error;
+    }
+
+    return !data; // Retorna true si no existe, false si existe
+  } catch (error) {
+    console.error("Error verificando el código del paciente:", error.message);
+    return false;
+  }
+};
+
+/**
+ * Validaciones específicas
+ */
+const validateMedico = () => {
+  validaciones.medico = !!pacienteSeleccionado.medicoId;
+};
+
+const validateMedicoCabecera = () => {
+  validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
+};
+
+const validateEstadoCivil = () => {
+  validaciones.estadoCivilId = !!pacienteSeleccionado.estadoCivilId;
+};
+
+const validateDepartamento = () => {
+  validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
+};
+
+const validateMunicipio = () => {
+  validaciones.municipioId = !!pacienteSeleccionado.municipioId;
+};
+
+const validateEscolaridad = () => {
+  validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
+};
+
+const validateGrupoSanguineo = () => {
+  validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
+};
 
 // Cambio de sub tab en el modal
 const updateSubTab = (tabName) => {
@@ -946,9 +1095,13 @@ const limpiarFormulario = () => {
   pacienteSeleccionado.escolaridadId = null;
   pacienteSeleccionado.grupoSanguineoId = null;
   pacienteSeleccionado.vih = false;
+  pacienteSeleccionado.userId = authStore.userId;
+  pacienteSeleccionado.tenant_id = authStore.tenant_id;
 };
 
-// Validación del formulario
+/**
+ * Validación del formulario
+ */
 const validarFormulario = () => {
   validaciones.codigo = !!pacienteSeleccionado.codigo?.trim();
   validaciones.medico = !!pacienteSeleccionado.medicoId;
@@ -957,11 +1110,11 @@ const validarFormulario = () => {
   validaciones.nombres = !!pacienteSeleccionado.nombres?.trim();
   validaciones.apellidos = !!pacienteSeleccionado.apellidos?.trim();
   validaciones.fechaNacimiento = !!pacienteSeleccionado.fechaNacimiento?.trim();
-  validaciones.estadoCivil = !!pacienteSeleccionado.estadoCivilId;
+  validaciones.estadoCivilId = !!pacienteSeleccionado.estadoCivilId;
   validaciones.telPersonal = !!pacienteSeleccionado.telPersonal?.trim();
   validaciones.sexo = !!pacienteSeleccionado.sexo?.trim();
   validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
-  validaciones.municipio = !!pacienteSeleccionado.municipioId;
+  validaciones.municipioId = !!pacienteSeleccionado.municipioId;
   validaciones.referidoPorId = !!pacienteSeleccionado.referidoPorId;
   validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
   validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
@@ -970,9 +1123,12 @@ const validarFormulario = () => {
   return Object.values(validaciones).every((valido) => valido);
 };
 
-// Guardar / Actualizar Paciente
-const guardarDatosFormulario = () => {
-  if (!validarFormulario()) {
+/**
+ * Guarda o actualiza los datos del paciente.
+ */
+const guardarDatosFormulario = async () => {
+  const formularioValido = validarFormulario();
+  if (!formularioValido) {
     Notify.create({
       message: "Por favor corrige los campos con errores",
       color: "negative",
@@ -981,8 +1137,30 @@ const guardarDatosFormulario = () => {
     return;
   }
 
+  // Verificar si el código es único (Opcional)
+  const isUnique = await isCodeUnique(pacienteSeleccionado.codigo);
+  if (!isUnique) {
+    Notify.create({
+      message: "El código generado ya existe. Se generará uno nuevo.",
+      color: "warning",
+      position: "top-right",
+    });
+    try {
+      pacienteSeleccionado.codigo = await generatePatientCode(); // Genera un nuevo código
+      console.log("Nuevo código generado:", pacienteSeleccionado.codigo);
+    } catch (error) {
+      Notify.create({
+        message: "Error al generar el código del paciente.",
+        color: "negative",
+        position: "top-right",
+      });
+      return;
+    }
+    return; // Espera a que el usuario vuelva a intentar guardar
+  }
+
+  // Construir el payload excluyendo el 'id' si es un nuevo paciente
   const payload = {
-    id: pacienteSeleccionado.id,
     fechaRegistro:
       pacienteSeleccionado.fechaRegistro || new Date().toISOString(),
     codigo: pacienteSeleccionado.codigo,
@@ -1012,54 +1190,55 @@ const guardarDatosFormulario = () => {
     grupoSanguineoId: pacienteSeleccionado.grupoSanguineoId,
     alergias: pacienteSeleccionado.alergias,
     vih: pacienteSeleccionado.vih,
+    tenant_id: pacienteSeleccionado.tenant_id,
+    userId: pacienteSeleccionado.userId,
   };
 
-  // Si tiene id, es edición
-  if (pacienteSeleccionado.id) {
-    fichaIdentificacionStore
-      .actualizarPaciente(payload)
-      .then(() => {
-        Notify.create({
-          message: "Paciente actualizado",
-          color: "positive",
-          position: "top-right",
-        });
-        limpiarFormulario();
-        dialogNuevoContacto.value = false;
-      })
-      .catch((error) => {
-        Notify.create({
-          message: "Error al actualizar el paciente",
-          color: "negative",
-          position: "top-right",
-        });
-        console.error("Error actualizando el paciente:", error);
+  try {
+    if (pacienteSeleccionado.id) {
+      // Actualización
+      payload.id = pacienteSeleccionado.id; // Incluir 'id' solo para actualización
+
+      await fichaIdentificacionStore.actualizarPaciente(payload);
+      Notify.create({
+        message: "Paciente actualizado",
+        color: "positive",
+        position: "top-right",
       });
-  } else {
-    // Nuevo registro
-    fichaIdentificacionStore
-      .guardarDatos(payload)
-      .then(() => {
-        Notify.create({
-          message: "Paciente guardado",
-          color: "positive",
-          position: "top-right",
-        });
-        limpiarFormulario();
-        dialogNuevoContacto.value = false;
-      })
-      .catch((error) => {
-        Notify.create({
-          message: "Error al guardar el paciente",
-          color: "negative",
-          position: "top-right",
-        });
-        console.error("Error guardando el paciente:", error);
+    } else {
+      // Nuevo registro (sin 'id')
+      await fichaIdentificacionStore.guardarDatos(payload);
+      Notify.create({
+        message: "Paciente guardado",
+        color: "positive",
+        position: "top-right",
       });
+    }
+    limpiarFormulario();
+    dialogNuevoContacto.value = false;
+  } catch (error) {
+    if (error.code === "23505") {
+      // Código de error para violación de unicidad en PostgreSQL
+      Notify.create({
+        message: "El código generado ya existe. Por favor, inténtalo de nuevo.",
+        color: "negative",
+        position: "top-right",
+      });
+      console.error("Error de duplicación de código:", error);
+    } else {
+      Notify.create({
+        message: `Error al guardar el paciente: ${error.message}`,
+        color: "negative",
+        position: "top-right",
+      });
+      console.error("Error guardando el paciente:", error);
+    }
   }
 };
 
-// Computed con datos adicionales (nombres de médicos, etc.)
+/**
+ * Computed con datos adicionales (nombres de médicos, etc.)
+ */
 const pacientesConDetalles = computed(() => {
   return (formIdentificacion.value || []).map((paciente) => {
     const medicoEncontrado = (medicos.value || []).find(
@@ -1136,13 +1315,28 @@ const onCheckboxChange = async (data) => {
   }
 };
 
-// Botón para crear nuevo paciente (abrir modal en blanco)
-const handleNuevoContacto = () => {
+/**
+ * Botón para crear nuevo paciente (abrir modal en blanco)
+ */
+const handleNuevoContacto = async () => {
   limpiarFormulario();
+  try {
+    pacienteSeleccionado.codigo = await generatePatientCode(); // Asigna el código generado
+  } catch (error) {
+    Notify.create({
+      message: "Error al generar el código del paciente.",
+      color: "negative",
+      position: "top-right",
+    });
+    return; // Evita abrir el modal si hay un error
+  }
   dialogNuevoContacto.value = true;
 };
 
-// Llenar el formulario para edición
+/**
+ * Llenar el formulario para edición
+ * @param {Object} data - Datos del paciente seleccionado
+ */
 const llenarFormulario = (data) => {
   // Primero limpiamos para evitar "basura" de otro paciente
   limpiarFormulario();
@@ -1191,6 +1385,17 @@ const onDeleteButtonClick = async (e) => {
     });
   }
 };
+
+// Impresión de los claims en el JWT
+onMounted(() => {
+  if (authStore.session) {
+    console.log("JWT (Access Token):", authStore.session.access_token);
+    console.log("Rol del usuario:", authStore.role);
+    console.log("Tenant ID del usuario:", authStore.tenant_id);
+  } else {
+    console.log("No hay sesión activa.");
+  }
+});
 </script>
 
 <style scoped>
@@ -1207,6 +1412,18 @@ const onDeleteButtonClick = async (e) => {
 ::v-deep .vertical-tabs-2 .nav-link {
   min-width: 12rem; /* Nuevo ancho mínimo */
   max-width: 10rem; /* Nuevo ancho máximo */
+}
+.small-checkbox {
+  transform: scale(0.8);
+  margin-right: 5px; /* Ajusta el margen si es necesario */
+  transform-origin: center;
+  height: 20px;
+  width: 20px;
+}
+
+/* Ajuste de alineación vertical */
+.form-check-input.small-checkbox {
+  margin-top: 0.3rem;
 }
 
 /* Opcional: Ajustar el ancho en pantallas más pequeñas */
@@ -1275,6 +1492,10 @@ h6.text-primary {
   font-weight: 500;
 }
 
+.form-labelChecbox {
+  font-weight: 100;
+}
+
 .fsButton {
   font-size: 16px;
 }
@@ -1315,5 +1536,17 @@ h6.text-primary {
   border: none;
   font-size: 24px;
   cursor: pointer;
+}
+
+/* Estilos para DevExtreme DxCheckBox */
+.small-checkbox .dx-checkbox-icon {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 576px) {
+  .small-checkbox {
+    transform: scale(0.7);
+  }
 }
 </style>

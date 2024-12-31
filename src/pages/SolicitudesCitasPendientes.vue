@@ -163,7 +163,6 @@ async function rejectAppointmentAndRefresh(appointmentId) {
 }
 </style>
 <!--
-
 <template>
   <div class="row justify-center espaciadoLateral q-py-md">
     <div id="app-container" class="q-mb-xl q-px-xl q-pa-xs">
@@ -314,7 +313,6 @@ const columns = [
     align: "center",
     field: "actions",
     sortable: false,
-
   },
 ];
 
