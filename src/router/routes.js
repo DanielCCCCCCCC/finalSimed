@@ -197,6 +197,7 @@ const routes = [
         component: Configuraciones,
         meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
       },
+
       {
         path: "admin",
         name: "AdminPanel",
@@ -217,7 +218,7 @@ const routes = [
     component: Login,
   },
   {
-    path: "/schedule/:organizationId/:doctorId",
+    path: "/schedule/:organizationId/:userId",
     name: "PublicScheduleAppointment",
     component: PacientesScheduleAppointment,
     meta: { requiresAuth: false },

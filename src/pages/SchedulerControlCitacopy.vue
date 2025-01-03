@@ -45,7 +45,7 @@
             />
             <DxSelection mode="single" />
             <DxColumn data-field="nombres" caption="Nombres" />
-            <DxColumn data-field="apellidos" caption="Apellidos" />
+            <!-- <DxColumn data-field="apellidos" caption="Apellidos" /> -->
             <DxColumn data-field="dni" caption="DNI" />
           </DxDataGrid>
         </q-card-section>
@@ -181,7 +181,7 @@ const computedAppointments = computed(() =>
         (p) => p.id === parseInt(appointment.nombre)
       );
       const nombrePaciente = paciente
-        ? `${paciente.nombres} ${paciente.apellidos}`
+        ? `${paciente.nombres}`
         : "Paciente no asignado";
 
       return {
@@ -268,13 +268,13 @@ const onAppointmentFormOpening = (e) => {
     const pac = formIdentificacion.value.find(
       (p) => p.id === parseInt(currentAppointmentData.value.nombre)
     );
-    if (pac) {
-      selectedPatient.value = `${pac.nombres} ${pac.apellidos}`;
-      selectedPatientId.value = pac.id;
-    } else {
-      selectedPatient.value = "No seleccionado";
-      selectedPatientId.value = null;
-    }
+    // if (pac) {
+    //   selectedPatient.value = `${pac.nombres} ${pac.apellidos}`;
+    //   selectedPatientId.value = pac.id;
+    // } else {
+    //   selectedPatient.value = "No seleccionado";
+    //   selectedPatientId.value = null;
+    // }
   }
   if (currentAppointmentData.value.medico) {
     const doc = medicosConEspecialidad.value.find(
@@ -635,8 +635,8 @@ const onAppointmentDeleted = async (e) => {
 const onPatientSelected = (e) => {
   const patient = e.selectedRowsData[0];
   if (patient) {
-    const { nombres, apellidos, id } = patient;
-    selectedPatient.value = `${nombres} ${apellidos}`;
+    const { nombres, id } = patient;
+    selectedPatient.value = `${nombres} `;
     selectedPatientId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {

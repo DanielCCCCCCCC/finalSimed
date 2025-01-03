@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="row">
       <!-- Menú de Pestañas Verticales -->
-      <div class="col-md-2 menu-container">
+      <div class="menu-container">
         <ul class="nav nav-tabs flex-column vertical-tabs" role="tablist">
           <li class="nav-item">
             <a
@@ -42,7 +42,7 @@
               aria-current="page"
               :aria-selected="activeTab === 'perfilMedico'"
             >
-              <i class="ri-medical-line me-2"></i>
+              <i class="ri-medical-line"></i>
               <span>Perfil Médico</span>
             </a>
           </li>
@@ -103,14 +103,6 @@
                     :allow-editing="false"
                     min-width="150"
                   />
-                  <!-- ID del usuario -->
-                  <!-- <DxColumn
-                    data-field="id"
-                    caption="ID"
-                    :allow-sorting="true"
-                    :allow-editing="false"
-                    min-width="100"
-                  /> -->
 
                   <!-- Correo (NO editable) -->
                   <DxColumn
@@ -153,7 +145,7 @@
                   <!-- Campos nuevos: nombreCompleto, direccion, telefono, observaciones -->
                   <DxColumn
                     data-field="nombreCompleto"
-                    caption="Nombre Completo"
+                    caption="nombreCompleto"
                     data-type="string"
                     :allow-sorting="true"
                   />
@@ -201,7 +193,6 @@
                 <div class="text-h6">Organización</div>
               </q-card-section>
               <q-card-section>
-                <CodeQr />
                 <div v-if="organizaciones.length">
                   <q-list dense bordered separator>
                     <q-item>
@@ -236,8 +227,174 @@
                     </q-item>
                   </q-list>
                 </div>
+
+                <!-- Nueva Sección: Horarios de Atención -->
+                <q-separator class="q-my-md" />
+                <div class="horarios-container">
+                  <div class="horarios-header">
+                    <h6 class="text-primary">Horarios de Atención</h6>
+                    <q-btn
+                      label="Agregar Horario"
+                      color="primary"
+                      icon="add"
+                      @click="abrirModalCrearHorario()"
+                      flat
+                    />
+                  </div>
+
+                  <!-- DxDataGrid para Horarios de Atención -->
+                  <DxDataGrid
+                    :data-source="horariosAtencion"
+                    :allow-column-reordering="true"
+                    :row-alternation-enabled="true"
+                    :show-borders="true"
+                    key-expr="id"
+                    :column-auto-width="true"
+                    :column-min-width="90"
+                    class="custom-data-grid"
+                  >
+                    <DxEditing
+                      :allow-updating="false"
+                      :allow-adding="false"
+                      :allow-deleting="false"
+                      mode="row"
+                    />
+                    <DxPaging :enabled="true" :page-size="7" />
+                    <!-- Definir las columnas -->
+                    <DxColumn
+                      data-field="dia_semana"
+                      caption="Día de la Semana"
+                      data-type="string"
+                      min-width="150"
+                    />
+                    <DxColumn
+                      data-field="hora_inicio"
+                      caption="Hora de Inicio"
+                      data-type="time"
+                      min-width="120"
+                    />
+                    <DxColumn
+                      data-field="hora_fin"
+                      caption="Hora de Fin"
+                      data-type="time"
+                      min-width="120"
+                    />
+                    <DxColumn
+                      data-field="intervalo_min"
+                      caption="Intervalo (min)"
+                      data-type="number"
+                      min-width="120"
+                    />
+
+                    <!-- Botones de acción -->
+                    <DxColumn type="buttons" width="150">
+                      <DxButton
+                        name="edit"
+                        icon="edit"
+                        hint="Editar Horario"
+                        @click="editarHorarioAtencion(row)"
+                      />
+                      <DxButton
+                        name="delete"
+                        icon="delete"
+                        hint="Eliminar Horario"
+                        @click="eliminarHorarioAtencion(row)"
+                      />
+                    </DxColumn>
+                  </DxDataGrid>
+                </div>
               </q-card-section>
             </q-card>
+
+            <!-- Modal para Agregar/Editar Horario de Atención -->
+            <q-dialog v-model="abrirModalHorario" persistent>
+              <q-card class="form-container widthModalHorarios">
+                <q-card-section>
+                  <div class="text-h6">
+                    {{ esEditar ? "Editar" : "Agregar" }} Horario de Atención
+                  </div>
+                </q-card-section>
+
+                <q-card-section>
+                  <q-form
+                    @submit.prevent="
+                      esEditar ? actualizarHorario() : crearHorario()
+                    "
+                  >
+                    <div class="q-gutter-md">
+                      <!-- Día de la Semana -->
+                      <div>
+                        <label for="dia_semana">Día de la Semana</label>
+                        <select
+                          id="dia_semana"
+                          name="dia_semana"
+                          v-model="formHorario.dia_semana"
+                          required
+                          class="form-select custom-select-height"
+                        >
+                          <option value="" disabled>Seleccionar un día</option>
+                          <option
+                            v-for="dia in diasSemana"
+                            :key="dia"
+                            :value="dia"
+                          >
+                            {{ dia }}
+                          </option>
+                        </select>
+                      </div>
+                      <!-- Hora de Inicio y Hora de Fin en la misma fila -->
+                      <div class="row-horizontal">
+                        <div class="time-picker">
+                          <label for="hora_inicio">Hora de Inicio</label>
+                          <input
+                            type="time"
+                            id="hora_inicio"
+                            v-model="formHorario.hora_inicio"
+                            required
+                          />
+                        </div>
+                        <div class="time-picker">
+                          <label for="hora_fin">Hora de Fin</label>
+                          <input
+                            type="time"
+                            id="hora_fin"
+                            v-model="formHorario.hora_fin"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <!-- Intervalo entre Citas -->
+                      <div>
+                        <label for="intervalo_min"
+                          >Intervalo entre Citas (minutos)</label
+                        >
+
+                        <input
+                          id="intervalo_min"
+                          name="intervalo_min"
+                          type="number"
+                          min="5"
+                          v-model.number="formHorario.intervalo_min"
+                          class="form-control"
+                          required
+                          placeholder="Intervalo entre Citas (minutos)"
+                        />
+                      </div>
+                    </div>
+                  </q-form>
+                </q-card-section>
+
+                <q-card-actions align="right">
+                  <q-btn flat label="Cancelar" @click="cerrarModalHorario" />
+                  <q-btn
+                    label="Guardar"
+                    color="primary"
+                    @click="esEditar ? actualizarHorario() : crearHorario()"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
           </div>
 
           <!-- Pestaña Perfil Médico -->
@@ -257,9 +414,8 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 
@@ -284,28 +440,29 @@ import {
   DxButton,
 } from "devextreme-vue/data-grid";
 
+// **Librería para formateo de fechas**
 import { format } from "date-fns";
 
-// Emitir eventos (si se necesita cerrar el modal desde un componente padre)
-const emit = defineEmits(["cerrar"]);
-
-// Instancia de Quasar para notificaciones
+// **Notificaciones de Quasar**
 const $q = useQuasar();
 
-// Estado reactivo para la pestaña activa
+// **Emitir eventos (si se necesita cerrar el modal desde un componente padre)**
+const emit = defineEmits(["cerrar"]);
+
+// **Estado reactivo para la pestaña activa**
 const activeTab = ref("crearUsuarios");
 
-// Usar las stores
+// **Instancia de las stores**
 const crearUsuariosStore = useCrearUsuariosStore();
 const organizacionStore = useOrganizacionStore();
 const authStore = useAuthStore();
 
-// Desestructurar propiedades reactivas de las stores
+// **Desestructurar propiedades reactivas de las stores**
 const { users } = storeToRefs(crearUsuariosStore);
-const { organizaciones } = storeToRefs(organizacionStore);
+const { organizaciones, horariosAtencion } = storeToRefs(organizacionStore);
 const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
 
-// Opciones para los roles (aunque estarán deshabilitados para edición)
+// **Opciones para los roles**
 const rolesOptions = ref([
   { value: "admin", text: "Admin" },
   { value: "medico", text: "Médico" },
@@ -313,18 +470,35 @@ const rolesOptions = ref([
   { value: "paciente", text: "Paciente" },
 ]);
 
-// Estado reactivo para el formulario de Organización (no se usa mucho aquí)
-const formOrganizacion = reactive({
-  nombre: "",
-  email: "",
-  password: "",
-  role: "",
+// **Estado reactivo para el formulario de Horario de Atención**
+const formHorario = reactive({
+  id: null, // Para edición
+  dia_semana: "",
+  hora_inicio: "",
+  hora_fin: "",
+  intervalo_min: 15, // Valor por defecto
 });
 
-// Estado reactivo para los errores del formulario de Organización
-const errorsOrganizacion = reactive({});
+// **Estado para determinar si se está editando o creando**
+const esEditar = ref(false);
 
-// Función para formatear fechas
+// **Opciones para los días de la semana**
+const diasSemana = ref([
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo",
+]);
+
+// **Estado para controlar el modal de horarios de atención**
+const abrirModalHorario = ref(false);
+
+/**
+ * Función para formatear fechas
+ */
 const formatDate = (dateString) => {
   try {
     return format(new Date(dateString), "dd/MM/yyyy hh:mm a");
@@ -333,14 +507,34 @@ const formatDate = (dateString) => {
   }
 };
 
-/** Actualizar la organización (ejemplo, si lo necesitas) */
+/**
+ * Función para formatear horas (HH:MM a formato AM/PM)
+ */
+// const formatTime = (time) => {
+//   try {
+//     const [hour, minute] = time.split(":").map(Number);
+//     const period = hour >= 12 ? "PM" : "AM";
+//     const formattedHour = hour % 12 || 12;
+//     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${period}`;
+//   } catch {
+//     return "Hora no válida";
+//   }
+// };
+
+/**
+ * Función para actualizar la organización existente
+ * (si necesitas editar los detalles de la organización)
+ */
+// Se asume que tienes una función en organizacionStore para actualizar la organización
 const actualizarOrganizacion = async () => {
   try {
     await organizacionStore.actualizarOrganizacion(formOrganizacion);
     $q.notify({
       type: "positive",
       message: "Organización actualizada exitosamente.",
+      position: "top-right",
     });
+    // Resetear el formulario si es necesario
     formOrganizacion.nombre = "";
     formOrganizacion.email = "";
     formOrganizacion.password = "";
@@ -354,9 +548,14 @@ const actualizarOrganizacion = async () => {
     $q.notify({
       type: "negative",
       message: err.message || "Error al actualizar la organización.",
+      position: "top-right",
     });
   }
 };
+
+/**
+ * Funciones para manejar los usuarios en el DxDataGrid
+ */
 
 /**
  * Crear usuario (cuando se presiona "Agregar" en el DataGrid)
@@ -371,12 +570,14 @@ const onRowInserting = async (e) => {
     $q.notify({
       type: "positive",
       message: "Usuario creado exitosamente.",
+      position: "top-right",
     });
   } catch (err) {
     e.cancel = true;
     $q.notify({
       type: "negative",
       message: err.message || "Error al crear el usuario.",
+      position: "top-right",
     });
   }
 };
@@ -395,12 +596,14 @@ const onRowUpdating = async (e) => {
     $q.notify({
       type: "positive",
       message: "Usuario actualizado exitosamente.",
+      position: "top-right",
     });
   } catch (err) {
     e.cancel = true;
     $q.notify({
       type: "negative",
       message: err.message || "Error al actualizar el usuario.",
+      position: "top-right",
     });
   }
 };
@@ -417,22 +620,278 @@ const onRowDeleting = async (e) => {
     $q.notify({
       type: "positive",
       message: "Usuario eliminado exitosamente.",
+      position: "top-right",
     });
   } catch (err) {
     e.cancel = true;
     $q.notify({
       type: "negative",
       message: err.message || "Error al eliminar el usuario.",
+      position: "top-right",
     });
   }
 };
 
-// Al montar el componente, cargamos los usuarios y las organizaciones
+/**
+ * Funciones para manejar los Horarios de Atención
+ */
+
+/**
+ * Abrir el modal para crear un nuevo horario
+ */
+const abrirModalCrearHorario = () => {
+  esEditar.value = false;
+  formHorario.id = null;
+  formHorario.dia_semana = "";
+  formHorario.hora_inicio = "";
+  formHorario.hora_fin = "";
+  formHorario.intervalo_min = 15;
+  abrirModalHorario.value = true;
+};
+
+/**
+ * Abrir el modal para editar un horario existente
+ * @param {Object} row - Datos del horario a editar
+ */
+const editarHorarioAtencion = (row) => {
+  esEditar.value = true;
+  formHorario.id = row.data.id;
+  formHorario.dia_semana = row.data.dia_semana;
+  formHorario.hora_inicio = row.data.hora_inicio;
+  formHorario.hora_fin = row.data.hora_fin;
+  formHorario.intervalo_min = row.data.intervalo_min;
+  abrirModalHorario.value = true;
+};
+
+/**
+ * Cerrar el modal de horarios de atención
+ */
+const cerrarModalHorario = () => {
+  abrirModalHorario.value = false;
+};
+
+/**
+ * Crear un nuevo horario de atención
+ */
+const crearHorario = async () => {
+  // Validaciones básicas
+  if (
+    !formHorario.dia_semana ||
+    !formHorario.hora_inicio ||
+    !formHorario.hora_fin ||
+    !formHorario.intervalo_min
+  ) {
+    $q.notify({
+      type: "negative",
+      message: "Por favor, completa todos los campos.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Validar que la hora_fin sea mayor que hora_inicio
+  if (formHorario.hora_fin <= formHorario.hora_inicio) {
+    $q.notify({
+      type: "negative",
+      message: "La hora de fin debe ser mayor que la hora de inicio.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Verificar que tenant_id esté definido y sea válido
+  if (!tenant_id.value) {
+    $q.notify({
+      type: "negative",
+      message: "Error: La organización no está definida o es inválida.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Construir el objeto de horario (incluyendo tenant_id)
+  const nuevoHorario = {
+    dia_semana: formHorario.dia_semana,
+    hora_inicio: formHorario.hora_inicio,
+    hora_fin: formHorario.hora_fin,
+    intervalo_min: formHorario.intervalo_min,
+    tenant_id: tenant_id.value, // Asignación automática desde authStore
+  };
+
+  try {
+    await organizacionStore.crearHorarioAtencion(nuevoHorario);
+    cerrarModalHorario();
+    // Recargar los horarios de atención
+    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
+    $q.notify({
+      type: "positive",
+      message: "Horario de atención creado exitosamente.",
+      position: "top-right",
+    });
+  } catch (error) {
+    console.error("Error creando horario de atención:", error);
+    $q.notify({
+      type: "negative",
+      message: "Error al crear el horario de atención.",
+      position: "top-right",
+    });
+  }
+};
+
+/**
+ * Actualizar un horario de atención existente
+ */
+const actualizarHorario = async () => {
+  // Validaciones básicas
+  if (
+    !formHorario.dia_semana ||
+    !formHorario.hora_inicio ||
+    !formHorario.hora_fin ||
+    !formHorario.intervalo_min
+  ) {
+    $q.notify({
+      type: "negative",
+      message: "Por favor, completa todos los campos.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Validar que la hora_fin sea mayor que hora_inicio
+  if (formHorario.hora_fin <= formHorario.hora_inicio) {
+    $q.notify({
+      type: "negative",
+      message: "La hora de fin debe ser mayor que la hora de inicio.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Verificar que tenant_id esté definido y sea válido
+  if (!tenant_id.value) {
+    $q.notify({
+      type: "negative",
+      message: "Error: La organización no está definida o es inválida.",
+      position: "top-right",
+    });
+    return;
+  }
+
+  // Construir el objeto de horario actualizado (incluyendo tenant_id)
+  const horarioActualizado = {
+    dia_semana: formHorario.dia_semana,
+    hora_inicio: formHorario.hora_inicio,
+    hora_fin: formHorario.hora_fin,
+    intervalo_min: formHorario.intervalo_min,
+    tenant_id: tenant_id.value, // Asegurar que tenant_id se mantenga
+  };
+
+  try {
+    await organizacionStore.actualizarHorarioAtencion(
+      formHorario.id,
+      horarioActualizado
+    );
+    cerrarModalHorario();
+    // Recargar los horarios de atención
+    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
+    $q.notify({
+      type: "positive",
+      message: "Horario de atención actualizado exitosamente.",
+      position: "top-right",
+    });
+  } catch (error) {
+    console.error("Error actualizando horario de atención:", error);
+    $q.notify({
+      type: "negative",
+      message: "Error al actualizar el horario de atención.",
+      position: "top-right",
+    });
+  }
+};
+
+/**
+ * Eliminar un horario de atención existente
+ * @param {Object} row - Datos del horario a eliminar
+ */
+const eliminarHorarioAtencion = async (row) => {
+  const horario = row.data;
+  if (
+    confirm(
+      `¿Estás seguro de eliminar el horario de ${
+        horario.dia_semana
+      } de ${formatTime(horario.hora_inicio)} a ${formatTime(
+        horario.hora_fin
+      )}?`
+    )
+  ) {
+    try {
+      await organizacionStore.eliminarHorarioAtencion(horario.id);
+      // Recargar los horarios de atención
+      await organizacionStore.cargarHorariosAtencion(tenant_id.value);
+      $q.notify({
+        type: "positive",
+        message: "Horario de atención eliminado exitosamente.",
+        position: "top-right",
+      });
+    } catch (error) {
+      console.error("Error eliminando horario de atención:", error);
+      $q.notify({
+        type: "negative",
+        message: "Error al eliminar el horario de atención.",
+        position: "top-right",
+      });
+    }
+  }
+};
+
+/**
+ * Monitorear cambios en tenant_id para cargar organizaciones y horarios
+ */
+watch(
+  () => tenant_id.value,
+  async (newTenantId) => {
+    if (newTenantId) {
+      await organizacionStore.cargarOrganizaciones();
+      await organizacionStore.cargarHorariosAtencion(newTenantId);
+    } else if (newTenantId === "undefined" || newTenantId === undefined) {
+      organizacionStore.organizaciones = [];
+      organizacionStore.horariosAtencion = [];
+      if (newTenantId === "undefined") {
+        $q.notify({
+          type: "negative",
+          message: "Error: tenant_id es 'undefined'.",
+          position: "top-right",
+        });
+      } else {
+        $q.notify({
+          type: "negative",
+          message: "Error: tenant_id no está definido.",
+          position: "top-right",
+        });
+      }
+    }
+  },
+  { immediate: true }
+);
+
+/**
+ * Cargar usuarios y organizaciones al montar el componente
+ */
 onMounted(async () => {
   await crearUsuariosStore.cargarUsuarios();
   await organizacionStore.cargarOrganizaciones();
   console.log("User Auth:", user.value?.email);
   console.log("Organizaciones: ", organizaciones.value);
+  console.log("tenant_id onMounted:", tenant_id.value); // Log para depuración
+  if (tenant_id.value) {
+    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
+  } else {
+    $q.notify({
+      type: "negative",
+      message: "Error: tenant_id no está definido o es inválido.",
+      position: "top-right",
+    });
+  }
 });
 </script>
 
@@ -446,13 +905,16 @@ onMounted(async () => {
   left: 135px;
   height: 90vh; /* Ajusta según tu preferencia */
 }
+
 .custom-data-grid {
   width: 100%;
 }
+
 .menu-container {
   background: #f8f9fa;
   border-radius: 8px;
   height: 86vh;
+  width: 200px;
 }
 
 .vertical-tabs .nav-link {
@@ -465,7 +927,7 @@ onMounted(async () => {
 
 .vertical-tabs .nav-link.active {
   background: #e74c3c;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .content-container {
@@ -485,12 +947,134 @@ onMounted(async () => {
   height: 400px;
   margin-top: 10px;
 }
+
 .hsize {
   height: 600px;
   position: relative;
   top: -10px;
 }
+
 .q-btn {
   width: 100%;
+}
+
+.widthModalHorarios {
+  width: 40%; /* Aumenta el ancho al 80% del viewport */
+  height: auto;
+  max-width: 1400px; /* Ancho máximo para evitar que sea demasiado grande */
+}
+/* Eliminamos la regla global de .q-time para evitar afectar otros componentes */
+.q-time {
+  /* width: 70%; */ /* Esta línea se elimina o comenta */
+}
+/* Contenedor para alinear los campos horizontalmente */
+.row-horizontal {
+  display: flex;
+  gap: 20px; /* Espacio entre los campos */
+  flex-wrap: wrap; /* Permite que los campos se ajusten en pantallas pequeñas */
+  margin-bottom: 16px; /* Espacio inferior para separar de otros campos */
+}
+
+/* Estilos para cada campo de tiempo */
+.time-picker {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Permite que los campos crezcan igualmente */
+}
+
+.time-picker label {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.time-picker input[type="time"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Responsividad para dispositivos pequeños */
+@media (max-width: 768px) {
+  .row-horizontal {
+    flex-direction: column;
+    gap: 10px; /* Reduce el espacio entre elementos en pantallas pequeñas */
+  }
+
+  .time-picker input[type="time"] {
+    width: 100%;
+  }
+}
+/* Sección de Horarios de Atención */
+.horarios-container {
+  margin-top: 10px;
+}
+.row-horizontal {
+  display: flex;
+  gap: 16px; /* Espacio entre los elementos */
+  align-items: center; /* Alinea verticalmente */
+}
+.time-picker {
+  flex: 1; /* Ajusta el ancho de los time pickers proporcionalmente */
+}
+.horarios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Reducido de 150px a 20px para evitar superposición */
+}
+
+.horarios-header h6 {
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.horarios-header .q-btn {
+  min-width: 150px;
+}
+
+/* Contenedor de los Componentes de Tiempo */
+.horarios-row {
+  display: flex;
+  gap: 16px; /* Espacio entre los elementos */
+  flex-wrap: wrap;
+  margin-bottom: 20px; /* Espacio inferior para separar del siguiente campo */
+}
+
+.horarios-row .horario-item {
+  flex: 1;
+  min-width: 150px;
+}
+
+.horarios-row .q-time {
+  height: 40px; /* Reducir el tamaño del componente */
+  width: 100%; /* Asegura que ocupe todo el ancho dentro del horario-item */
+}
+
+/* Responsividad para Horarios de Atención */
+@media (max-width: 768px) {
+  .horarios-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .horarios-header .q-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .custom-data-grid {
+    min-height: 300px;
+  }
+
+  /* Stack verticalmente los horarios en pantallas pequeñas */
+  .horarios-row {
+    flex-direction: column;
+    gap: 10px; /* Reduce el espacio entre elementos para pantallas pequeñas */
+  }
+
+  .horarios-row .horario-item {
+    min-width: 100%;
+  }
 }
 </style>

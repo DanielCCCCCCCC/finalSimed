@@ -140,25 +140,3 @@ watch(
   }
 );
 </script>
-
-<style scoped>
-.qr-container {
-  text-align: center;
-  padding: 20px;
-}
-
-.spinner {
-  margin-top: 20px;
-}
-
-img {
-  margin-top: 20px;
-  width: 300px;
-  height: 300px;
-}
-
-.alert {
-  margin-top: 20px;
-  color: red;
-}
-</style>

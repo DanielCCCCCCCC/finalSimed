@@ -41,7 +41,28 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       loading.value = false;
     }
   };
+  const cargarUsuarioPerfil = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", authStore.userId);
 
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      users.value = data || [];
+      console.log("Usuarios PERFIL: ", users.value);
+    } catch (err) {
+      console.error("Error al obtener usuarios:", err.message);
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
   /**
    * Crea un nuevo usuario con Supabase Auth + inserción en tabla `users`.
    * payload: { email, password, role, nombreCompleto?, direccion?, telefono?, observaciones? }
@@ -274,6 +295,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
     success,
     users,
     cargarUsuarios,
+    cargarUsuarioPerfil,
     crearUsuario,
     actualizarUsuario,
     eliminarUsuario,

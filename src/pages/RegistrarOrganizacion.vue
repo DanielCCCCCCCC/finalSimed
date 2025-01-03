@@ -49,57 +49,39 @@
                       <!-- Campos de la organización -->
                       <div class="form-group text-start">
                         <label>Nombre de la Organización</label>
-                        <q-input
+                        <input
                           v-model="nombre"
                           placeholder="Ingrese el nombre de la organización"
-                          outlined
-                          dense
                           class="form-control"
                           required
-                          :rules="[(v) => !!v || 'El nombre es obligatorio.']"
-                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
                         <label>Dirección</label>
-                        <q-input
+                        <input
                           v-model="direccion"
                           placeholder="Ingrese la dirección"
-                          outlined
-                          dense
                           class="form-control"
                           required
-                          :rules="[
-                            (v) => !!v || 'La dirección es obligatoria.',
-                          ]"
-                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
                         <label>Email de Contacto</label>
-                        <q-input
+                        <input
                           v-model="email_contacto"
                           placeholder="Ingrese el email de contacto"
                           type="email"
-                          outlined
-                          dense
                           class="form-control"
                           required
-                          :rules="emailRules"
-                          lazy-rules
                         />
                       </div>
                       <div class="form-group text-start">
                         <label>Número de Teléfono</label>
-                        <q-input
+                        <input
                           v-model="numero_telefono"
                           placeholder="Ingrese el número de teléfono"
                           type="text"
-                          outlined
-                          dense
                           class="form-control"
-                          :rules="[]"
-                          lazy-rules
                         />
                       </div>
 
@@ -111,16 +93,12 @@
                           <span class="input-group-text">
                             <i class="ri-mail-line"></i>
                           </span>
-                          <q-input
+                          <input
                             v-model="admin_email"
                             placeholder="Ingrese el email del administrador"
                             type="email"
-                            outlined
-                            dense
                             class="form-control"
                             required
-                            :rules="emailRules"
-                            lazy-rules
                           />
                         </div>
                       </div>

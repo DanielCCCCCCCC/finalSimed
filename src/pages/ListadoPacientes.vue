@@ -150,9 +150,7 @@
                           <input
                             v-model="pacienteSeleccionado.codigo"
                             class="form-control"
-                            :class="{ 'is-invalid': !validaciones.codigo }"
                             placeholder="Ingresa código"
-                            readonly
                           />
                           <!--
                           <div v-if="!validaciones.codigo" class="text-danger mt-1">
@@ -284,21 +282,7 @@
                             placeholder="Ingrese los nombres"
                           />
                         </div>
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Apellidos</label>
-                          <input
-                            v-model="pacienteSeleccionado.apellidos"
-                            class="form-control"
-                            :class="{ 'is-invalid': !validaciones.apellidos }"
-                            placeholder="Ingrese los apellidos"
-                          />
-                          <div
-                            v-if="!validaciones.apellidos"
-                            class="invalid-feedback"
-                          >
-                            Los apellidos son obligatorios
-                          </div>
-                        </div>
+
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Identificación</label>
                           <input
@@ -728,12 +712,7 @@
           sort-order="asc"
           :min-width="130"
         />
-        <DxColumn
-          data-field="apellidos"
-          caption="Apellidos"
-          sort-order="asc"
-          :min-width="130"
-        />
+
         <DxColumn
           data-field="fechaNacimiento"
           caption="F. Nacimiento"
@@ -794,6 +773,7 @@
     </transition>
   </div>
 </template>
+
 <script setup>
 import {
   DxDataGrid,
@@ -873,7 +853,6 @@ const pacienteSeleccionado = reactive({
   referidoPorId: null,
   dni: "",
   nombres: "",
-  apellidos: "",
   fechaNacimiento: "",
   sexo: "",
   estadoCivilId: null,
@@ -921,7 +900,6 @@ const validaciones = reactive({
   medicoCabecera: true,
   dni: true,
   nombres: true,
-  apellidos: true,
   fechaNacimiento: true,
   sexo: true,
   estadoCivilId: true,
@@ -935,111 +913,101 @@ const validaciones = reactive({
 });
 
 /**
- * Extrae las iniciales de un nombre completo.
  * @param {string} fullName - Nombre completo del usuario.
  * @returns {string} - Iniciales en mayúsculas.
  */
-const getInitials = (fullName) => {
-  return fullName
-    .split(" ")
-    .map((name) => name.charAt(0).toUpperCase())
-    .join("");
-};
 
-/**
- * Genera un código único para el paciente basado en las iniciales del usuario y un número incremental.
- * @returns {Promise<string>} - Código único del paciente.
- */
-const generatePatientCode = async () => {
-  try {
-    const nombreUser = authStore.nombreCompleto;
-    if (!nombreUser) {
-      throw new Error("Nombre completo del usuario no disponible.");
-    }
+// const getInitials = (fullName) => {
+//   return fullName
+//     .split(" ")
+//     .map((name) => name.charAt(0).toUpperCase())
+//     .join("");
+// };
 
-    const initials = getInitials(nombreUser);
-    console.log("Iniciales del usuario:", initials);
+// /**
+//  * @returns {Promise<string>}
+//  */
+// const generatePatientCode = async () => {
+//   try {
+//     const nombreUser = authStore.nombreCompleto;
+//     if (!nombreUser) {
+//       throw new Error("Nombre completo del usuario no disponible.");
+//     }
 
-    const userId = authStore.userId;
-    if (!userId || userId.length < 8) {
-      throw new Error("userId no disponible o demasiado corto.");
-    }
+//     const initials = getInitials(nombreUser);
+//     console.log("Iniciales del usuario:", initials);
 
-    const userIdPrefix = userId.substring(0, 8);
-    console.log("Prefijo del userId:", userIdPrefix);
+//     const userId = authStore.userId;
+//     if (!userId || userId.length < 8) {
+//       throw new Error("userId no disponible o demasiado corto.");
+//     }
 
-    // Consulta para encontrar el último código con estas iniciales y userIdPrefix en la tabla correcta
-    const { data, error } = await supabase
-      .from("fichaIdentificacion") // Nombre de la tabla
-      .select("codigo")
-      .ilike("codigo", `${initials}-%-${userIdPrefix}`)
-      .order("codigo", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+//     const userIdPrefix = userId.substring(0, 8);
+//     console.log("Prefijo del userId:", userIdPrefix);
 
-    if (error) {
-      console.error("Error al consultar la tabla de pacientes:", error.message);
-      throw error;
-    }
+//     const { data, error } = await supabase
+//       .from("fichaIdentificacion")
+//       .select("codigo")
+//       .ilike("codigo", `${initials}-%-${userIdPrefix}`)
+//       .order("codigo", { ascending: false })
+//       .limit(1)
+//       .maybeSingle();
 
-    let nextNumber = "01"; // Valor por defecto
+//     if (error) {
+//       console.error("Error al consultar la tabla de pacientes:", error.message);
+//       throw error;
+//     }
 
-    if (data && data.codigo) {
-      console.log("Último código encontrado:", data.codigo);
-      const codeParts = data.codigo.split("-");
-      if (codeParts.length === 3) {
-        const lastNumber = parseInt(codeParts[1], 10); // Ahora el número está en la segunda posición
-        if (!isNaN(lastNumber)) {
-          const incremented = lastNumber + 1;
-          nextNumber = incremented.toString().padStart(2, "0"); // Asegura que tenga al menos 2 dígitos
-          console.log("Número incrementado:", nextNumber);
-        }
-      } else {
-        console.warn("El formato del código no es el esperado.");
-      }
-    } else {
-      console.log(
-        "No se encontró ningún código previo. Se asignará el número inicial 01."
-      );
-    }
+//     let nextNumber = "01"; // Valor por defecto
 
-    const newCode = `${initials}-${nextNumber}-${userIdPrefix}`;
-    console.log("Nuevo código generado para el paciente:", newCode);
-    return newCode;
-  } catch (err) {
-    console.error("Error generando el código del paciente:", err.message);
-    throw err;
-  }
-};
+//     if (data && data.codigo) {
+//       console.log("Último código encontrado:", data.codigo);
+//       const codeParts = data.codigo.split("-");
+//       if (codeParts.length === 3) {
+//         const lastNumber = parseInt(codeParts[1], 10);
+//         if (!isNaN(lastNumber)) {
+//           const incremented = lastNumber + 1;
+//           nextNumber = incremented.toString().padStart(2, "0");
+//           console.log("Número incrementado:", nextNumber);
+//         }
+//       } else {
+//         console.warn("El formato del código no es el esperado.");
+//       }
+//     } else {
+//       console.log(
+//         "No se encontró ningún código previo. Se asignará el número inicial 01."
+//       );
+//     }
 
-/**
- * Verificación de unicidad del código (Opcional)
- * Esta función verifica si el código generado ya existe en la base de datos.
- * Retorna true si el código es único, false si ya existe.
- */
-const isCodeUnique = async (code) => {
-  try {
-    const { data, error } = await supabase
-      .from("fichaIdentificacion") // Nombre de la tabla
-      .select("id")
-      .eq("codigo", code)
-      .maybeSingle();
+//     const newCode = `${initials}-${nextNumber}-${userIdPrefix}`;
+//     console.log("Nuevo código generado para el paciente:", newCode);
+//     return newCode;
+//   } catch (err) {
+//     console.error("Error generando el código del paciente:", err.message);
+//     throw err;
+//   }
+// };
 
-    if (error && error.code !== "PGRST116") {
-      console.error("Error verificando el código del paciente:", error.message);
-      throw error;
-    }
+// const isCodeUnique = async (code) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from("fichaIdentificacion")
+//       .select("id")
+//       .eq("codigo", code)
+//       .maybeSingle();
 
-    return !data; // Retorna true si no existe, false si existe
-  } catch (error) {
-    console.error("Error verificando el código del paciente:", error.message);
-    return false;
-  }
-};
+//     if (error && error.code !== "PGRST116") {
+//       console.error("Error verificando el código del paciente:", error.message);
+//       throw error;
+//     }
 
-/**
- * Validaciones específicas
- */
+//     return !data;
+//   } catch (error) {
+//     console.error("Error verificando el código del paciente:", error.message);
+//     return false;
+//   }
+// };
+
 const validateMedico = () => {
   validaciones.medico = !!pacienteSeleccionado.medicoId;
 };
@@ -1108,7 +1076,6 @@ const validarFormulario = () => {
   validaciones.dni = !!pacienteSeleccionado.dni?.trim();
   validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
   validaciones.nombres = !!pacienteSeleccionado.nombres?.trim();
-  validaciones.apellidos = !!pacienteSeleccionado.apellidos?.trim();
   validaciones.fechaNacimiento = !!pacienteSeleccionado.fechaNacimiento?.trim();
   validaciones.estadoCivilId = !!pacienteSeleccionado.estadoCivilId;
   validaciones.telPersonal = !!pacienteSeleccionado.telPersonal?.trim();
@@ -1137,7 +1104,8 @@ const guardarDatosFormulario = async () => {
     return;
   }
 
-  // Verificar si el código es único (Opcional)
+  // ---------- INICIO: Código relacionado con generación de código de paciente ----------
+  /*
   const isUnique = await isCodeUnique(pacienteSeleccionado.codigo);
   if (!isUnique) {
     Notify.create({
@@ -1156,8 +1124,10 @@ const guardarDatosFormulario = async () => {
       });
       return;
     }
-    return; // Espera a que el usuario vuelva a intentar guardar
+    return;
   }
+  */
+  // ---------- FIN: Código relacionado con generación de código de paciente ----------
 
   // Construir el payload excluyendo el 'id' si es un nuevo paciente
   const payload = {
@@ -1170,7 +1140,6 @@ const guardarDatosFormulario = async () => {
     referidoPorId: pacienteSeleccionado.referidoPorId,
     dni: pacienteSeleccionado.dni,
     nombres: pacienteSeleccionado.nombres,
-    apellidos: pacienteSeleccionado.apellidos,
     fechaNacimiento: pacienteSeleccionado.fechaNacimiento,
     sexo: pacienteSeleccionado.sexo,
     estadoCivilId: pacienteSeleccionado.estadoCivilId,
@@ -1320,6 +1289,7 @@ const onCheckboxChange = async (data) => {
  */
 const handleNuevoContacto = async () => {
   limpiarFormulario();
+  /*
   try {
     pacienteSeleccionado.codigo = await generatePatientCode(); // Asigna el código generado
   } catch (error) {
@@ -1330,6 +1300,7 @@ const handleNuevoContacto = async () => {
     });
     return; // Evita abrir el modal si hay un error
   }
+  */
   dialogNuevoContacto.value = true;
 };
 

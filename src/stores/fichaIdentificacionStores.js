@@ -38,6 +38,33 @@ export const useFichaIdentificacionStore = defineStore(
         formIdentificacion.value = data || [];
       }
     };
+    const cargarDatosPorDoctor = async (organizationId, doctorId) => {
+      if (!organizationId || !doctorId) {
+        console.warn("Faltan organizationId o doctorId");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("fichaIdentificacion")
+        .select("userId, nombres, dni")
+        .eq("tenant_id", organizationId)
+        .eq("userId", doctorId) // Asegúrate de que el campo en la base de datos es 'medicoId'
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error(
+          "Error al cargar los datos de identificación por doctor:",
+          error
+        );
+        Notify.create({
+          message: `Error al cargar los datos: ${error.message}`,
+          color: "negative",
+          position: "top-right",
+        });
+      } else {
+        formIdentificacion.value = data || [];
+      }
+    };
 
     const guardarDatos = async (nuevoFormulario) => {
       if (!tenant_id.value) {
@@ -83,7 +110,41 @@ export const useFichaIdentificacionStore = defineStore(
         return data;
       }
     };
+    /**
+     * Busca un paciente por su DNI.
+     * @param {string} dni - El DNI del paciente a buscar.
+     * @returns {Object|null} - Los datos del paciente si existe, o null si no se encuentra.
+     */
+    const buscarPacientePorDni = async (dni) => {
+      if (!tenant_id.value) {
+        console.warn("No hay tenant_id disponible");
+        return null;
+      }
 
+      const { data, error } = await supabase
+        .from("fichaIdentificacion")
+        .select("nombres, email")
+        .eq("dni", dni)
+        .eq("userId", userId.value) // Añadido el filtro de userId
+        .eq("tenant_id", tenant_id.value)
+        .single(); // Asume que el DNI es único
+
+      if (error) {
+        if (error.code === "PGRST116") {
+          // No se encontró el registro
+          return null;
+        }
+        console.error("Error al buscar paciente por DNI:", error);
+        Notify.create({
+          message: `Error al buscar paciente: ${error.message}`,
+          color: "negative",
+          position: "top-right",
+        });
+        return null;
+      }
+
+      return data; // { nombres: "Nombre del Paciente", email: "email@ejemplo.com" }
+    };
     const actualizarPaciente = async (pacienteActualizado) => {
       if (!tenant_id.value) {
         console.warn("No hay tenant_id disponible");
@@ -278,10 +339,21 @@ export const useFichaIdentificacionStore = defineStore(
       { estado: "Inactivos", cantidad: totalInactivos.value },
     ]);
 
+    // watch(
+    //   tenant_id,
+    //   (newTenantId) => {
+    //     if (newTenantId) {
+    //       cargarDatos();
+    //     } else {
+    //       formIdentificacion.value = [];
+    //     }
+    //   },
+    //   { immediate: true }
+    // );
     watch(
-      tenant_id,
-      (newTenantId) => {
-        if (newTenantId) {
+      [tenant_id, userId],
+      ([newTenantId, newUserId]) => {
+        if (newTenantId && newUserId) {
           cargarDatos();
         } else {
           formIdentificacion.value = [];
@@ -293,6 +365,8 @@ export const useFichaIdentificacionStore = defineStore(
     return {
       formIdentificacion,
       cargarDatos,
+      cargarDatosPorDoctor, // Añadir este método
+
       guardarDatos,
       actualizarPaciente,
       eliminarPaciente,
@@ -300,6 +374,7 @@ export const useFichaIdentificacionStore = defineStore(
       totalActivos,
       totalInactivos,
       dataGraficoPacientes,
+      buscarPacientePorDni, // Exponer la nueva función
     };
   }
 );
