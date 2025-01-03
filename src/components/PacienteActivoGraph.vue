@@ -96,9 +96,9 @@ const chartOptions = computed(() => ({
   display: flex;
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */
-  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  height: 85%; /* Asegura que ocupe toda la altura del contenedor */
   position: relative;
-  top: 10px;
+  top: 40px;
   border: none;
 }
 .title {

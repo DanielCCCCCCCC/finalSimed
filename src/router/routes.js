@@ -38,6 +38,7 @@ import RecoverPassword from "../pages/RecoverPassword.vue";
 import PerfilMedico from "../pages/PerfilMedico.vue";
 import PacientesScheduleAppointment from "../pages/PacientesScheduleAppointment.vue";
 import SolicitudesCitasPendientes from "../pages/SolicitudesCitasPendientes.vue";
+import ConfirmarCuenta from "../pages/ConfirmarCuenta.vue";
 const routes = [
   {
     path: "/",
@@ -234,6 +235,12 @@ const routes = [
     path: "/reset-password",
     name: "ResetPassword",
     component: ResetPassword,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/confirmar-cuenta",
+    name: "confirmarCuenta",
+    component: ConfirmarCuenta,
     meta: { requiresAuth: false },
   },
   {

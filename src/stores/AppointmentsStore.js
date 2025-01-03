@@ -456,6 +456,58 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       loading.value = false;
     }
   };
+  const last8AutoAppointments = ref([]);
+  /**
+   * Obtiene las últimas 8 citas (ordenadas por fecha de creación o startDate)
+   * que sean `autoCita = true`, con un filtro opcional de status.
+   *
+   * @param {string} status - "Pendiente", "Aceptada", "Rechazada", o "Todas".
+   * @param {number} limit - Por defecto 8 (las últimas 8).
+   */
+  const fetchLast8AutoAppointmentsByStatus = async (
+    status = "Todas",
+    limit = 8
+  ) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      // userId del médico autenticado:
+      const userId = authStore.userId;
+      if (!userId) {
+        console.warn(
+          "[fetchLast8AutoAppointmentsByStatus] No hay userId. Retornando vacío."
+        );
+        last8AutoAppointments.value = [];
+        return;
+      }
+
+      let query = supabase
+        .from("appointments")
+        .select("*")
+        .eq("autoCita", true) // Solo las citas solicitadas por pacientes
+        .eq("userId", userId) // Solo las del médico actual
+        .order("created_at", { ascending: false }) // Ordena desde las más recientes
+        .limit(limit);
+
+      if (status !== "Todas") {
+        query = query.eq("status", status);
+      }
+
+      const { data, error: fetchError } = await query;
+      if (fetchError) {
+        throw fetchError;
+      } else {
+        last8AutoAppointments.value = data || [];
+        console.log("Nuevos datossss:", last8AutoAppointments.value);
+      }
+    } catch (err) {
+      console.error("[fetchLast8AutoAppointmentsByStatus] Error:", err.message);
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  };
 
   return {
     // State
@@ -476,5 +528,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     // Utils / stats
     calculateAppointmentsTrend,
     calculateMonthlyStats,
+    last8AutoAppointments,
+    fetchLast8AutoAppointmentsByStatus,
   };
 });

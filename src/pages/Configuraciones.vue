@@ -49,7 +49,6 @@
         </ul>
       </div>
 
-      <!-- Contenido de las Pestañas -->
       <div class="col-12 col-md-10 content-container">
         <div class="tab-content">
           <!-- Pestaña Crear Usuarios -->
@@ -67,6 +66,7 @@
                   Crear Usuarios para: {{ organizaciones[0]?.nombre }}
                 </div>
               </q-card-section>
+
               <q-card-section>
                 <!-- DxDataGrid Component -->
                 <DxDataGrid
@@ -89,7 +89,6 @@
                     :allow-deleting="true"
                     mode="form"
                   />
-
                   <DxPaging :enabled="true" :page-size="10" />
 
                   <!-- Fecha de creación -->
@@ -104,7 +103,7 @@
                     min-width="150"
                   />
 
-                  <!-- Correo (NO editable) -->
+                  <!-- Correo (editable) -->
                   <DxColumn
                     data-field="email"
                     caption="Correo Electrónico"
@@ -126,7 +125,7 @@
                     :visible="false"
                   />
 
-                  <!-- Rol (NO editable) -->
+                  <!-- Rol (editable) -->
                   <DxColumn
                     data-field="role"
                     caption="Rol"
@@ -228,7 +227,7 @@
                   </q-list>
                 </div>
 
-                <!-- Nueva Sección: Horarios de Atención -->
+                <!-- Sección: Horarios de Atención -->
                 <q-separator class="q-my-md" />
                 <div class="horarios-container">
                   <div class="horarios-header">
@@ -260,7 +259,8 @@
                       mode="row"
                     />
                     <DxPaging :enabled="true" :page-size="7" />
-                    <!-- Definir las columnas -->
+
+                    <!-- Columnas Horarios -->
                     <DxColumn
                       data-field="dia_semana"
                       caption="Día de la Semana"
@@ -306,7 +306,7 @@
               </q-card-section>
             </q-card>
 
-            <!-- Modal para Agregar/Editar Horario de Atención -->
+            <!-- Modal para Agregar/Editar Horario -->
             <q-dialog v-model="abrirModalHorario" persistent>
               <q-card class="form-container widthModalHorarios">
                 <q-card-section>
@@ -342,7 +342,8 @@
                           </option>
                         </select>
                       </div>
-                      <!-- Hora de Inicio y Hora de Fin en la misma fila -->
+
+                      <!-- Hora de Inicio y Hora de Fin -->
                       <div class="row-horizontal">
                         <div class="time-picker">
                           <label for="hora_inicio">Hora de Inicio</label>
@@ -366,10 +367,7 @@
 
                       <!-- Intervalo entre Citas -->
                       <div>
-                        <label for="intervalo_min"
-                          >Intervalo entre Citas (minutos)</label
-                        >
-
+                        <label for="intervalo_min">Intervalo (minutos)</label>
                         <input
                           id="intervalo_min"
                           name="intervalo_min"
@@ -414,13 +412,14 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 
 // **Stores**
-import { useCrearUsuariosStore } from "../stores/crearUsuarios"; // Ajusta la ruta si es necesario
+import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth";
 import { useOrganizacionStore } from "../stores/organizacionStore";
 
@@ -440,29 +439,29 @@ import {
   DxButton,
 } from "devextreme-vue/data-grid";
 
-// **Librería para formateo de fechas**
+// **date-fns** para formatear fechas
 import { format } from "date-fns";
 
-// **Notificaciones de Quasar**
+// **Notificaciones Quasar**
 const $q = useQuasar();
 
-// **Emitir eventos (si se necesita cerrar el modal desde un componente padre)**
+// Emitir eventos si lo necesitas
 const emit = defineEmits(["cerrar"]);
 
-// **Estado reactivo para la pestaña activa**
+// Tab activa
 const activeTab = ref("crearUsuarios");
 
-// **Instancia de las stores**
+// Instancia Stores
 const crearUsuariosStore = useCrearUsuariosStore();
 const organizacionStore = useOrganizacionStore();
 const authStore = useAuthStore();
 
-// **Desestructurar propiedades reactivas de las stores**
+// Desestructurar states
 const { users } = storeToRefs(crearUsuariosStore);
 const { organizaciones, horariosAtencion } = storeToRefs(organizacionStore);
 const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
 
-// **Opciones para los roles**
+// Roles
 const rolesOptions = ref([
   { value: "admin", text: "Admin" },
   { value: "medico", text: "Médico" },
@@ -470,19 +469,15 @@ const rolesOptions = ref([
   { value: "paciente", text: "Paciente" },
 ]);
 
-// **Estado reactivo para el formulario de Horario de Atención**
+// Horarios
 const formHorario = reactive({
-  id: null, // Para edición
+  id: null,
   dia_semana: "",
   hora_inicio: "",
   hora_fin: "",
-  intervalo_min: 15, // Valor por defecto
+  intervalo_min: 15,
 });
-
-// **Estado para determinar si se está editando o creando**
 const esEditar = ref(false);
-
-// **Opciones para los días de la semana**
 const diasSemana = ref([
   "Lunes",
   "Martes",
@@ -492,13 +487,9 @@ const diasSemana = ref([
   "Sábado",
   "Domingo",
 ]);
-
-// **Estado para controlar el modal de horarios de atención**
 const abrirModalHorario = ref(false);
 
-/**
- * Función para formatear fechas
- */
+/** Formatea fecha en la grilla */
 const formatDate = (dateString) => {
   try {
     return format(new Date(dateString), "dd/MM/yyyy hh:mm a");
@@ -508,68 +499,53 @@ const formatDate = (dateString) => {
 };
 
 /**
- * Función para formatear horas (HH:MM a formato AM/PM)
+ * Genera una contraseña aleatoria con mayúsculas, minúsculas, dígitos y símbolos.
+ * @param {number} length - Longitud de la contraseña, por defecto 12
  */
-// const formatTime = (time) => {
-//   try {
-//     const [hour, minute] = time.split(":").map(Number);
-//     const period = hour >= 12 ? "PM" : "AM";
-//     const formattedHour = hour % 12 || 12;
-//     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${period}`;
-//   } catch {
-//     return "Hora no válida";
-//   }
-// };
-
-/**
- * Función para actualizar la organización existente
- * (si necesitas editar los detalles de la organización)
- */
-// Se asume que tienes una función en organizacionStore para actualizar la organización
-const actualizarOrganizacion = async () => {
-  try {
-    await organizacionStore.actualizarOrganizacion(formOrganizacion);
-    $q.notify({
-      type: "positive",
-      message: "Organización actualizada exitosamente.",
-      position: "top-right",
-    });
-    // Resetear el formulario si es necesario
-    formOrganizacion.nombre = "";
-    formOrganizacion.email = "";
-    formOrganizacion.password = "";
-    formOrganizacion.role = "";
-  } catch (err) {
-    if (err.errors) {
-      err.errors.forEach((error) => {
-        errorsOrganizacion[error.field] = error.message;
-      });
-    }
-    $q.notify({
-      type: "negative",
-      message: err.message || "Error al actualizar la organización.",
-      position: "top-right",
-    });
+function generateRandomPassword(length = 12) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}:<>?,./";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-};
+  return result;
+}
 
 /**
- * Funciones para manejar los usuarios en el DxDataGrid
- */
-
-/**
- * Crear usuario (cuando se presiona "Agregar" en el DataGrid)
+ * onRowInserting: Crear usuario con password aleatorio.
+ * Llama a crearUsuarioConPassword(...) en la store.
  */
 const onRowInserting = async (e) => {
   const { data } = e;
   try {
-    // data contendrá { email, password, role, nombreCompleto, direccion, telefono, observaciones }
-    await crearUsuariosStore.crearUsuario(data);
+    if (!data.email) {
+      throw new Error("Debes ingresar un correo electrónico.");
+    }
+
+    // Generar una contraseña aleatoria robusta
+    const generatedPassword = generateRandomPassword(12);
+    console.log("Contraseña generada:", generatedPassword);
+
+    // Llamar a la función de la store
+    await crearUsuariosStore.crearUsuario(data.email, generatedPassword, {
+      role: data.role,
+      nombreCompleto: data.nombreCompleto,
+      direccion: data.direccion,
+      telefono: data.telefono,
+      observaciones: data.observaciones,
+      tenant_id: tenant_id.value,
+    });
+
+    // Cancelamos la inserción local para no duplicar
     e.cancel = true;
+
+    // Refrescamos la lista
     await crearUsuariosStore.cargarUsuarios();
+
     $q.notify({
       type: "positive",
-      message: "Usuario creado exitosamente.",
+      message: `Usuario creado con contraseña generada: ${generatedPassword}`,
       position: "top-right",
     });
   } catch (err) {
@@ -582,14 +558,10 @@ const onRowInserting = async (e) => {
   }
 };
 
-/**
- * Actualizar usuario (cuando se presiona "Guardar" en edición en el DataGrid)
- */
+/** Actualizar usuario en la tabla 'users' (no confundir con supabase.auth) */
 const onRowUpdating = async (e) => {
   const { key, newData } = e;
   try {
-    // key es el 'id' del usuario
-    // newData contendrá SOLO los campos modificados
     await crearUsuariosStore.actualizarUsuario({ id: key, ...newData });
     e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();
@@ -608,9 +580,7 @@ const onRowUpdating = async (e) => {
   }
 };
 
-/**
- * Eliminar usuario (cuando se presiona el botón "Eliminar" en el DataGrid)
- */
+/** Eliminar usuario */
 const onRowDeleting = async (e) => {
   const { key } = e;
   try {
@@ -632,13 +602,7 @@ const onRowDeleting = async (e) => {
   }
 };
 
-/**
- * Funciones para manejar los Horarios de Atención
- */
-
-/**
- * Abrir el modal para crear un nuevo horario
- */
+/** Abrir el modal de nuevo horario */
 const abrirModalCrearHorario = () => {
   esEditar.value = false;
   formHorario.id = null;
@@ -649,10 +613,7 @@ const abrirModalCrearHorario = () => {
   abrirModalHorario.value = true;
 };
 
-/**
- * Abrir el modal para editar un horario existente
- * @param {Object} row - Datos del horario a editar
- */
+/** Editar horario existente */
 const editarHorarioAtencion = (row) => {
   esEditar.value = true;
   formHorario.id = row.data.id;
@@ -663,18 +624,13 @@ const editarHorarioAtencion = (row) => {
   abrirModalHorario.value = true;
 };
 
-/**
- * Cerrar el modal de horarios de atención
- */
+/** Cerrar modal */
 const cerrarModalHorario = () => {
   abrirModalHorario.value = false;
 };
 
-/**
- * Crear un nuevo horario de atención
- */
+/** Crear horario */
 const crearHorario = async () => {
-  // Validaciones básicas
   if (
     !formHorario.dia_semana ||
     !formHorario.hora_inicio ||
@@ -688,8 +644,6 @@ const crearHorario = async () => {
     });
     return;
   }
-
-  // Validar que la hora_fin sea mayor que hora_inicio
   if (formHorario.hora_fin <= formHorario.hora_inicio) {
     $q.notify({
       type: "negative",
@@ -698,8 +652,6 @@ const crearHorario = async () => {
     });
     return;
   }
-
-  // Verificar que tenant_id esté definido y sea válido
   if (!tenant_id.value) {
     $q.notify({
       type: "negative",
@@ -709,19 +661,17 @@ const crearHorario = async () => {
     return;
   }
 
-  // Construir el objeto de horario (incluyendo tenant_id)
   const nuevoHorario = {
     dia_semana: formHorario.dia_semana,
     hora_inicio: formHorario.hora_inicio,
     hora_fin: formHorario.hora_fin,
     intervalo_min: formHorario.intervalo_min,
-    tenant_id: tenant_id.value, // Asignación automática desde authStore
+    tenant_id: tenant_id.value,
   };
 
   try {
     await organizacionStore.crearHorarioAtencion(nuevoHorario);
     cerrarModalHorario();
-    // Recargar los horarios de atención
     await organizacionStore.cargarHorariosAtencion(tenant_id.value);
     $q.notify({
       type: "positive",
@@ -729,7 +679,7 @@ const crearHorario = async () => {
       position: "top-right",
     });
   } catch (error) {
-    console.error("Error creando horario de atención:", error);
+    console.error("Error creando horario:", error);
     $q.notify({
       type: "negative",
       message: "Error al crear el horario de atención.",
@@ -738,11 +688,8 @@ const crearHorario = async () => {
   }
 };
 
-/**
- * Actualizar un horario de atención existente
- */
+/** Actualizar horario */
 const actualizarHorario = async () => {
-  // Validaciones básicas
   if (
     !formHorario.dia_semana ||
     !formHorario.hora_inicio ||
@@ -756,8 +703,6 @@ const actualizarHorario = async () => {
     });
     return;
   }
-
-  // Validar que la hora_fin sea mayor que hora_inicio
   if (formHorario.hora_fin <= formHorario.hora_inicio) {
     $q.notify({
       type: "negative",
@@ -766,8 +711,6 @@ const actualizarHorario = async () => {
     });
     return;
   }
-
-  // Verificar que tenant_id esté definido y sea válido
   if (!tenant_id.value) {
     $q.notify({
       type: "negative",
@@ -777,13 +720,12 @@ const actualizarHorario = async () => {
     return;
   }
 
-  // Construir el objeto de horario actualizado (incluyendo tenant_id)
   const horarioActualizado = {
     dia_semana: formHorario.dia_semana,
     hora_inicio: formHorario.hora_inicio,
     hora_fin: formHorario.hora_fin,
     intervalo_min: formHorario.intervalo_min,
-    tenant_id: tenant_id.value, // Asegurar que tenant_id se mantenga
+    tenant_id: tenant_id.value,
   };
 
   try {
@@ -792,7 +734,6 @@ const actualizarHorario = async () => {
       horarioActualizado
     );
     cerrarModalHorario();
-    // Recargar los horarios de atención
     await organizacionStore.cargarHorariosAtencion(tenant_id.value);
     $q.notify({
       type: "positive",
@@ -800,7 +741,7 @@ const actualizarHorario = async () => {
       position: "top-right",
     });
   } catch (error) {
-    console.error("Error actualizando horario de atención:", error);
+    console.error("Error actualizando horario:", error);
     $q.notify({
       type: "negative",
       message: "Error al actualizar el horario de atención.",
@@ -809,10 +750,7 @@ const actualizarHorario = async () => {
   }
 };
 
-/**
- * Eliminar un horario de atención existente
- * @param {Object} row - Datos del horario a eliminar
- */
+/** Eliminar horario */
 const eliminarHorarioAtencion = async (row) => {
   const horario = row.data;
   if (
@@ -826,7 +764,6 @@ const eliminarHorarioAtencion = async (row) => {
   ) {
     try {
       await organizacionStore.eliminarHorarioAtencion(horario.id);
-      // Recargar los horarios de atención
       await organizacionStore.cargarHorariosAtencion(tenant_id.value);
       $q.notify({
         type: "positive",
@@ -834,7 +771,7 @@ const eliminarHorarioAtencion = async (row) => {
         position: "top-right",
       });
     } catch (error) {
-      console.error("Error eliminando horario de atención:", error);
+      console.error("Error eliminando horario:", error);
       $q.notify({
         type: "negative",
         message: "Error al eliminar el horario de atención.",
@@ -844,45 +781,47 @@ const eliminarHorarioAtencion = async (row) => {
   }
 };
 
-/**
- * Monitorear cambios en tenant_id para cargar organizaciones y horarios
- */
+/** Formatea la hora HH:mm a AM/PM */
+const formatTime = (timeStr) => {
+  try {
+    const [hour, minute] = timeStr.split(":").map(Number);
+    const suffix = hour >= 12 ? "PM" : "AM";
+    const adjHour = hour % 12 || 12;
+    return `${adjHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
+  } catch {
+    return timeStr;
+  }
+};
+
+/** Watch: Cargar organización y horarios al cambiar tenant_id */
 watch(
   () => tenant_id.value,
   async (newTenantId) => {
     if (newTenantId) {
       await organizacionStore.cargarOrganizaciones();
       await organizacionStore.cargarHorariosAtencion(newTenantId);
-    } else if (newTenantId === "undefined" || newTenantId === undefined) {
+    } else {
       organizacionStore.organizaciones = [];
       organizacionStore.horariosAtencion = [];
-      if (newTenantId === "undefined") {
-        $q.notify({
-          type: "negative",
-          message: "Error: tenant_id es 'undefined'.",
-          position: "top-right",
-        });
-      } else {
-        $q.notify({
-          type: "negative",
-          message: "Error: tenant_id no está definido.",
-          position: "top-right",
-        });
-      }
+      $q.notify({
+        type: "negative",
+        message: "Error: tenant_id no está definido o es inválido.",
+        position: "top-right",
+      });
     }
   },
   { immediate: true }
 );
 
-/**
- * Cargar usuarios y organizaciones al montar el componente
- */
+/** onMounted: cargarUsuarios, cargarOrganizaciones */
 onMounted(async () => {
   await crearUsuariosStore.cargarUsuarios();
   await organizacionStore.cargarOrganizaciones();
+
   console.log("User Auth:", user.value?.email);
   console.log("Organizaciones: ", organizaciones.value);
-  console.log("tenant_id onMounted:", tenant_id.value); // Log para depuración
+  console.log("tenant_id onMounted:", tenant_id.value);
+
   if (tenant_id.value) {
     await organizacionStore.cargarHorariosAtencion(tenant_id.value);
   } else {
@@ -927,7 +866,7 @@ onMounted(async () => {
 
 .vertical-tabs .nav-link.active {
   background: #e74c3c;
-  color: rgb(255, 255, 255);
+  color: #fff;
 }
 
 .content-container {
@@ -959,27 +898,22 @@ onMounted(async () => {
 }
 
 .widthModalHorarios {
-  width: 40%; /* Aumenta el ancho al 80% del viewport */
+  width: 40%;
   height: auto;
-  max-width: 1400px; /* Ancho máximo para evitar que sea demasiado grande */
-}
-/* Eliminamos la regla global de .q-time para evitar afectar otros componentes */
-.q-time {
-  /* width: 70%; */ /* Esta línea se elimina o comenta */
-}
-/* Contenedor para alinear los campos horizontalmente */
-.row-horizontal {
-  display: flex;
-  gap: 20px; /* Espacio entre los campos */
-  flex-wrap: wrap; /* Permite que los campos se ajusten en pantallas pequeñas */
-  margin-bottom: 16px; /* Espacio inferior para separar de otros campos */
+  max-width: 1400px;
 }
 
-/* Estilos para cada campo de tiempo */
+.row-horizontal {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
 .time-picker {
   display: flex;
   flex-direction: column;
-  flex: 1; /* Permite que los campos crezcan igualmente */
+  flex: 1;
 }
 
 .time-picker label {
@@ -994,34 +928,15 @@ onMounted(async () => {
   font-size: 16px;
 }
 
-/* Responsividad para dispositivos pequeños */
-@media (max-width: 768px) {
-  .row-horizontal {
-    flex-direction: column;
-    gap: 10px; /* Reduce el espacio entre elementos en pantallas pequeñas */
-  }
-
-  .time-picker input[type="time"] {
-    width: 100%;
-  }
-}
-/* Sección de Horarios de Atención */
 .horarios-container {
   margin-top: 10px;
 }
-.row-horizontal {
-  display: flex;
-  gap: 16px; /* Espacio entre los elementos */
-  align-items: center; /* Alinea verticalmente */
-}
-.time-picker {
-  flex: 1; /* Ajusta el ancho de los time pickers proporcionalmente */
-}
+
 .horarios-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px; /* Reducido de 150px a 20px para evitar superposición */
+  margin-bottom: 20px;
 }
 
 .horarios-header h6 {
@@ -1033,48 +948,24 @@ onMounted(async () => {
   min-width: 150px;
 }
 
-/* Contenedor de los Componentes de Tiempo */
-.horarios-row {
-  display: flex;
-  gap: 16px; /* Espacio entre los elementos */
-  flex-wrap: wrap;
-  margin-bottom: 20px; /* Espacio inferior para separar del siguiente campo */
-}
-
-.horarios-row .horario-item {
-  flex: 1;
-  min-width: 150px;
-}
-
-.horarios-row .q-time {
-  height: 40px; /* Reducir el tamaño del componente */
-  width: 100%; /* Asegura que ocupe todo el ancho dentro del horario-item */
-}
-
-/* Responsividad para Horarios de Atención */
 @media (max-width: 768px) {
+  .row-horizontal {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .time-picker input[type="time"] {
+    width: 100%;
+  }
   .horarios-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .horarios-header .q-btn {
     width: 100%;
     margin-top: 10px;
   }
-
   .custom-data-grid {
     min-height: 300px;
-  }
-
-  /* Stack verticalmente los horarios en pantallas pequeñas */
-  .horarios-row {
-    flex-direction: column;
-    gap: 10px; /* Reduce el espacio entre elementos para pantallas pequeñas */
-  }
-
-  .horarios-row .horario-item {
-    min-width: 100%;
   }
 }
 </style>

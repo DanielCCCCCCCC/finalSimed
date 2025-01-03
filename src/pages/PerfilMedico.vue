@@ -188,11 +188,10 @@
     </div>
   </q-page>
 </template>
-
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import QRCode from "qrcode";
-import { useAuthStore } from "../stores/auth"; // Asegúrate de ajustar la ruta según tu estructura
+import { useAuthStore } from "../stores/auth";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
@@ -206,8 +205,8 @@ const tab = ref("info");
 
 // Acceder a la store de autenticación
 const authStore = useAuthStore();
-const organizationId = ref(authStore.tenant_id || "defaultOrgId"); // Proporciona un valor por defecto si es necesario
-const doctorId = ref(authStore.userId || "defaultDoctorId"); // Proporciona un valor por defecto si es necesario
+const organizationId = ref(authStore.tenant_id || "defaultOrgId");
+const doctorId = ref(authStore.userId || "defaultDoctorId");
 
 // Estado para el código QR
 const qrCodeUrl = ref("");
@@ -219,7 +218,7 @@ const copySuccess = ref(false);
 
 // Definir la base URL
 const baseUrl =
-  import.meta.env.VITE_BASE_URL || "http://localhost:9000/schedule"; // Configura correctamente en producción
+  import.meta.env.VITE_BASE_URL || "http://localhost:9000/schedule";
 
 // URL completa: /schedule/:organizationId/:doctorId
 const fullUrl = ref(`${baseUrl}/${organizationId.value}/${doctorId.value}`);
@@ -282,9 +281,16 @@ function downloadQRCode() {
 
 // Obtener el usuario actual y generar QR al montar el componente
 onMounted(async () => {
-  await crearUsuariosStore.cargarUsuarioPerfil();
-  console.log("USER DE PERFIL MEDICO: ", crearUsuariosStore.users.value);
-  await generateQRCode();
+  // Verificar si userId está disponible
+  if (authStore.userId) {
+    await crearUsuariosStore.cargarUsuarioPerfil();
+    console.log("USER DE PERFIL MEDICO: ", crearUsuariosStore.users.value);
+    await generateQRCode();
+  } else {
+    console.warn(
+      "userId no está disponible en authStore al montar el componente."
+    );
+  }
 });
 
 // Si cambia tenant_id o userId en la store, regeneramos el QR
@@ -299,10 +305,13 @@ watch(
 
 watch(
   () => authStore.userId,
-  (newDoc) => {
+  async (newDoc) => {
     doctorId.value = newDoc;
     fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
-    generateQRCode();
+    if (newDoc) {
+      await crearUsuariosStore.cargarUsuarioPerfil();
+      generateQRCode();
+    }
   }
 );
 </script>
