@@ -162,9 +162,10 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
   //   }
   // };
   /**
-   * Cargar Horarios de Atención
-   * @param tenantId - ID del tenant
-   */
+ /**
+ * Cargar Horarios de Atención
+ * @param {string} tenantId - ID del tenant
+ */
   const cargarHorariosAtencion = async (tenantId) => {
     if (!tenantId) {
       console.error("Error: tenantId es inválido:", tenantId);
@@ -184,7 +185,9 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
         .select("*")
         .eq("tenant_id", tenantId)
         .order("dia_semana", { ascending: true });
+
       if (fetchError) throw fetchError;
+
       horariosAtencion.value = data;
       console.log("Horarios de Atención Cargados:", data); // Log para depuración
     } catch (err) {
@@ -201,14 +204,14 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
   };
 
   /**
-   * Cargar Horarios de Atención
-   * @param tenantId - ID del tenant
+   * Crear un nuevo Horario de Atención
+   * @param {Object} nuevoHorario - Objeto con los campos del horario (incluye tenant_id)
    */
-  const crearHorarioAtencion = async (tenantId) => {
-    if (!tenantId) {
-      console.error("Error: tenantId es inválido:", tenantId);
+  const crearHorarioAtencion = async (nuevoHorario) => {
+    if (!nuevoHorario || !nuevoHorario.tenant_id) {
+      console.error("Error: tenant_id es inválido:", nuevoHorario?.tenant_id);
       Notify.create({
-        message: "Error: tenantId es inválido.",
+        message: "Error: tenant_id es inválido.",
         color: "negative",
         position: "top-right",
       });
@@ -218,22 +221,28 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
     cargando.value = true;
     error.value = null;
     try {
-      const { data, error: fetchError } = await supabase
+      // Inserta el nuevo horario en la tabla
+      const { data, error: insertError } = await supabase
         .from("horarios_atencion")
-        .select("*")
-        .eq("tenant_id", tenantId)
-        .order("dia_semana", { ascending: true });
-      if (fetchError) throw fetchError;
-      horariosAtencion.value = data;
-      console.log("Horarios de Atención Cargados:", data); // Log para depuración
+        .insert([nuevoHorario])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      // Agrega el nuevo registro al estado local
+      horariosAtencion.value.push(data);
+
+      console.log("Horario de Atención Creado:", data);
     } catch (err) {
-      console.error("Error al cargar horarios de atención:", err);
-      error.value = err.message || "Error al cargar horarios de atención.";
+      console.error("Error al crear horario de atención:", err);
+      error.value = err.message || "Error al crear horario de atención.";
       Notify.create({
         message: error.value,
         color: "negative",
         position: "top-right",
       });
+      throw err; // Importante si quieres manejarlo en el componente
     } finally {
       cargando.value = false;
     }
@@ -242,7 +251,7 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
   /**
    * Actualizar un Horario de Atención existente
    * @param {string} id - ID del horario a actualizar
-   * @param {Object} horarioActualizado - Nuevos datos del horario
+   * @param {Object} horarioActualizado - Objeto con campos actualizados
    */
   const actualizarHorarioAtencion = async (id, horarioActualizado) => {
     try {
@@ -252,11 +261,15 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
         .eq("id", id)
         .select()
         .single();
+
       if (updateError) throw updateError;
+
+      // Reemplaza en el array local el horario actualizado
       const index = horariosAtencion.value.findIndex((h) => h.id === id);
       if (index !== -1) {
         horariosAtencion.value[index] = data;
       }
+
       Notify.create({
         message: "Horario de atención actualizado exitosamente.",
         color: "positive",
@@ -283,10 +296,14 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
         .from("horarios_atencion")
         .delete()
         .eq("id", id);
+
       if (deleteError) throw deleteError;
+
+      // Quita del array local el horario eliminado
       horariosAtencion.value = horariosAtencion.value.filter(
         (h) => h.id !== id
       );
+
       Notify.create({
         message: "Horario de atención eliminado exitosamente.",
         color: "positive",

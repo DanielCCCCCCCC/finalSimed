@@ -4,10 +4,10 @@
 
     <!-- Botones para filtrar según status -->
     <div class="filter-buttons">
-      <q-btn label="Todas" color="primary" @click="cargarCitas('Todas')" />
+      <q-btn label="Todas" color="info" @click="cargarCitas('Todas')" />
       <q-btn
         label="Pendientes"
-        color="primary"
+        color="dark"
         @click="cargarCitas('Pendiente')"
       />
       <q-btn

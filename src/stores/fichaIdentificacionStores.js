@@ -65,7 +65,12 @@ export const useFichaIdentificacionStore = defineStore(
         formIdentificacion.value = data || [];
       }
     };
-
+    // NUEVO MÉTODO para buscar nombre real dado el ID
+    function getPatientNameById(patientId) {
+      const paciente = formIdentificacion.value.find((p) => p.id == patientId);
+      if (!paciente) return "Desconocido";
+      return paciente.nombres;
+    }
     const guardarDatos = async (nuevoFormulario) => {
       if (!tenant_id.value) {
         console.warn("No hay tenant_id disponible");
@@ -123,7 +128,7 @@ export const useFichaIdentificacionStore = defineStore(
 
       const { data, error } = await supabase
         .from("fichaIdentificacion")
-        .select("nombres, email")
+        .select("*")
         .eq("dni", dni)
         .eq("userId", userId.value) // Añadido el filtro de userId
         .eq("tenant_id", tenant_id.value)
@@ -366,7 +371,7 @@ export const useFichaIdentificacionStore = defineStore(
       formIdentificacion,
       cargarDatos,
       cargarDatosPorDoctor, // Añadir este método
-
+      getPatientNameById,
       guardarDatos,
       actualizarPaciente,
       eliminarPaciente,

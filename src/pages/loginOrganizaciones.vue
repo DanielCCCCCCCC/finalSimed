@@ -85,7 +85,7 @@
                           />
                           <button
                             type="button"
-                            class="btn btn-outline-secondary"
+                            class="separadoInput btn btn-outline-secondary"
                             @click="togglePasswordVisibility"
                           >
                             <i
@@ -219,6 +219,11 @@ input {
   height: 50px;
   padding: 10px;
   font-size: 1rem;
+}
+
+.separadoInput {
+  position: relative;
+  left: 1px;
 }
 
 .tamano {

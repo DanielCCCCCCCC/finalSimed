@@ -485,7 +485,7 @@ const onAppointmentAdded = async (e) => {
       tipoCita: appointmentData.tipoCita,
       tenant_id: tenant_id,
       userId: userId, // El ID del médico que registra la cita
-      status: "Aceptada", // O "Pendiente" si quieres que sea visible al final
+      status: "Aceptada",
     };
 
     // Verificar superposición

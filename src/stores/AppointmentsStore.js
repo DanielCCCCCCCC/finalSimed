@@ -361,7 +361,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
   };
 
-  // NUEVO: Función para enviar correo
+  // NUEVO: Función para enviar WhatsApp
   async function sendWhatsAppNotification(appointmentId, status) {
     try {
       // 1. Obtener la cita para ver el 'patientphone' u otros datos
@@ -378,13 +378,12 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       const { patientphone, title, startDate, nombre } = data;
 
       // 2. Llamar a tu API / servicio de WhatsApp
-      //    Por ejemplo: 'http://localhost:9000/sendwhatsapp'
-      //    donde tengas la lógica de Twilio, WhatsApp Cloud API, etc.
+      //    Este es un ejemplo básico:
       const response = await fetch("http://localhost:9000/sendwhatsapp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: patientphone, // número del paciente
+          to: patientphone,
           message: `Hola, la cita "${title}" para ${nombre} a las ${startDate} ha sido ${status}.`,
         }),
       });
@@ -456,6 +455,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       loading.value = false;
     }
   };
+
   const last8AutoAppointments = ref([]);
   /**
    * Obtiene las últimas 8 citas (ordenadas por fecha de creación o startDate)
@@ -509,26 +509,61 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
   };
 
+  // ---------------------------------------------------------------------------
+  // AÑADIR AQUÍ la función para buscar pacientes por DNI
+  // ---------------------------------------------------------------------------
+  /**
+   * Busca un paciente en la tabla 'pacientes' por su DNI.
+   * Retorna el objeto del paciente si se encuentra, o null en caso contrario.
+   *
+   * @param {string} dni - El DNI del paciente a buscar
+   * @returns {object|null}
+   */
+  const buscarPacientePorDni = async (dni) => {
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("fichaIdentificacion") // Ajusta si tu tabla se llama distinto
+        .select("*")
+        .eq("dni", dni)
+        .single();
+
+      if (fetchError) {
+        // Si la consulta falla o no encuentra nada, lanzamos error para capturarlo abajo
+        throw fetchError;
+      }
+
+      return data; // Retornamos el objeto del paciente
+    } catch (err) {
+      console.error("Error al buscar paciente por DNI:", err);
+      return null; // O undefined, según tu preferencia
+    }
+  };
+
+  // Retornamos todo lo necesario para usar en otros componentes
   return {
     // State
     appointments,
     appointmentsTrend,
     loading,
     error,
+    last8AutoAppointments,
 
-    // Actions / getters
+    // Actions (métodos)
     fetchAppointments,
     fetchAutoAppointments,
+    fetchLast8AutoAppointmentsByStatus,
     addAppointment,
     updateAppointment,
     deleteAppointment,
     acceptAppointment,
     rejectAppointment,
 
-    // Utils / stats
+    // Utils
     calculateAppointmentsTrend,
     calculateMonthlyStats,
-    last8AutoAppointments,
-    fetchLast8AutoAppointmentsByStatus,
+    pendingAppointmentsCount,
+
+    // *** NUEVA FUNCIÓN ***
+    buscarPacientePorDni, // <- aquí la exponemos
   };
 });
