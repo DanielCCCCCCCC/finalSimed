@@ -13,7 +13,7 @@
         :series="series"
         class="apex-chart"
         width="790"
-        height="270"
+        height="300"
       />
     </div>
     <div v-else>
@@ -108,12 +108,6 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
-.apex-chart {
-  position: relative;
-  left: 20px;
-  width: 100%;
-  height: 280px;
-}
 .card {
   display: flex;
   justify-content: center;

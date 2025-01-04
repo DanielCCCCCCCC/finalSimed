@@ -666,7 +666,7 @@ async function handleSubmit() {
   const endDateStr = endDate.toISOString().slice(0, 19);
 
   const newAppointment = {
-    title: `Cita con paciente ID: ${form.value?.patientNameUI}`,
+    title: `AutoCita con: ${form.value?.patientNameUI}`,
     startDate: startDateStr,
     endDate: endDateStr,
     allDay: false,

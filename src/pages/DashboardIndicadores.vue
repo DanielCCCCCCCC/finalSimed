@@ -3,31 +3,102 @@
     <div class="dashboard">
       <!-- 1) Indicador arriba a la izquierda, doble ancho -->
       <div class="card indicadorAutoCitas">
+        <!-- Botón en la esquina superior derecha -->
+        <router-link to="/solicitudesCitasPendientes">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <IndicadorSolicitudCitas />
       </div>
 
       <!-- 2) Los demás componentes con sus áreas de grid -->
       <div class="card pacienteActivoGraph">
+        <router-link to="/listadotipopacientes">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <PacienteActivoGraph />
       </div>
 
       <div class="card ultimasTransacciones">
+        <router-link to="/ruta-ultimas-transacciones">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <IndicadorUltimasTransacciones />
       </div>
 
       <div class="card aggMensualmente">
+        <router-link to="/listadotipopacientes">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <PacientesAggMensualmente />
       </div>
 
       <div class="card difCitasMes">
+        <router-link to="/controlCitasv2">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <IndicadorDifCitasMes />
       </div>
 
       <!-- <div class="card ultimosCitasAgregadas">
+        <router-link to="/ruta-ultimos-citas-agregadas">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <IndicadorUltimosCitasAgregadas />
       </div> -->
 
       <div class="card citasAgendadas">
+        <router-link to="/controlCitasv2">
+          <q-btn
+            icon="mdi-eye"
+            size="xs"
+            flat
+            round
+            class="card-button"
+            aria-label="Ver más"
+          />
+        </router-link>
         <CitasAgendadas />
       </div>
     </div>
@@ -56,7 +127,6 @@ onMounted(() => {
   );
 });
 </script>
-
 <style scoped>
 .dashboard {
   display: grid;
@@ -117,7 +187,39 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(102, 97, 97, 0.151);
   padding: 16px;
   transition: all 0.3s ease;
-  position: relative;
+  position: relative; /* Importante para posicionar el botón */
   margin-bottom: 1px;
+  height: 400px;
+}
+
+/* Botón en la esquina superior derecha */
+.card-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10; /* Asegura que el botón esté por encima del contenido */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Fondo semi-transparente para mejor visibilidad */
+  transition: background-color 0.3s ease;
+}
+
+/* Cambio de fondo al pasar el cursor */
+.card-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .card {
+    height: auto;
+  }
+  .card-button {
+    top: 4px;
+    right: 4px;
+  }
 }
 </style>

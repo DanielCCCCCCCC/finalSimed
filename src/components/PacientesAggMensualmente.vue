@@ -1,13 +1,13 @@
 <template>
   <div class="grafico-container">
     <!-- Gráfico de radar con ApexCharts -->
-    <h3 class="main-content-label mb-5 title">Registro de pacientes</h3>
+    <h3 class="main-content-label title">Registro de pacientes</h3>
     <ApexCharts
       v-if="registrosPorDia.length > 0"
       type="radar"
       :options="chartOptions"
       :series="series"
-      height="300px"
+      height="350px"
       width="350px"
       class="apex-chart"
     ></ApexCharts>
@@ -116,5 +116,10 @@ watch(
   top: 20px;
   display: flex;
   justify-content: center; /* Centra horizontalmente */
+}
+
+.grafico-container {
+  position: relative;
+  top: 1%;
 }
 </style>

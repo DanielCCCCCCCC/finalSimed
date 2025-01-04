@@ -45,7 +45,6 @@
             />
             <DxSelection mode="single" />
             <DxColumn data-field="nombres" caption="Nombres" />
-            <!-- <DxColumn data-field="apellidos" caption="Apellidos" /> -->
             <DxColumn data-field="dni" caption="DNI" />
           </DxDataGrid>
         </q-card-section>
@@ -98,13 +97,10 @@
 </template>
 
 <script setup>
+/* -------------------------------------
+   Imports y librerías
+------------------------------------- */
 import { DxScheduler, DxView } from "devextreme-vue/scheduler";
-import { supabase } from "../supabaseClient";
-import { Notify } from "quasar";
-
-import { onMounted, ref, computed } from "vue";
-import { storeToRefs } from "pinia";
-
 import {
   DxDataGrid,
   DxColumn,
@@ -112,14 +108,25 @@ import {
   DxSearchPanel,
 } from "devextreme-vue/data-grid";
 
-// Stores
+import { supabase } from "../supabaseClient";
+import { Notify } from "quasar";
+import { onMounted, ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+
+/* -------------------------------------
+   Imports de Stores (Pinia)
+------------------------------------- */
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import { useMedicoStore } from "../stores/MedicoStores";
-import { useEspecialidadMedicaStore } from "../stores/ConfiMedicasStores";
-import { useTiposCitasStore } from "../stores/ConfiMedicasStores";
+import {
+  useEspecialidadMedicaStore,
+  useTiposCitasStore,
+} from "../stores/ConfiMedicasStores";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 
-// Variables reactivas para modales
+/* -------------------------------------
+   Variables reactivas para modales
+------------------------------------- */
 const isModalOpen = ref(false);
 const isDoctorModalOpen = ref(false);
 const selectedPatient = ref(null);
@@ -127,7 +134,9 @@ const selectedPatientId = ref(null);
 const selectedDoctor = ref(null);
 const selectedDoctorId = ref(null);
 
-// Form y datos de la cita actual
+/* -------------------------------------
+   Form y datos de la cita actual
+------------------------------------- */
 const appointmentForm = ref(null);
 const currentAppointmentData = ref(null);
 
@@ -135,20 +144,26 @@ const isMedicosLoading = ref(true);
 const isEspecialidadesLoading = ref(true);
 const isPacientesLoading = ref(false);
 
-// Acceder a las stores
+/* -------------------------------------
+   Acceder a las stores
+------------------------------------- */
 const appointmentsStore = useAppointmentsStore();
 const medicoStore = useMedicoStore();
 const especialidadMedicaStore = useEspecialidadMedicaStore();
 const tiposCitasStore = useTiposCitasStore();
 const fichaIdentificacionStore = useFichaIdentificacionStore();
 
-// Desestructurar las variables reactivas
+/* -------------------------------------
+   Desestructuramos las variables reactivas
+------------------------------------- */
 const { medicos } = storeToRefs(medicoStore);
 const { especialidades } = storeToRefs(especialidadMedicaStore);
 const { citas } = storeToRefs(tiposCitasStore);
 const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
 
-// Mapeamos especialidad con cada médico
+/* -------------------------------------
+   Mapeamos especialidad con cada médico
+------------------------------------- */
 const medicosConEspecialidad = computed(() => {
   if (!medicos.value || !especialidades.value) return [];
   return medicos.value.map((medico) => {
@@ -164,15 +179,22 @@ const medicosConEspecialidad = computed(() => {
   });
 });
 
-// Desde la appointmentsStore
+/* -------------------------------------
+   Store de citas (appointments)
+------------------------------------- */
 const { appointments } = storeToRefs(appointmentsStore);
 
-// Vista del Scheduler
+/* -------------------------------------
+   Configuración del Scheduler
+------------------------------------- */
 const currentDate = ref(new Date());
 const currentView = ref("day");
 const views = ["day", "week", "workWeek", "month", "agenda"];
 
-// Filtramos SOLO las "Aceptadas"
+/**
+ * Filtramos SOLO las "Aceptadas"
+ * y mapeamos la info del paciente al texto de la cita.
+ */
 const computedAppointments = computed(() =>
   appointments.value
     .filter((appt) => appt.status === "Aceptada")
@@ -193,23 +215,9 @@ const computedAppointments = computed(() =>
     })
 );
 
-// Mapeo de colores por tipo de cita
-const colorMapping = {
-  "Primera vez": "#E0F7FA",
-  Seguimiento: "#FFF9C4",
-  Consulta: "#FFECB3",
-  // ... etc
-};
-
-// Abrir modales
-const openPatientModal = () => {
-  isModalOpen.value = true;
-};
-const openDoctorModal = () => {
-  isDoctorModalOpen.value = true;
-};
-
-// Helpers de fecha
+/* -------------------------------------
+   Helpers de fecha
+------------------------------------- */
 const getStartOfDay = (date) => {
   const newDate = new Date(date);
   newDate.setHours(0, 0, 0, 0);
@@ -231,7 +239,10 @@ const formatDate = (date) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-// Verificar superposiciones (paciente y/o médico)
+/* -------------------------------------
+   Verificar superposiciones
+   (paciente y/o médico)
+------------------------------------- */
 const checkAppointmentOverlap = async (appointment) => {
   const { startDate, endDate, medico, nombre, id } = appointment;
 
@@ -242,7 +253,8 @@ const checkAppointmentOverlap = async (appointment) => {
     .from("appointments")
     .select("*")
     .neq("id", id || 0)
-    // EJEMPLO: or(`medico.eq.${medico},nombre.eq.${nombre}`)
+    // En este ejemplo solo verificamos superposición por médico,
+    // si deseas también por paciente, podrías usar or(`medico.eq.${medico},nombre.eq.${nombre}`)
     .or(`medico.eq.${medico}`)
     .lt("startDate", end)
     .gt("endDate", start);
@@ -251,11 +263,12 @@ const checkAppointmentOverlap = async (appointment) => {
     console.error("Error al verificar superposiciones:", error);
     throw error;
   }
-
   return overlappingAppointments.length > 0;
 };
 
-// Form de cita
+/* -------------------------------------
+   Form de la cita (Appointment Form)
+------------------------------------- */
 const onAppointmentFormOpening = (e) => {
   const form = e.form;
   appointmentForm.value = form;
@@ -321,7 +334,6 @@ const onAppointmentFormOpening = (e) => {
                 const endDate = getEndOfDay(
                   form.getEditor("startDate").option("value")
                 );
-
                 form.updateData("startDate", startDate);
                 form.updateData("endDate", endDate);
               }
@@ -430,12 +442,16 @@ const onAppointmentFormOpening = (e) => {
   ]);
 };
 
-// Al agregar (el médico crea una nueva cita)
+/* -------------------------------------
+   CRUD de citas
+------------------------------------- */
+
+// Agregar cita
 const onAppointmentAdded = async (e) => {
   try {
     const appointmentData = e.appointmentData;
 
-    // Validar selección de paciente/médico
+    // Validar paciente/médico
     if (!selectedPatientId.value) {
       Notify.create({
         message: "Por favor, selecciona un paciente.",
@@ -453,7 +469,7 @@ const onAppointmentAdded = async (e) => {
       throw new Error("Médico no seleccionado.");
     }
 
-    // Tomar tenant_id y userId del authStore (médico actual)
+    // Obtener tenant_id y userId del authStore
     const { useAuthStore } = await import("../stores/auth");
     const authStore = useAuthStore();
     const tenant_id = authStore.tenant_id;
@@ -481,17 +497,17 @@ const onAppointmentAdded = async (e) => {
       repeat: appointmentData.repeat || false,
       description: appointmentData.description || "",
       nombre: selectedPatientId.value, // ID del paciente
-      medico: selectedDoctorId.value, // ID del médico (puede ser el mismo user? o distinto)
+      medico: selectedDoctorId.value, // ID del médico
       tipoCita: appointmentData.tipoCita,
       tenant_id: tenant_id,
-      userId: userId, // El ID del médico que registra la cita
+      userId: userId,
       status: "Aceptada",
     };
 
     // Verificar superposición
     const hasOverlap = await checkAppointmentOverlap({
       ...newAppointment,
-      id: 0,
+      id: 0, // es nuevo
     });
     if (hasOverlap) {
       Notify.create({
@@ -502,23 +518,8 @@ const onAppointmentAdded = async (e) => {
       throw new Error("Superposición de citas detectada.");
     }
 
-    // Opción A: Insert directo a Supabase
-    // const { data, error } = await supabase
-    //   .from("appointments")
-    //   .insert([newAppointment])
-    //   .select();
-
-    // Opción B: Usar el store (más limpio)
-    const data = await appointmentsStore.addAppointment(newAppointment);
-
-    if (!data) {
-      Notify.create({
-        message: "No se pudo obtener la cita creada.",
-        color: "negative",
-        position: "top-right",
-      });
-      return;
-    }
+    // Guardar en BD (usando el store)
+    await appointmentsStore.addAppointment(newAppointment);
 
     Notify.create({
       message: "Cita agregada exitosamente.",
@@ -526,7 +527,7 @@ const onAppointmentAdded = async (e) => {
       position: "top-right",
     });
 
-    // Al refrescar
+    // Refrescar
     await appointmentsStore.fetchAppointments();
   } catch (error) {
     console.error("Error al agregar la cita:", error);
@@ -538,11 +539,12 @@ const onAppointmentAdded = async (e) => {
   }
 };
 
-// Actualizar la cita
+// Actualizar cita
 const onAppointmentUpdated = async (e) => {
   try {
     const appointmentData = e.appointmentData;
 
+    // Construimos el objeto para update
     const updatedAppointment = {
       title: appointmentData.title || appointmentData.text,
       startDate: appointmentData.allDay
@@ -573,14 +575,7 @@ const onAppointmentUpdated = async (e) => {
       throw new Error("Superposición de citas detectada.");
     }
 
-    // Opción A: update directo
-    // const { data, error } = await supabase
-    //   .from("appointments")
-    //   .update(updatedAppointment)
-    //   .eq("id", appointmentData.id)
-    //   .select();
-
-    // Opción B: Usar store
+    // Usar el store para actualizar
     await appointmentsStore.updateAppointment(
       appointmentData.id,
       updatedAppointment
@@ -591,7 +586,6 @@ const onAppointmentUpdated = async (e) => {
       color: "positive",
       position: "top-right",
     });
-    // Volvemos a cargar la lista
     await appointmentsStore.fetchAppointments();
   } catch (error) {
     console.error("Error al actualizar la cita:", error);
@@ -603,15 +597,10 @@ const onAppointmentUpdated = async (e) => {
   }
 };
 
-// Eliminar
+// Eliminar cita
 const onAppointmentDeleted = async (e) => {
   try {
     const { id } = e.appointmentData;
-
-    // Opción A: directo
-    // const { error } = await supabase.from("appointments").delete().eq("id", id);
-
-    // Opción B: store
     await appointmentsStore.deleteAppointment(id);
 
     Notify.create({
@@ -619,7 +608,6 @@ const onAppointmentDeleted = async (e) => {
       color: "positive",
       position: "top-right",
     });
-
     await appointmentsStore.fetchAppointments();
   } catch (error) {
     console.error("Error al eliminar la cita:", error);
@@ -631,7 +619,9 @@ const onAppointmentDeleted = async (e) => {
   }
 };
 
-// Seleccionar paciente
+/* -------------------------------------
+   Selección de paciente
+------------------------------------- */
 const onPatientSelected = (e) => {
   const patient = e.selectedRowsData[0];
   if (patient) {
@@ -650,7 +640,9 @@ const onPatientSelected = (e) => {
   }
 };
 
-// Seleccionar médico
+/* -------------------------------------
+   Selección de médico
+------------------------------------- */
 const onDoctorSelected = (e) => {
   const doctor = e.selectedRowsData[0];
   if (doctor) {
@@ -669,21 +661,31 @@ const onDoctorSelected = (e) => {
   }
 };
 
-// Colorear la cita según el tipo
+/* -------------------------------------
+   Colorear la cita según el tipo
+   (Usamos la columna 'color' de tu tabla)
+------------------------------------- */
 const onAppointmentRendered = (e) => {
   const appointmentData = e.appointmentData;
   const appointmentElement = e.appointmentElement;
 
+  // Obtenemos el id del tipo de cita
   const tipoCitaId = parseInt(appointmentData.tipoCita, 10);
+
+  // Buscamos en 'citas.value' el que coincida
   const tipoCitaObj = citas.value.find((c) => c.id === tipoCitaId);
 
-  let descripcionTipoCita = tipoCitaObj ? tipoCitaObj.descripcion : null;
-  const bgColor = colorMapping[descripcionTipoCita] || "#FFFFFF";
+  // Si existe, tomamos su color; si no, un color por defecto
+  const bgColor =
+    tipoCitaObj && tipoCitaObj.color ? tipoCitaObj.color : "#FFFFFF";
+
   appointmentElement.style.backgroundColor = bgColor;
   appointmentElement.style.color = "#000";
 };
 
-// onMounted: cargar datos iniciales
+/* -------------------------------------
+   onMounted: cargar datos iniciales
+------------------------------------- */
 onMounted(async () => {
   try {
     const { useAuthStore } = await import("../stores/auth");
@@ -706,7 +708,7 @@ onMounted(async () => {
       throw new Error("tenant_id o userId faltante.");
     }
 
-    // Cargamos citas, especialidades, médicos, etc.
+    // Cargar datos de la BD
     await appointmentsStore.fetchAppointments();
     await especialidadMedicaStore.cargarEspecialidades();
     await medicoStore.cargarMedicos();
@@ -727,6 +729,16 @@ onMounted(async () => {
     isPacientesLoading.value = false;
   }
 });
+
+/* -------------------------------------
+   Funciones para abrir modales
+------------------------------------- */
+const openPatientModal = () => {
+  isModalOpen.value = true;
+};
+const openDoctorModal = () => {
+  isDoctorModalOpen.value = true;
+};
 </script>
 
 <style scoped>

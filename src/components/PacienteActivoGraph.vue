@@ -7,6 +7,7 @@
         type="donut"
         :options="chartOptions"
         :series="series"
+        height="300"
       />
     </div>
   </div>
@@ -47,8 +48,6 @@ const labels = computed(() => {
 const chartOptions = computed(() => ({
   chart: {
     type: "donut",
-    width: 350,
-    height: 220,
   },
   labels: labels.value,
   dataLabels: {
@@ -85,7 +84,7 @@ const chartOptions = computed(() => ({
   plotOptions: {
     pie: {
       donut: {
-        size: "45%",
+        size: "35%",
       },
     },
   },

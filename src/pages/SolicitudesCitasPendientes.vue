@@ -253,7 +253,7 @@ const pendingAppointments = computed(() => {
 });
 
 // Ancho responsivo para el DataGrid
-const responsiveWidth = ref(1600);
+const responsiveWidth = ref(1685);
 
 /* --- ESTADOS PARA EDITAR CITA --- */
 const showEditModal = ref(false);

@@ -1,6 +1,6 @@
 <template>
   <div class="citas-agendadas-container">
-    <h5 class="title">Últimas 8 Solicitudes de Citas (autoCita) - Filtradas</h5>
+    <h5 class="title">Últimas 6 Solicitudes de Citas (autoCita) - Filtradas</h5>
 
     <!-- Botones para filtrar según status -->
     <div class="filter-buttons">
@@ -29,7 +29,7 @@
         <h6>Columna 1</h6>
         <ul>
           <li
-            v-for="item in last8AutoAppointments.slice(0, 4)"
+            v-for="item in last8AutoAppointments.slice(0, 3)"
             :key="item.id"
             class="appointment-item"
           >
@@ -46,14 +46,13 @@
         <h6>Columna 2</h6>
         <ul>
           <li
-            v-for="item in last8AutoAppointments.slice(4, 8)"
+            v-for="item in last8AutoAppointments.slice(3, 6)"
             :key="item.id"
             class="appointment-item"
           >
             <strong>{{ item.title }}</strong
             ><br />
-            <span class="status">{{ item.status }}</span
-            ><br />
+
             <span class="date">{{ item.startDate }}</span>
           </li>
         </ul>
@@ -86,7 +85,6 @@ onMounted(() => {
 <style scoped>
 .citas-agendadas-container {
   padding: 20px;
-  background-color: #ffffff;
   border-radius: 12px;
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   /* Ajusta el ancho según el grid del dashboard */
@@ -135,7 +133,7 @@ ul {
 }
 
 .appointment-item {
-  background-color: #f9f9f9;
+  background-color: #f8f4f4;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
