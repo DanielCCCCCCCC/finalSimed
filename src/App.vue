@@ -5,7 +5,31 @@
 <script setup>
 import "devextreme/dist/css/dx.light.css";
 import { useThemeStore } from "./stores/themeStore";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+
+import { useAppointmentsStore } from "./stores/AppointmentsStore";
+import { Notify } from "quasar";
+
+/* -------------------------------------
+   Datos y Estados Reactivos
+------------------------------------- */
+const store = useAppointmentsStore();
+const cargando = ref(true);
+
+onMounted(async () => {
+  try {
+    await store?.fetchAppointments();
+  } catch (error) {
+    Notify.create({
+      message: "Error al cargar las citas.",
+      color: "negative",
+      position: "top-right",
+    });
+    console.error("Error al cargar citas:", error);
+  } finally {
+    cargando.value = false;
+  }
+});
 
 const themeStore = useThemeStore();
 onMounted(async () => {

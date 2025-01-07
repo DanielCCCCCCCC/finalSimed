@@ -148,6 +148,7 @@
                     data-type="string"
                     :allow-sorting="true"
                   />
+
                   <DxColumn
                     data-field="direccion"
                     caption="Dirección"

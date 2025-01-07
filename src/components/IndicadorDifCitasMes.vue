@@ -78,13 +78,14 @@ import { computed, onMounted, ref } from "vue";
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import { Notify } from "quasar";
 import ApexCharts from "vue3-apexcharts"; // Asegúrate de importar ApexCharts si lo usas localmente
+import { storeToRefs } from "pinia";
 
 /* -------------------------------------
    Datos y Estados Reactivos
 ------------------------------------- */
 const store = useAppointmentsStore();
 const cargando = ref(true);
-
+const { appointments } = storeToRefs(store);
 onMounted(async () => {
   try {
     await store?.fetchAppointments();

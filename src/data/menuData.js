@@ -80,23 +80,23 @@ export let menuData = [
     ],
   },
   // Sección de médicos
-  {
-    title: "Médicos",
-    icon: "ti-briefcase",
-    type: "sub",
-    active: false,
-    defaultActive: false,
-    roles: ["admin"],
-    children: [
-      {
-        path: "/listamedicos",
-        title: "Médicos",
-        type: "link",
-        active: false,
-        defaultActive: false,
-      },
-    ],
-  },
+  // {
+  //   title: "Médicos",
+  //   icon: "ti-briefcase",
+  //   type: "sub",
+  //   active: false,
+  //   defaultActive: false,
+  //   roles: ["admin"],
+  //   children: [
+  //     {
+  //       path: "/listamedicos",
+  //       title: "Médicos",
+  //       type: "link",
+  //       active: false,
+  //       defaultActive: false,
+  //     },
+  //   ],
+  // },
   // Sección de directorios
   {
     title: "Directorios",
@@ -113,6 +113,13 @@ export let menuData = [
       //   active: false,
       //   defaultActive: false,
       // },
+      {
+        path: "/listamedicos",
+        title: "Médicos",
+        type: "link",
+        active: false,
+        defaultActive: false,
+      },
       {
         path: "/listadomedicamentos",
         title: "Medicamentos",
@@ -269,8 +276,8 @@ export let menuData = [
     ],
   },
   {
-    title: "Configuraciones",
-    icon: "ti-info",
+    title: "Organización",
+    icon: "ri-organization-chart",
     type: "sub",
     active: false,
     defaultActive: false,

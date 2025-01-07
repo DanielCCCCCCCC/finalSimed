@@ -22,19 +22,12 @@
                   <i class="ri-phone-line"></i>
                   {{ organization.phone }}
                 </p>
-                <p v-if="organization.email">
-                  <i class="ri-mail-line"></i>
-                  {{ organization.email }}
-                </p>
               </div>
 
               <!-- Información del Médico -->
               <div class="col-md-6 mb-4">
                 <h5>Dr(a). {{ doctorData.nombreCompleto }}</h5>
-                <p>
-                  <i class="ri-mail-line"></i>
-                  {{ doctorData.email }}
-                </p>
+
                 <p>
                   <i class="ri-phone-line"></i>
                   {{ doctorData.telefono }}
@@ -50,10 +43,11 @@
             <form @submit.prevent="handleSubmit">
               <!-- Campo de Identificación (DNI) -->
               <div class="row">
-                <div class="col-md-12 mb-3">
-                  <label for="identificacion" class="form-label"
-                    >Identificación</label
-                  >
+                <!-- Campo de Identificación (DNI) -->
+                <div class="col-md-6 mb-3">
+                  <label for="identificacion" class="form-label">
+                    Identificación<span class="required">*</span>
+                  </label>
                   <div class="input-group">
                     <span class="input-group-text">
                       <i class="ri-id-card-line"></i>
@@ -74,19 +68,16 @@
                     {{ errors.identificacion }}
                   </div>
                 </div>
-              </div>
 
-              <div class="row">
                 <!-- Nombre del Paciente (UI) -->
                 <div class="col-md-6 mb-3">
-                  <label for="patientNameUI" class="form-label"
-                    >Nombre del Paciente</label
-                  >
+                  <label for="patientNameUI" class="form-label">
+                    Nombre del Paciente<span class="required">*</span>
+                  </label>
                   <div class="input-group">
                     <span class="input-group-text">
                       <i class="ri-user-line"></i>
                     </span>
-                    <!-- MOSTRAMOS el nombre real en la UI -->
                     <input
                       type="text"
                       id="patientNameUI"
@@ -96,28 +87,12 @@
                       required
                     />
                   </div>
-                </div>
-
-                <!-- Correo Electrónico -->
-                <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label"
-                    >Correo Electrónico</label
+                  <!-- Opcional: Mensaje de error para Nombre del Paciente -->
+                  <div
+                    v-if="errors.patientNameUI"
+                    class="text-danger fs-13 mt-1"
                   >
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="ri-mail-line"></i>
-                    </span>
-                    <input
-                      type="email"
-                      id="email"
-                      v-model="form.email"
-                      class="form-control"
-                      placeholder="Ingrese el correo electrónico"
-                      required
-                    />
-                  </div>
-                  <div v-if="errors.email" class="text-danger fs-13 mt-1">
-                    {{ errors.email }}
+                    {{ errors.patientNameUI }}
                   </div>
                 </div>
               </div>
@@ -160,22 +135,6 @@
                   </select>
                   <div v-if="errors.time" class="text-danger fs-13 mt-1">
                     {{ errors.time }}
-                  </div>
-                </div>
-
-                <!-- Hora Final de la Cita (Solo Lectura) -->
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label for="endTime" class="form-label">Hora Final</label>
-                    <input
-                      type="time"
-                      id="endTime"
-                      v-model="endTime"
-                      class="form-control"
-                      readonly
-                      placeholder="Hora Final"
-                      required
-                    />
                   </div>
                 </div>
               </div>
@@ -323,7 +282,6 @@ const form = ref({
   identificacion: "",
   patientName: "", // ID del paciente
   patientNameUI: "", // Nombre real
-  email: "",
   date: "",
   time: "",
   description: "",
@@ -333,7 +291,6 @@ const form = ref({
 // Errores
 const errors = ref({
   identificacion: "",
-  email: "",
   date: "",
   time: "",
   phone: "",
@@ -355,16 +312,6 @@ const validateIdentificacion = () => {
   }
 };
 
-const validateEmail = () => {
-  const email = form.value.email;
-  if (!email) {
-    errors.value.email = "Correo es requerido";
-  } else if (!/.+@.+\..+/.test(email)) {
-    errors.value.email = "Correo inválido";
-  } else {
-    errors.value.email = "";
-  }
-};
 const validateDate = () => {
   const date = form.value.date;
   if (!date) {
@@ -400,7 +347,7 @@ const validatePhone = () => {
 
 /**
  * Buscar Paciente por DNI.
- * - Si se encuentra, llenamos form.patientName (ID), form.patientNameUI (nombres) y form.email.
+ * - Si se encuentra, llenamos form.patientName (ID), form.patientNameUI (nombres) .
  * - Si no se encuentra, reseteamos campos.
  */
 async function buscarPaciente(dni) {
@@ -422,22 +369,19 @@ async function buscarPaciente(dni) {
     if (paciente) {
       form.value.patientName = paciente.id || "";
       form.value.patientNameUI = paciente.nombres || "";
-      form.value.email = paciente.email ?? "";
       console.log(
-        `[buscarPaciente] Paciente encontrado => ID: ${paciente.id}, Nombres: ${paciente.nombres}, Email: ${paciente.email}`
+        `[buscarPaciente] Paciente encontrado => ID: ${paciente.id}, Nombres: ${paciente.nombres}`
       );
     } else {
       console.log(`[buscarPaciente] No se encontró paciente con DNI => ${dni}`);
       form.value.patientName = "";
       form.value.patientNameUI = "";
-      form.value.email = "";
     }
   } catch (err) {
     console.error("[buscarPaciente] Error al buscar paciente por DNI:", err);
     // Reset en caso de error
     form.value.patientName = "";
     form.value.patientNameUI = "";
-    form.value.email = "";
   }
 }
 
@@ -463,7 +407,6 @@ watch(
       );
       form.value.patientName = "";
       form.value.patientNameUI = "";
-      form.value.email = "";
     }
   }
 );
@@ -476,7 +419,7 @@ async function fetchDoctorData() {
   }
   const { data, error } = await supabase
     .from("users")
-    .select("nombreCompleto, email, direccion, telefono")
+    .select("nombreCompleto, direccion, telefono")
     .eq("id", doctorId.value)
     .single();
 
@@ -520,7 +463,6 @@ async function fetchOrganizationInfo() {
         name: data.nombre,
         address: data.direccion,
         phone: data.numero_telefono,
-        email: data.email || "",
       };
     }
   } catch (err) {
@@ -628,14 +570,12 @@ function calculateEndTime(startTime) {
 // --- Manejo del Submit ---
 async function handleSubmit() {
   validateIdentificacion();
-  validateEmail();
   validateDate();
   validateTime();
   validatePhone();
 
   if (
     errors.value.identificacion ||
-    errors.value.email ||
     errors.value.date ||
     errors.value.time ||
     errors.value.phone
@@ -676,7 +616,6 @@ async function handleSubmit() {
     tipoCita: "Consulta",
     userId: doctorId.value,
     tenant_id: tenant_id.value,
-    patientemail: form.value.email,
     patientphone: form.value.phone,
     identificacion: form.value.identificacion,
     status: "Pendiente",
@@ -705,7 +644,6 @@ async function handleSubmit() {
         identificacion: "",
         patientName: "",
         patientNameUI: "",
-        email: "",
         date: "",
         time: "",
         description: "",
@@ -714,7 +652,6 @@ async function handleSubmit() {
       availableTimes.value = [];
       errors.value = {
         identificacion: "",
-        email: "",
         date: "",
         time: "",
         phone: "",
@@ -726,7 +663,7 @@ async function handleSubmit() {
   }
 }
 
-// --- WATCHERS de date, time, email, etc. ---
+// --- WATCHERS de date, time,  etc. ---
 watch(
   () => form.value.date,
   async () => {
@@ -754,13 +691,6 @@ watch(
   }
 );
 
-watch(
-  () => form.value.email,
-  () => {
-    validateEmail();
-  }
-);
-
 // --- Cambios en la ruta (doctorId) ---
 watch(
   () => route.params.userId,
@@ -775,7 +705,6 @@ async function reloadData() {
     identificacion: "",
     patientName: "",
     patientNameUI: "",
-    email: "",
     date: "",
     time: "",
     description: "",
@@ -786,7 +715,6 @@ async function reloadData() {
   availableTimes.value = [];
   errors.value = {
     identificacion: "",
-    email: "",
     date: "",
     time: "",
     phone: "",

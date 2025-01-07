@@ -5,7 +5,7 @@
       <div class="q-pb-md">
         <div class="row items-center">
           <div class="header-container">
-            <h4 class="header-title">Médicos referente o de cabecera</h4>
+            <h4 class="header-title">Directorio Medicos</h4>
             <p class="parrafo">Catálogo de médicos del centro médico</p>
           </div>
           <div>

@@ -7,8 +7,11 @@
       :time-zone="'America/Tegucigalpa'"
       :height="800"
       :cell-duration="15"
+      :show-all-day-panel="true"
       :start-day-hour="8"
       :end-day-hour="18"
+      :show-current-time-indicator="true"
+      :cross-scrolling-enabled="true"
       :views="views"
       :first-day-of-week="1"
       :onAppointmentAdded="onAppointmentAdded"
@@ -41,7 +44,7 @@
             <DxSearchPanel
               :width="300"
               :visible="true"
-              placeholder="Buscar Nombre, Apellido o Cédula"
+              placeholder="Buscar nombres, Apellido o Cédula"
             />
             <DxSelection mode="single" />
             <DxColumn data-field="nombres" caption="Nombres" />
@@ -81,6 +84,7 @@
               />
               <DxSelection mode="single" />
               <DxColumn data-field="nombre" caption="Nombre" />
+              <!-- Corrección aquí -->
               <DxColumn
                 data-field="especialidadDescripcion"
                 caption="Especialidad"
@@ -91,6 +95,112 @@
         <q-card-actions align="right">
           <q-btn flat label="Cerrar" @click="isDoctorModalOpen = false" />
         </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- Modal para crear nuevo paciente -->
+    <q-dialog v-model="isCreatePatientModalOpen" persistent>
+      <q-card style="width: 90%; max-width: 500px">
+        <q-card-section>
+          <div class="text-h6">Crear Nuevo Paciente</div>
+        </q-card-section>
+        <q-card-section>
+          <form @submit.prevent="submitNewPatient" class="patient-form">
+            <!-- Código de Paciente -->
+            <div class="form-group">
+              <label for="codigo"
+                >Código de Paciente<span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="codigo"
+                v-model="newPatient.codigo"
+                class="form-control"
+                placeholder="Ingrese el código de paciente"
+              />
+            </div>
+
+            <!-- Nombres -->
+            <div class="form-group">
+              <label for="nombres">Nombre<span class="required">*</span></label>
+              <input
+                type="text"
+                id="nombres"
+                v-model="newPatient.nombres"
+                class="form-control"
+                placeholder="Ingrese el nombre"
+              />
+            </div>
+
+            <!-- DNI -->
+            <div class="form-group">
+              <label for="dni">DNI</label>
+              <input
+                type="text"
+                id="dni"
+                v-model="newPatient.dni"
+                class="form-control"
+                placeholder="Ingrese el DNI"
+              />
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div class="form-group">
+              <label for="fechaNacimiento"
+                >Fecha de Nacimiento<span class="required">*</span></label
+              >
+              <input
+                type="date"
+                id="fechaNacimiento"
+                v-model="newPatient.fechaNacimiento"
+                class="form-control"
+              />
+            </div>
+
+            <!-- Sexo -->
+            <div class="form-group">
+              <label for="sexo"
+                >Seleccione un sexo<span class="required">*</span></label
+              >
+              <select id="sexo" v-model="newPatient.sexo" class="form-control">
+                <option value="" disabled>Seleccione un sexo</option>
+                <option
+                  v-for="option in sexOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group">
+              <label for="telPersonal">Teléfono</label>
+              <input
+                type="tel"
+                id="telPersonal"
+                v-model="newPatient.telPersonal"
+                class="form-control"
+                placeholder="Ingrese el teléfono personal"
+              />
+            </div>
+
+            <!-- Botones -->
+            <div class="form-actions">
+              <button
+                type="button"
+                @click="isCreatePatientModalOpen = false"
+                class="btn btn-cancel"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-submit bg-primary">
+                Crear
+              </button>
+            </div>
+          </form>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </div>
@@ -108,10 +218,10 @@ import {
   DxSearchPanel,
 } from "devextreme-vue/data-grid";
 
-import { supabase } from "../supabaseClient";
 import { Notify } from "quasar";
 import { onMounted, ref, computed } from "vue";
 import { storeToRefs } from "pinia";
+import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta es correcta
 
 /* -------------------------------------
    Imports de Stores (Pinia)
@@ -123,12 +233,20 @@ import {
   useTiposCitasStore,
 } from "../stores/ConfiMedicasStores";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useAuthStore } from "../stores/auth"; // Importación de useAuthStore
+
+/* -------------------------------------
+   Inicializar authStore y fichaIdentificacionStore
+------------------------------------- */
+const authStore = useAuthStore();
+const fichaIdentificacionStore = useFichaIdentificacionStore();
 
 /* -------------------------------------
    Variables reactivas para modales
 ------------------------------------- */
 const isModalOpen = ref(false);
 const isDoctorModalOpen = ref(false);
+const isCreatePatientModalOpen = ref(false); // Nueva variable para el modal de creación de pacientes
 const selectedPatient = ref(null);
 const selectedPatientId = ref(null);
 const selectedDoctor = ref(null);
@@ -140,6 +258,9 @@ const selectedDoctorId = ref(null);
 const appointmentForm = ref(null);
 const currentAppointmentData = ref(null);
 
+/* -------------------------------------
+   Estados de carga
+------------------------------------- */
 const isMedicosLoading = ref(true);
 const isEspecialidadesLoading = ref(true);
 const isPacientesLoading = ref(false);
@@ -151,7 +272,6 @@ const appointmentsStore = useAppointmentsStore();
 const medicoStore = useMedicoStore();
 const especialidadMedicaStore = useEspecialidadMedicaStore();
 const tiposCitasStore = useTiposCitasStore();
-const fichaIdentificacionStore = useFichaIdentificacionStore();
 
 /* -------------------------------------
    Desestructuramos las variables reactivas
@@ -159,7 +279,18 @@ const fichaIdentificacionStore = useFichaIdentificacionStore();
 const { medicos } = storeToRefs(medicoStore);
 const { especialidades } = storeToRefs(especialidadMedicaStore);
 const { citas } = storeToRefs(tiposCitasStore);
-const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
+const { formIdentificacion, buscarPacientePorDni } = storeToRefs(
+  fichaIdentificacionStore
+);
+
+/* -------------------------------------
+   Opciones para el campo "sexo"
+------------------------------------- */
+const sexOptions = [
+  { label: "Masculino", value: "Masculino" },
+  { label: "Femenino", value: "Femenino" },
+  { label: "Otro", value: "Otro" },
+];
 
 /* -------------------------------------
    Mapeamos especialidad con cada médico
@@ -189,26 +320,36 @@ const { appointments } = storeToRefs(appointmentsStore);
 ------------------------------------- */
 const currentDate = ref(new Date());
 const currentView = ref("day");
-const views = ["day", "week", "workWeek", "month", "agenda"];
+// const views = ["day", "week", "workWeek", "month", "agenda"];
+const views = [
+  { type: "day", name: "Día", cellDuration: 15 },
+  { type: "workWeek", name: "Días Laborales", cellDuration: 15 },
+  { type: "week", name: "Semana", cellDuration: 15 },
+];
 
 /**
  * Filtramos SOLO las "Aceptadas"
- * y mapeamos la info del paciente al texto de la cita.
+ * y mapeamos la info del paciente y médico al texto de la cita.
  */
 const computedAppointments = computed(() =>
   appointments.value
     .filter((appt) => appt.status === "Aceptada")
     .map((appointment) => {
-      const paciente = formIdentificacion.value.find(
-        (p) => p.id === parseInt(appointment.nombre)
+      const pacienteId = parseInt(appointment.nombre, 10); // Convertir a entero
+      const paciente = fichaIdentificacionStore.formIdentificacion.find(
+        (p) => p.id === pacienteId
       );
-      const nombrePaciente = paciente
+      const nombresPaciente = paciente
         ? `${paciente.nombres}`
         : "Paciente no asignado";
 
+      const medicoId = parseInt(appointment.medico, 10); // Convertir a entero
+      const medico = medicos.value.find((m) => m.id === medicoId);
+      const nombreMedico = medico ? `${medico.nombre}` : "Médico no asignado";
+
       return {
         ...appointment,
-        text: `${appointment.title} - ${nombrePaciente}`,
+        text: `${appointment.title} - ${nombresPaciente} - ${nombreMedico}`,
         startDate: new Date(appointment.startDate),
         endDate: new Date(appointment.endDate),
       };
@@ -244,7 +385,7 @@ const formatDate = (date) => {
    (paciente y/o médico)
 ------------------------------------- */
 const checkAppointmentOverlap = async (appointment) => {
-  const { startDate, endDate, medico, nombre, id } = appointment;
+  const { startDate, endDate, medico, nombre, id } = appointment; // 'nombre' y 'medico' son cadenas
 
   const start = formatDate(startDate);
   const end = formatDate(endDate);
@@ -253,9 +394,8 @@ const checkAppointmentOverlap = async (appointment) => {
     .from("appointments")
     .select("*")
     .neq("id", id || 0)
-    // En este ejemplo solo verificamos superposición por médico,
-    // si deseas también por paciente, podrías usar or(`medico.eq.${medico},nombre.eq.${nombre}`)
-    .or(`medico.eq.${medico}`)
+    // Verificar superposición por médico y paciente
+    .or(`medico.eq.${medico},nombre.eq.${nombre}`)
     .lt("startDate", end)
     .gt("endDate", start);
 
@@ -278,21 +418,23 @@ const onAppointmentFormOpening = (e) => {
 
   // Cargar info de paciente/doctor si ya viene en la cita
   if (currentAppointmentData.value.nombre) {
-    const pac = formIdentificacion.value.find(
-      (p) => p.id === parseInt(currentAppointmentData.value.nombre)
+    // 'nombre' es cadena de ID
+    const pacienteId = parseInt(currentAppointmentData.value.nombre, 10);
+    const pac = fichaIdentificacionStore.formIdentificacion.find(
+      (p) => p.id === pacienteId
     );
-    // if (pac) {
-    //   selectedPatient.value = `${pac.nombres} ${pac.apellidos}`;
-    //   selectedPatientId.value = pac.id;
-    // } else {
-    //   selectedPatient.value = "No seleccionado";
-    //   selectedPatientId.value = null;
-    // }
+    if (pac) {
+      selectedPatient.value = `${pac.nombres}`;
+      selectedPatientId.value = pac.id;
+    } else {
+      selectedPatient.value = "No seleccionado";
+      selectedPatientId.value = null;
+    }
   }
   if (currentAppointmentData.value.medico) {
-    const doc = medicosConEspecialidad.value.find(
-      (d) => d.id === parseInt(currentAppointmentData.value.medico)
-    );
+    // 'medico' es cadena de ID
+    const medicoId = parseInt(currentAppointmentData.value.medico, 10);
+    const doc = medicosConEspecialidad.value.find((d) => d.id === medicoId);
     if (doc) {
       selectedDoctor.value = doc.nombre;
       selectedDoctorId.value = doc.id;
@@ -400,11 +542,22 @@ const onAppointmentFormOpening = (e) => {
           itemType: "simple",
           template: () => {
             const container = document.createElement("div");
-            const button = document.createElement("button");
-            button.textContent = "Seleccionar Paciente";
-            button.className = "btn btn-primary";
-            button.onclick = () => openPatientModal();
-            container.appendChild(button);
+            container.style.display = "flex";
+            container.style.justifyContent = "flex-start"; // Alinear a la izquierda
+            container.style.gap = "8px"; // Espaciado entre botones
+
+            const selectButton = document.createElement("button");
+            selectButton.textContent = "Seleccionar Paciente";
+            selectButton.className = "btn btn-primary me-2";
+            selectButton.onclick = () => openPatientModal();
+
+            const createButton = document.createElement("button");
+            createButton.textContent = "Crear Paciente";
+            createButton.className = "btn btn-success";
+            createButton.onclick = () => openCreatePatientModal();
+
+            container.appendChild(selectButton);
+            container.appendChild(createButton);
             return container;
           },
         },
@@ -439,6 +592,34 @@ const onAppointmentFormOpening = (e) => {
         },
       ],
     },
+    // Nuevo Grupo para Botones en la Parte Inferior del Modal
+    // {
+    //   itemType: "group",
+    //   colCount: 2,
+    //   items: [
+    //     {
+    //       itemType: "empty",
+    //       colSpan: 1,
+    //     },
+    //     {
+    //       itemType: "simple",
+    //       template: () => {
+    //         const container = document.createElement("div");
+    //         container.style.display = "flex";
+    //         container.style.justifyContent = "flex-start"; // Alinear a la izquierda
+    //         container.style.marginTop = "20px"; // Espaciado superior
+
+    //         const createButton = document.createElement("button");
+    //         createButton.textContent = "Crear Paciente";
+    //         createButton.className = "btn btn-success";
+    //         createButton.onclick = () => openCreatePatientModal();
+
+    //         container.appendChild(createButton);
+    //         return container;
+    //       },
+    //     },
+    //   ],
+    // },
   ]);
 };
 
@@ -470,12 +651,10 @@ const onAppointmentAdded = async (e) => {
     }
 
     // Obtener tenant_id y userId del authStore
-    const { useAuthStore } = await import("../stores/auth");
-    const authStore = useAuthStore();
-    const tenant_id = authStore.tenant_id;
-    const userId = authStore.user?.id;
+    const tenant_id_val = authStore.tenant_id;
+    const userId_val = authStore.userId;
 
-    if (!tenant_id || !userId) {
+    if (!tenant_id_val || !userId_val) {
       Notify.create({
         message: "No se encontraron datos de usuario o tenant.",
         color: "negative",
@@ -496,11 +675,11 @@ const onAppointmentAdded = async (e) => {
       allDay: appointmentData.allDay || false,
       repeat: appointmentData.repeat || false,
       description: appointmentData.description || "",
-      nombre: selectedPatientId.value, // ID del paciente
-      medico: selectedDoctorId.value, // ID del médico
+      nombre: selectedPatientId.value.toString(), // Asignar ID como cadena
+      medico: selectedDoctorId.value.toString(), // Asignar ID como cadena
       tipoCita: appointmentData.tipoCita,
-      tenant_id: tenant_id,
-      userId: userId,
+      tenant_id: tenant_id_val,
+      userId: userId_val,
       status: "Aceptada",
     };
 
@@ -556,8 +735,12 @@ const onAppointmentUpdated = async (e) => {
       allDay: appointmentData.allDay || false,
       repeat: appointmentData.repeat || false,
       description: appointmentData.description || "",
-      nombre: selectedPatientId.value || appointmentData.nombre,
-      medico: selectedDoctorId.value || appointmentData.medico,
+      nombre: selectedPatientId.value
+        ? selectedPatientId.value.toString()
+        : appointmentData.nombre, // Asignar ID como cadena si existe
+      medico: selectedDoctorId.value
+        ? selectedDoctorId.value.toString()
+        : appointmentData.medico, // Asignar ID como cadena si existe
       tipoCita: appointmentData.tipoCita,
     };
 
@@ -625,12 +808,12 @@ const onAppointmentDeleted = async (e) => {
 const onPatientSelected = (e) => {
   const patient = e.selectedRowsData[0];
   if (patient) {
-    const { nombres, id } = patient;
-    selectedPatient.value = `${nombres} `;
+    const { nombres, apellidos, id } = patient;
+    selectedPatient.value = `${nombres} ${apellidos || ""}`;
     selectedPatientId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.nombre = id;
+      currentAppointmentData.value.nombre = id.toString(); // Asignar ID como cadena
       appointmentForm.value.updateData(
         "selectedPatientName",
         selectedPatient.value
@@ -646,12 +829,13 @@ const onPatientSelected = (e) => {
 const onDoctorSelected = (e) => {
   const doctor = e.selectedRowsData[0];
   if (doctor) {
+    console.log("Doctor seleccionado:", doctor); // Para depuración
     const { nombre, id } = doctor;
     selectedDoctor.value = nombre;
     selectedDoctorId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.medico = id;
+      currentAppointmentData.value.medico = id.toString(); // Asignar ID como cadena
       appointmentForm.value.updateData(
         "selectedDoctorName",
         selectedDoctor.value
@@ -688,18 +872,16 @@ const onAppointmentRendered = (e) => {
 ------------------------------------- */
 onMounted(async () => {
   try {
-    const { useAuthStore } = await import("../stores/auth");
-    const authStore = useAuthStore();
-    await authStore.initialize();
+    await authStore.initialize(); // Inicializar authStore
 
     if (!authStore?.user) {
       throw new Error("El usuario no está autenticado.");
     }
 
-    const tenant_id = authStore?.tenant_id;
-    const userId = authStore?.user?.id;
+    const tenant_id_val = authStore.tenant_id;
+    const userId_val = authStore.userId;
 
-    if (!tenant_id) {
+    if (!tenant_id_val) {
       Notify.create({
         message: "No se encontraron datos de usuario o tenant.",
         color: "negative",
@@ -739,6 +921,132 @@ const openPatientModal = () => {
 const openDoctorModal = () => {
   isDoctorModalOpen.value = true;
 };
+const openCreatePatientModal = () => {
+  // Reiniciar los campos del nuevo paciente
+  newPatient.value = {
+    codigo: "",
+    nombres: "",
+    dni: "",
+    fechaNacimiento: "",
+    sexo: "",
+    telPersonal: "",
+  };
+  isCreatePatientModalOpen.value = true;
+};
+
+/* -------------------------------------
+   Funciones para crear un nuevo paciente
+------------------------------------- */
+const newPatient = ref({
+  codigo: "",
+  nombres: "",
+  dni: "",
+  fechaNacimiento: "",
+  sexo: "",
+  telPersonal: "",
+});
+
+const submitNewPatient = async () => {
+  try {
+    // Validar que los campos obligatorios estén llenos
+    if (!newPatient.value.codigo || !newPatient.value.codigo.trim()) {
+      Notify.create({
+        message: "El código es obligatorio.",
+        color: "warning",
+        position: "top-right",
+      });
+      return;
+    }
+    if (!newPatient.value.nombres || !newPatient.value.nombres.trim()) {
+      Notify.create({
+        message: "El nombre es obligatorio.",
+        color: "warning",
+        position: "top-right",
+      });
+      return;
+    }
+    if (!newPatient.value.fechaNacimiento) {
+      Notify.create({
+        message: "La fecha de nacimiento es obligatoria.",
+        color: "warning",
+        position: "top-right",
+      });
+      return;
+    }
+    if (!newPatient.value.dni) {
+      Notify.create({
+        message: "La identificación es obligatoria.",
+        color: "warning",
+        position: "top-right",
+      });
+      return;
+    }
+
+    // Depurar el valor de 'sexo'
+    console.log("Valor de sexo antes de asignar:", newPatient.value.sexo);
+
+    // Preparar los datos del nuevo paciente
+    const patientToCreate = {
+      codigo: newPatient.value.codigo.trim(),
+      nombres: newPatient.value.nombres.trim(),
+      fechaNacimiento: newPatient.value.fechaNacimiento,
+      sexo: newPatient.value.sexo || null, // Ahora 'sexo' es una cadena
+      dni: newPatient.value.dni.trim(),
+      telPersonal: newPatient.value.telPersonal
+        ? newPatient.value.telPersonal.trim()
+        : null,
+      tenant_id: authStore.tenant_id, // Asumiendo que el paciente está asociado a un tenant
+      userId: authStore.userId,
+      // Otros campos pueden ser agregados aquí si es necesario
+    };
+
+    // Usar el store para agregar el nuevo paciente
+    const result = await fichaIdentificacionStore.guardarDatos(patientToCreate);
+
+    if (result) {
+      Notify.create({
+        message: "Paciente creado exitosamente.",
+        color: "positive",
+        position: "top-right",
+      });
+
+      // Cerrar el modal
+      isCreatePatientModalOpen.value = false;
+
+      // Actualizar la lista de pacientes
+      await fichaIdentificacionStore.cargarDatos();
+
+      // Seleccionar automáticamente el nuevo paciente
+      const createdPatient =
+        fichaIdentificacionStore.formIdentificacion.slice(-1)[0];
+      if (createdPatient) {
+        selectedPatient.value = `${createdPatient.nombres}`;
+        selectedPatientId.value = createdPatient.id;
+
+        if (appointmentForm.value && currentAppointmentData.value) {
+          currentAppointmentData.value.nombre = createdPatient.id.toString(); // Asignar ID como cadena
+          appointmentForm.value.updateData(
+            "selectedPatientName",
+            selectedPatient.value
+          );
+        }
+      }
+    } else {
+      Notify.create({
+        message: "No se pudo crear el paciente.",
+        color: "negative",
+        position: "top-right",
+      });
+    }
+  } catch (error) {
+    console.error("Error al crear el paciente:", error);
+    Notify.create({
+      message: `Error al crear el paciente: ${error.message}`,
+      color: "negative",
+      position: "top-right",
+    });
+  }
+};
 </script>
 
 <style scoped>
@@ -747,7 +1055,7 @@ const openDoctorModal = () => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: relative; /* Para posicionamiento absoluto dentro del contenedor */
   margin: 25px 50px 0px 130px;
 }
 
@@ -770,5 +1078,43 @@ const openDoctorModal = () => {
   font-size: 18px;
   color: #1976d2;
   font-weight: bold;
+}
+
+/* Estilos para los botones */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dx-scheduler-date-table-cell {
+  border-bottom: 1px solid #e0e0e0; /* Línea divisoria entre celdas */
+}
+
+.dx-scheduler-time-panel-cell {
+  font-size: 12px; /* Tamaño del texto de las horas */
+  color: #666666; /* Color del texto */
+}
+
+.dx-scheduler-all-day-appointment {
+  background-color: #f0f8ff; /* Fondo para citas de todo el día */
+}
+
+.btn-primary {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.me-2 {
+  margin-right: 8px;
+}
+
+.q-ml-sm {
+  margin-left: 8px;
 }
 </style>
