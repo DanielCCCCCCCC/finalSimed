@@ -219,7 +219,7 @@ import {
 } from "devextreme-vue/data-grid";
 
 import { Notify } from "quasar";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta es correcta
 
@@ -233,6 +233,7 @@ import {
   useTiposCitasStore,
 } from "../stores/ConfiMedicasStores";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth"; // Importación de useAuthStore
 
 /* -------------------------------------
@@ -272,7 +273,7 @@ const appointmentsStore = useAppointmentsStore();
 const medicoStore = useMedicoStore();
 const especialidadMedicaStore = useEspecialidadMedicaStore();
 const tiposCitasStore = useTiposCitasStore();
-
+const crearUsuariosStore = useCrearUsuariosStore();
 /* -------------------------------------
    Desestructuramos las variables reactivas
 ------------------------------------- */
@@ -282,6 +283,8 @@ const { citas } = storeToRefs(tiposCitasStore);
 const { formIdentificacion, buscarPacientePorDni } = storeToRefs(
   fichaIdentificacionStore
 );
+const { users } = storeToRefs(crearUsuariosStore);
+const { appointments } = storeToRefs(appointmentsStore);
 
 /* -------------------------------------
    Opciones para el campo "sexo"
@@ -296,24 +299,40 @@ const sexOptions = [
    Mapeamos especialidad con cada médico
 ------------------------------------- */
 const medicosConEspecialidad = computed(() => {
-  if (!medicos.value || !especialidades.value) return [];
-  return medicos.value.map((medico) => {
-    const especialidad = especialidades.value.find(
-      (esp) => esp.id === medico.especialidadId
-    );
-    return {
-      ...medico,
-      especialidadDescripcion: especialidad
-        ? especialidad.descripcion
-        : "Especialidad no encontrada",
-    };
-  });
-});
+  if (!users.value || !especialidades.value) return [];
+  return users.value
+    .filter((usuario) => usuario.role === "medico" || usuario.esMarcado)
+    .map((medico) => {
+      // Depuración: mostrar valores de especialidadMedica para el médico
+      console.log(
+        `Medico ID: ${medico.id}, EspecialidadMedica: ${medico.especialidadMedica}`
+      );
 
-/* -------------------------------------
-   Store de citas (appointments)
-------------------------------------- */
-const { appointments } = storeToRefs(appointmentsStore);
+      // Buscar la especialidad que coincida con la propiedad especialidadMedica del médico
+      const especialidad = especialidades.value.find(
+        (esp) => esp.id === parseInt(medico.especialidadMedica)
+      );
+
+      // Depuración: si no se encuentra la especialidad, mostrar información
+      if (!especialidad) {
+        console.warn(
+          `No se encontró la especialidad para el médico ID: ${medico.especialidadMedica}`
+        );
+      }
+      console.log(
+        "especialidadDescripcion: ",
+        especialidad ? especialidad.descripcion : "Sin especialidad"
+      );
+      return {
+        ...medico,
+        // Usamos nombreCompleto como nombre para mostrar en la UI
+        nombre: medico.nombreCompleto,
+        especialidadDescripcion: especialidad
+          ? especialidad.descripcion
+          : "Especialidad no encontrada",
+      };
+    });
+});
 
 /* -------------------------------------
    Configuración del Scheduler
@@ -335,7 +354,7 @@ const computedAppointments = computed(() =>
   appointments.value
     .filter((appt) => appt.status === "Aceptada")
     .map((appointment) => {
-      const pacienteId = parseInt(appointment.nombre, 10); // Convertir a entero
+      const pacienteId = parseInt(appointment.nombre, 10);
       const paciente = fichaIdentificacionStore.formIdentificacion.find(
         (p) => p.id === pacienteId
       );
@@ -343,9 +362,14 @@ const computedAppointments = computed(() =>
         ? `${paciente.nombres}`
         : "Paciente no asignado";
 
-      const medicoId = parseInt(appointment.medico, 10); // Convertir a entero
-      const medico = medicos.value.find((m) => m.id === medicoId);
-      const nombreMedico = medico ? `${medico.nombre}` : "Médico no asignado";
+      // Aquí se usa directamente el UUID para buscar al médico
+      const medicoId = appointment.medico;
+      const medico = users.value.find(
+        (m) => m.role === "medico" && m.id === medicoId
+      );
+      const nombreMedico = medico
+        ? `${medico.nombreCompleto}`
+        : "Médico no asignado";
 
       return {
         ...appointment,
@@ -355,6 +379,9 @@ const computedAppointments = computed(() =>
       };
     })
 );
+watch(appointments, (newVal) => {
+  console.log("Citas actualizadas:", newVal);
+});
 
 /* -------------------------------------
    Helpers de fecha
@@ -385,8 +412,7 @@ const formatDate = (date) => {
    (paciente y/o médico)
 ------------------------------------- */
 const checkAppointmentOverlap = async (appointment) => {
-  const { startDate, endDate, medico, nombre, id } = appointment; // 'nombre' y 'medico' son cadenas
-
+  const { startDate, endDate, medico, nombre, id } = appointment;
   const start = formatDate(startDate);
   const end = formatDate(endDate);
 
@@ -394,7 +420,6 @@ const checkAppointmentOverlap = async (appointment) => {
     .from("appointments")
     .select("*")
     .neq("id", id || 0)
-    // Verificar superposición por médico y paciente
     .or(`medico.eq.${medico},nombre.eq.${nombre}`)
     .lt("startDate", end)
     .gt("endDate", start);
@@ -432,11 +457,11 @@ const onAppointmentFormOpening = (e) => {
     }
   }
   if (currentAppointmentData.value.medico) {
-    // 'medico' es cadena de ID
-    const medicoId = parseInt(currentAppointmentData.value.medico, 10);
+    // 'medico' es un UUID, usarlo directamente
+    const medicoId = currentAppointmentData.value.medico;
     const doc = medicosConEspecialidad.value.find((d) => d.id === medicoId);
     if (doc) {
-      selectedDoctor.value = doc.nombre;
+      selectedDoctor.value = doc.nombreCompleto; // Usar nombreCompleto si es necesario
       selectedDoctorId.value = doc.id;
     } else {
       selectedDoctor.value = "No seleccionado";
@@ -592,37 +617,29 @@ const onAppointmentFormOpening = (e) => {
         },
       ],
     },
-    // Nuevo Grupo para Botones en la Parte Inferior del Modal
-    // {
-    //   itemType: "group",
-    //   colCount: 2,
-    //   items: [
-    //     {
-    //       itemType: "empty",
-    //       colSpan: 1,
-    //     },
-    //     {
-    //       itemType: "simple",
-    //       template: () => {
-    //         const container = document.createElement("div");
-    //         container.style.display = "flex";
-    //         container.style.justifyContent = "flex-start"; // Alinear a la izquierda
-    //         container.style.marginTop = "20px"; // Espaciado superior
-
-    //         const createButton = document.createElement("button");
-    //         createButton.textContent = "Crear Paciente";
-    //         createButton.className = "btn btn-success";
-    //         createButton.onclick = () => openCreatePatientModal();
-
-    //         container.appendChild(createButton);
-    //         return container;
-    //       },
-    //     },
-    //   ],
-    // },
   ]);
 };
-
+const onMarcadoChange = async (usuario) => {
+  try {
+    await crearUsuariosStore.actualizarUsuario({
+      id: usuario.id,
+      esMarcado: usuario.esMarcado,
+    });
+    await crearUsuariosStore.cargarUsuarios();
+    Notify.create({
+      type: "positive",
+      message: `Bandera actualizada para ${usuario.nombreCompleto}.`,
+      position: "top-right",
+    });
+  } catch (error) {
+    console.error("Error actualizando bandera:", error);
+    Notify.create({
+      type: "negative",
+      message: "Error al actualizar la bandera.",
+      position: "top-right",
+    });
+  }
+};
 /* -------------------------------------
    CRUD de citas
 ------------------------------------- */
@@ -813,7 +830,7 @@ const onPatientSelected = (e) => {
     selectedPatientId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.nombre = id.toString(); // Asignar ID como cadena
+      currentAppointmentData.value.nombre = id.toString();
       appointmentForm.value.updateData(
         "selectedPatientName",
         selectedPatient.value
@@ -829,13 +846,13 @@ const onPatientSelected = (e) => {
 const onDoctorSelected = (e) => {
   const doctor = e.selectedRowsData[0];
   if (doctor) {
-    console.log("Doctor seleccionado:", doctor); // Para depuración
+    console.log("Doctor seleccionado:", doctor);
     const { nombre, id } = doctor;
     selectedDoctor.value = nombre;
     selectedDoctorId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.medico = id.toString(); // Asignar ID como cadena
+      currentAppointmentData.value.medico = id.toString();
       appointmentForm.value.updateData(
         "selectedDoctorName",
         selectedDoctor.value
@@ -844,7 +861,6 @@ const onDoctorSelected = (e) => {
     isDoctorModalOpen.value = false;
   }
 };
-
 /* -------------------------------------
    Colorear la cita según el tipo
    (Usamos la columna 'color' de tu tabla)
@@ -896,7 +912,8 @@ onMounted(async () => {
     await medicoStore.cargarMedicos();
     await tiposCitasStore.cargarCitas();
     await fichaIdentificacionStore.cargarDatos();
-
+    await crearUsuariosStore.cargarUsuarios();
+    console.log("Citas cargadas: ", appointments.value);
     console.log("Datos iniciales cargados correctamente.");
   } catch (error) {
     console.error("Error al cargar datos iniciales:", error);

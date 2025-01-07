@@ -115,21 +115,12 @@
                     <DxEmailRule />
                   </DxColumn>
 
-                  <!-- Contraseña (NO editable, oculto) -->
-                  <DxColumn
-                    data-field="password"
-                    caption="Contraseña"
-                    :allow-sorting="false"
-                    :allow-editing="true"
-                    data-type="string"
-                    :visible="false"
-                  />
-
                   <!-- Rol (editable) -->
                   <DxColumn
                     data-field="role"
                     caption="Rol"
-                    min-width="100"
+                    min-width="60"
+                    width="120"
                     data-type="string"
                     :allow-editing="true"
                   >
@@ -141,26 +132,62 @@
                     <DxRequiredRule />
                   </DxColumn>
 
+                  <!-- Especialidad Médica (editable) -->
+                  <!-- Especialidad Médica (editable) -->
+                  <DxColumn
+                    data-field="especialidadMedica"
+                    caption="Especialidad Médica"
+                    min-width="150"
+                    width="100"
+                    data-type="string"
+                    :allow-editing="true"
+                  >
+                    <DxLookup
+                      :data-source="especialidades"
+                      value-expr="id"
+                      display-expr="descripcion"
+                      @contentReady="onLookupContentReady"
+                    />
+                    <DxRequiredRule />
+                  </DxColumn>
+                  <!-- Nueva Columna: Bandera (Checkbox) -->
+                  <DxColumn
+                    data-field="esMarcado"
+                    caption="Bandera"
+                    data-type="boolean"
+                    min-width="100"
+                    :allow-editing="true"
+                    alignment="center"
+                  >
+                    <template #cellTemplate="{ data }">
+                      <q-checkbox
+                        v-model="data.esMarcado"
+                        @update:model-value="onMarcadoChange(data)"
+                        color="primary"
+                        dense
+                      />
+                    </template>
+                  </DxColumn>
                   <!-- Campos nuevos: nombreCompleto, direccion, telefono, observaciones -->
                   <DxColumn
                     data-field="nombreCompleto"
-                    caption="nombreCompleto"
+                    caption="Nombre Completo"
                     data-type="string"
                     :allow-sorting="true"
                   />
-
                   <DxColumn
                     data-field="direccion"
                     caption="Dirección"
                     data-type="string"
                     :allow-sorting="true"
+                    :visible="false"
                   />
                   <DxColumn
                     data-field="telefono"
                     caption="Teléfono"
                     data-type="string"
                     :allow-sorting="true"
-                    width="80px"
+                    width="120px"
                   />
                   <DxColumn
                     data-field="observaciones"
@@ -413,7 +440,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
@@ -423,6 +449,7 @@ import { storeToRefs } from "pinia";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth";
 import { useOrganizacionStore } from "../stores/organizacionStore";
+import { useEspecialidadMedicaStore } from "../stores/ConfiMedicasStores";
 
 // **Componentes**
 import PerfilMedico from "./PerfilMedico.vue";
@@ -455,12 +482,14 @@ const activeTab = ref("crearUsuarios");
 // Instancia Stores
 const crearUsuariosStore = useCrearUsuariosStore();
 const organizacionStore = useOrganizacionStore();
+const especialidadMedicaStore = useEspecialidadMedicaStore();
 const authStore = useAuthStore();
 
 // Desestructurar states
 const { users } = storeToRefs(crearUsuariosStore);
 const { organizaciones, horariosAtencion } = storeToRefs(organizacionStore);
 const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
+const { especialidades } = storeToRefs(especialidadMedicaStore);
 
 // Roles
 const rolesOptions = ref([
@@ -528,6 +557,19 @@ const onRowInserting = async (e) => {
     const generatedPassword = generateRandomPassword(12);
     console.log("Contraseña generada:", generatedPassword);
 
+    // Debug: Verificar los datos antes de enviar a la store
+    console.log("Datos de Usuario a Crear:", {
+      email: data.email,
+      role: data.role,
+      nombreCompleto: data.nombreCompleto,
+      direccion: data.direccion,
+      telefono: data.telefono,
+      observaciones: data.observaciones,
+      especialidadMedica: data.especialidadMedica,
+      esMarcado: data.esMarcado, // Nuevo campo
+      tenant_id: tenant_id.value,
+    });
+
     // Llamar a la función de la store
     await crearUsuariosStore.crearUsuario(data.email, generatedPassword, {
       role: data.role,
@@ -535,6 +577,8 @@ const onRowInserting = async (e) => {
       direccion: data.direccion,
       telefono: data.telefono,
       observaciones: data.observaciones,
+      especialidadMedica: data.especialidadMedica, // Asegurar que la especialidad se guarda
+      esMarcado: data.esMarcado, // Asegurar que la bandera se guarda
       tenant_id: tenant_id.value,
     });
 
@@ -563,6 +607,9 @@ const onRowInserting = async (e) => {
 const onRowUpdating = async (e) => {
   const { key, newData } = e;
   try {
+    // Debug: Verificar los datos antes de actualizar
+    console.log("Datos de Usuario a Actualizar:", { id: key, ...newData });
+
     await crearUsuariosStore.actualizarUsuario({ id: key, ...newData });
     e.cancel = true;
     await crearUsuariosStore.cargarUsuarios();
@@ -818,10 +865,15 @@ watch(
 onMounted(async () => {
   await crearUsuariosStore.cargarUsuarios();
   await organizacionStore.cargarOrganizaciones();
+  await especialidadMedicaStore.cargarEspecialidades();
+
+  // Debug: Verificar las especialidades cargadas
+  console.log("Especialidades Cargadas (onMounted):", especialidades.value);
 
   console.log("User Auth:", user.value?.email);
   console.log("Organizaciones: ", organizaciones.value);
   console.log("tenant_id onMounted:", tenant_id.value);
+  console.log("ESPECIALIDADES MEDICAS: ", especialidades.value);
 
   if (tenant_id.value) {
     await organizacionStore.cargarHorariosAtencion(tenant_id.value);
@@ -833,6 +885,35 @@ onMounted(async () => {
     });
   }
 });
+
+/** Método para depurar DxLookup */
+const onLookupContentReady = () => {
+  console.log("DxLookup de Especialidad Médica listo.");
+  console.log("Datos de Especialidades en Lookup:", especialidades.value);
+};
+
+/** Manejar cambios en el checkbox de bandera */
+const onFlaggedChange = async (user) => {
+  try {
+    await crearUsuariosStore.actualizarUsuario({
+      id: user.id,
+      esMarcado: user.esMarcado,
+    });
+    await crearUsuariosStore.cargarUsuarios();
+    $q.notify({
+      type: "positive",
+      message: `Bandera actualizada para ${user.nombreCompleto}.`,
+      position: "top-right",
+    });
+  } catch (error) {
+    console.error("Error actualizando bandera:", error);
+    $q.notify({
+      type: "negative",
+      message: "Error al actualizar la bandera.",
+      position: "top-right",
+    });
+  }
+};
 </script>
 
 <style scoped>
@@ -840,7 +921,7 @@ onMounted(async () => {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  width: 90%;
+  width: 99%;
   position: relative;
   left: 135px;
   height: 90vh; /* Ajusta según tu preferencia */
@@ -968,5 +1049,14 @@ onMounted(async () => {
   .custom-data-grid {
     min-height: 300px;
   }
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.text-h6 {
+  font-size: 1.25rem;
 }
 </style>

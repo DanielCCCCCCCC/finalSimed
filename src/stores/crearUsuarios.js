@@ -80,9 +80,6 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       if (!email || !password || !extraData.role) {
         throw new Error("Email, contraseña y role son obligatorios.");
       }
-      if (password.length < 6) {
-        throw new Error("La contraseña debe tener al menos 6 caracteres.");
-      }
 
       const tenant_id = authStore.tenant_id;
       if (!tenant_id) {
@@ -119,6 +116,8 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
           direccion: extraData.direccion || null,
           telefono: extraData.telefono || null,
           observaciones: extraData.observaciones || null,
+          especialidadMedica: extraData.especialidadMedica || null,
+          esMarcado: extraData.esMarcado,
         },
       ]);
 
@@ -166,6 +165,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       if (payload.role) {
         updates.role = payload.role;
       }
+
       if (payload.nombreCompleto !== undefined) {
         updates.nombreCompleto = payload.nombreCompleto;
       }
@@ -178,7 +178,9 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       if (payload.observaciones !== undefined) {
         updates.observaciones = payload.observaciones;
       }
-
+      if (payload.especialidadMedica !== undefined) {
+        updates.especialidadMedica = payload.especialidadMedica;
+      }
       // 1) Actualizar en la tabla `users`
       const { data: userData, error: updateError } = await supabase
         .from("users")
