@@ -1,15 +1,16 @@
 <template>
   <div class="scheduler-container">
     <DxScheduler
+      :show-all-day-panel="true"
+      :key="schedulerKey"
       :data-source="computedAppointments"
       :current-view="currentView"
       :current-date="currentDate"
       :time-zone="'America/Tegucigalpa'"
       :height="800"
-      :cell-duration="15"
-      :show-all-day-panel="true"
-      :start-day-hour="8"
-      :end-day-hour="18"
+      :cell-duration="cellDurationConfig"
+      :start-day-hour="startDayHourConfig"
+      :end-day-hour="endDayHourConfig"
       :show-current-time-indicator="true"
       :cross-scrolling-enabled="true"
       :views="views"
@@ -21,6 +22,12 @@
       @appointmentRendered="onAppointmentRendered"
       key-expr="id"
     >
+      <DxView
+        type="month"
+        name="Unlimited Mode"
+        max-appointments-per-cell="unlimited"
+      />
+      <DxView :max-appointments-per-cell="2" type="month" name="Numeric Mode" />
       <DxView type="day" name="Día" />
       <DxView type="workWeek" name="Días Laborales" />
       <DxView type="week" name="Semana" />
@@ -107,97 +114,137 @@
         <q-card-section>
           <form @submit.prevent="submitNewPatient" class="patient-form">
             <!-- Código de Paciente -->
-            <div class="form-group">
-              <label for="codigo"
-                >Código de Paciente<span class="required">*</span></label
-              >
-              <input
-                type="text"
-                id="codigo"
-                v-model="newPatient.codigo"
-                class="form-control"
-                placeholder="Ingrese el código de paciente"
-              />
+            <div class="mb-3">
+              <label for="codigo" class="form-label fs-14 text-dark">
+                Código de Paciente<span class="required">*</span>
+              </label>
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-id-card-line"></i>
+                </div>
+                <input
+                  type="text"
+                  id="codigo"
+                  v-model="newPatient.codigo"
+                  class="form-control"
+                  placeholder="Ingrese el código de paciente"
+                  required
+                />
+              </div>
             </div>
 
             <!-- Nombres -->
-            <div class="form-group">
-              <label for="nombres">Nombre<span class="required">*</span></label>
-              <input
-                type="text"
-                id="nombres"
-                v-model="newPatient.nombres"
-                class="form-control"
-                placeholder="Ingrese el nombre"
-              />
+            <div class="mb-3">
+              <label for="nombres" class="form-label fs-14 text-dark">
+                Nombre<span class="required">*</span>
+              </label>
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-user-line"></i>
+                </div>
+                <input
+                  type="text"
+                  id="nombres"
+                  v-model="newPatient.nombres"
+                  class="form-control"
+                  placeholder="Ingrese el nombre"
+                  required
+                />
+              </div>
             </div>
 
             <!-- DNI -->
-            <div class="form-group">
-              <label for="dni">DNI</label>
-              <input
-                type="text"
-                id="dni"
-                v-model="newPatient.dni"
-                class="form-control"
-                placeholder="Ingrese el DNI"
-              />
+            <div class="mb-3">
+              <label for="dni" class="form-label fs-14 text-dark">DNI</label>
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-file-user-line"></i>
+                </div>
+                <input
+                  type="text"
+                  id="dni"
+                  v-model="newPatient.dni"
+                  class="form-control"
+                  placeholder="Ingrese el DNI"
+                />
+              </div>
             </div>
 
             <!-- Fecha de Nacimiento -->
-            <div class="form-group">
-              <label for="fechaNacimiento"
-                >Fecha de Nacimiento<span class="required">*</span></label
-              >
-              <input
-                type="date"
-                id="fechaNacimiento"
-                v-model="newPatient.fechaNacimiento"
-                class="form-control"
-              />
+            <div class="mb-3">
+              <label for="fechaNacimiento" class="form-label fs-14 text-dark">
+                Fecha de Nacimiento<span class="required">*</span>
+              </label>
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-calendar-line"></i>
+                </div>
+                <input
+                  type="date"
+                  id="fechaNacimiento"
+                  v-model="newPatient.fechaNacimiento"
+                  class="form-control"
+                  required
+                />
+              </div>
             </div>
 
             <!-- Sexo -->
-            <div class="form-group">
-              <label for="sexo"
-                >Seleccione un sexo<span class="required">*</span></label
-              >
-              <select id="sexo" v-model="newPatient.sexo" class="form-control">
-                <option value="" disabled>Seleccione un sexo</option>
-                <option
-                  v-for="option in sexOptions"
-                  :key="option.value"
-                  :value="option.value"
+            <div class="mb-3">
+              <label for="sexo" class="form-label fs-14 text-dark">
+                Seleccione un sexo<span class="required">*</span>
+              </label>
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-genderless-line"></i>
+                </div>
+                <select
+                  id="sexo"
+                  v-model="newPatient.sexo"
+                  class="form-control"
+                  required
                 >
-                  {{ option.label }}
-                </option>
-              </select>
+                  <option value="" disabled>Seleccione un sexo</option>
+                  <option
+                    v-for="option in sexOptions"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
             </div>
 
             <!-- Teléfono -->
-            <div class="form-group">
-              <label for="telPersonal">Teléfono</label>
-              <input
-                type="tel"
-                id="telPersonal"
-                v-model="newPatient.telPersonal"
-                class="form-control"
-                placeholder="Ingrese el teléfono personal"
-              />
+            <div class="mb-3">
+              <label for="telPersonal" class="form-label fs-14 text-dark"
+                >Teléfono</label
+              >
+              <div class="input-group">
+                <div class="input-group-text">
+                  <i class="ri-phone-line"></i>
+                </div>
+                <input
+                  type="tel"
+                  id="telPersonal"
+                  v-model="newPatient.telPersonal"
+                  class="form-control"
+                  placeholder="Ingrese el teléfono personal"
+                />
+              </div>
             </div>
 
             <!-- Botones -->
-            <div class="form-actions">
+            <div class="d-flex justify-content-end mt-3">
               <button
                 type="button"
                 @click="isCreatePatientModalOpen = false"
-                class="btn btn-cancel"
+                class="btn btn-outline-secondary me-2"
               >
                 Cancelar
               </button>
-              <button type="submit" class="btn btn-submit bg-primary">
-                Crear
-              </button>
+              <button type="submit" class="btn btn-primary">Crear</button>
             </div>
           </form>
         </q-card-section>
@@ -235,7 +282,7 @@ import {
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth"; // Importación de useAuthStore
-
+import { useOrganizacionStore } from "../stores/organizacionStore";
 /* -------------------------------------
    Inicializar authStore y fichaIdentificacionStore
 ------------------------------------- */
@@ -274,6 +321,7 @@ const medicoStore = useMedicoStore();
 const especialidadMedicaStore = useEspecialidadMedicaStore();
 const tiposCitasStore = useTiposCitasStore();
 const crearUsuariosStore = useCrearUsuariosStore();
+const organizacionStore = useOrganizacionStore();
 /* -------------------------------------
    Desestructuramos las variables reactivas
 ------------------------------------- */
@@ -283,8 +331,29 @@ const { citas } = storeToRefs(tiposCitasStore);
 const { formIdentificacion, buscarPacientePorDni } = storeToRefs(
   fichaIdentificacionStore
 );
-const { users } = storeToRefs(crearUsuariosStore);
+const {
+  users,
+  horariosAtencion,
+  cellDurationConfig,
+  startDayHourConfig,
+  endDayHourConfig,
+} = storeToRefs(crearUsuariosStore);
 const { appointments } = storeToRefs(appointmentsStore);
+
+// Función para convertir hora a número decimal
+function convertirHoraANumero(horaStr) {
+  if (!horaStr) return null;
+  const [horas, minutos, segundos] = horaStr.split(":").map(Number);
+  return horas + minutos / 60 + segundos / 3600;
+}
+
+// Función para obtener el día de la semana en español
+// function obtenerDiaSemanaEnEspanol(fecha) {
+//   const opciones = { weekday: "long" };
+//   return fecha
+//     .toLocaleDateString("es-ES", opciones)
+//     .replace(/^\w/, (c) => c.toUpperCase());
+// }
 
 /* -------------------------------------
    Opciones para el campo "sexo"
@@ -339,12 +408,55 @@ const medicosConEspecialidad = computed(() => {
 ------------------------------------- */
 const currentDate = ref(new Date());
 const currentView = ref("day");
+
 // const views = ["day", "week", "workWeek", "month", "agenda"];
-const views = [
-  { type: "day", name: "Día", cellDuration: 15 },
-  { type: "workWeek", name: "Días Laborales", cellDuration: 15 },
-  { type: "week", name: "Semana", cellDuration: 15 },
-];
+// const views = [
+//   { type: "day", name: "Día", cellDuration: 15 },
+//   { type: "workWeek", name: "Días Laborales", cellDuration: 15 },
+//   { type: "week", name: "Semana", cellDuration: 15 },
+// ];
+
+function obtenerDiaSemanaEnEspanol(fecha) {
+  const opciones = { weekday: "long" };
+  // Obtener el día de la semana en español, con la primera letra en mayúscula
+  return fecha
+    .toLocaleDateString("es-ES", opciones)
+    .replace(/^\w/, (c) => c.toUpperCase());
+}
+
+watch(currentDate, (nuevaFecha) => {
+  // Obtener el nombre del día en español
+  const diaSemana = obtenerDiaSemanaEnEspanol(nuevaFecha);
+  console.log("Día actual:", diaSemana);
+
+  // Buscar el horario correspondiente en la lista de horariosAtencion
+  const horarioDelDia = horariosAtencion.value.find(
+    (h) => h.dia_semana.toLowerCase() === diaSemana.toLowerCase()
+  );
+
+  if (horarioDelDia) {
+    console.log("Horario encontrado para", diaSemana, ":", horarioDelDia);
+
+    if (horarioDelDia.intervalo_min) {
+      cellDurationConfig.value = horarioDelDia.intervalo_min;
+    }
+    if (horarioDelDia.hora_inicio) {
+      startDayHourConfig.value = convertirHoraANumero(
+        horarioDelDia.hora_inicio
+      );
+    }
+    if (horarioDelDia.hora_fin) {
+      endDayHourConfig.value = convertirHoraANumero(horarioDelDia.hora_fin);
+    }
+  } else {
+    console.warn("No se encontró horario para", diaSemana);
+  }
+});
+
+/* --- NUEVA SECCIÓN: clave reactiva para Scheduler --- */
+const schedulerKey = computed(() => {
+  return `${cellDurationConfig.value}-${startDayHourConfig.value}-${endDayHourConfig.value}`;
+});
 
 /**
  * Filtramos SOLO las "Aceptadas"
@@ -572,12 +684,12 @@ const onAppointmentFormOpening = (e) => {
             container.style.gap = "8px"; // Espaciado entre botones
 
             const selectButton = document.createElement("button");
-            selectButton.textContent = "Seleccionar Paciente";
-            selectButton.className = "btn btn-primary me-2";
+            selectButton.textContent = "Seleccionar ";
+            selectButton.className = "btn btn-primary fs-6 w-100 me-2";
             selectButton.onclick = () => openPatientModal();
 
             const createButton = document.createElement("button");
-            createButton.textContent = "Crear Paciente";
+            createButton.textContent = "Crear ";
             createButton.className = "btn btn-success";
             createButton.onclick = () => openCreatePatientModal();
 
@@ -913,6 +1025,7 @@ onMounted(async () => {
     await tiposCitasStore.cargarCitas();
     await fichaIdentificacionStore.cargarDatos();
     await crearUsuariosStore.cargarUsuarios();
+    await crearUsuariosStore.cargarHorariosAtencion();
     console.log("Citas cargadas: ", appointments.value);
     console.log("Datos iniciales cargados correctamente.");
   } catch (error) {
@@ -961,6 +1074,7 @@ const newPatient = ref({
   fechaNacimiento: "",
   sexo: "",
   telPersonal: "",
+  activo: false,
 });
 
 const submitNewPatient = async () => {
@@ -1014,6 +1128,7 @@ const submitNewPatient = async () => {
         : null,
       tenant_id: authStore.tenant_id, // Asumiendo que el paciente está asociado a un tenant
       userId: authStore.userId,
+      activo: true,
       // Otros campos pueden ser agregados aquí si es necesario
     };
 
@@ -1098,30 +1213,28 @@ const submitNewPatient = async () => {
 }
 
 /* Estilos para los botones */
-.btn {
+/* .btn {
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-}
+} */
 .dx-scheduler-date-table-cell {
-  border-bottom: 1px solid #e0e0e0; /* Línea divisoria entre celdas */
-}
-
-.dx-scheduler-time-panel-cell {
-  font-size: 12px; /* Tamaño del texto de las horas */
-  color: #666666; /* Color del texto */
+  border-bottom: 1px solid #052ace; /* Línea divisoria entre celdas */
 }
 
 .dx-scheduler-all-day-appointment {
-  background-color: #f0f8ff; /* Fondo para citas de todo el día */
+  background-color: #da1103; /* Fondo para citas de todo el día */
 }
 
-.btn-primary {
+/* .btn-primary {
   background-color: #1976d2;
   color: #fff;
+} */
+.btnModalPaciente {
+  font-size: 8px;
+  width: 250px;
 }
-
 .btn-success {
   background-color: #4caf50;
   color: #fff;

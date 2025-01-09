@@ -301,35 +301,13 @@ const currentUser = computed(() => {
   if (!user.value?.id) return null;
   return users.value.find((u) => u.id === user.value.id) || null;
 });
-
 const displayName = computed(() => {
-  const r = role.value; // rol actual (admin, medico, etc.)
-  if (!r) {
-    // si no hay rol, fallback
-    return user.value?.email ?? "Usuario";
+  // Verificar si hay un usuario actual con nombreCompleto
+  if (currentUser.value?.nombreCompleto) {
+    return currentUser.value.nombreCompleto;
   }
-
-  if (r === "admin") {
-    // Mostrar nombre de la organización
-    return organizaciones.value[0]?.nombre ?? "Org. sin nombre";
-  } else if (r === "medico") {
-    // Mostrar nombreCompleto si existe, de lo contrario email
-    if (!currentUser.value) {
-      // si no tenemos usuario en la lista, fallback
-      return user.value?.email ?? "Medico sin datos";
-    }
-    return currentUser.value.nombreCompleto
-      ? currentUser.value.nombreCompleto
-      : currentUser.value.email;
-  } else {
-    // otros roles => nombreCompleto si existe, sino email
-    if (!currentUser.value) {
-      return user.value?.email ?? "Usuario";
-    }
-    return currentUser.value.nombreCompleto
-      ? currentUser.value.nombreCompleto
-      : currentUser.value.email;
-  }
+  // Fallback al email si no hay nombreCompleto
+  return currentUser.value?.email ?? "Usuario sin datos";
 });
 
 /**

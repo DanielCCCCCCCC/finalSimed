@@ -71,6 +71,7 @@ export const useFichaIdentificacionStore = defineStore(
       if (!paciente) return "Desconocido";
       return paciente.nombres;
     }
+
     const guardarDatos = async (nuevoFormulario) => {
       if (!tenant_id.value) {
         console.warn("No hay tenant_id disponible");

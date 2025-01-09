@@ -28,7 +28,7 @@
               aria-current="page"
               :aria-selected="activeTab === 'organizacion'"
             >
-              <i class="ri-buildings-line me-2"></i>
+              <i class="ri-building-2-line me-2"></i>
               <span>Organización</span>
             </a>
           </li>
@@ -42,7 +42,7 @@
               aria-current="page"
               :aria-selected="activeTab === 'perfilMedico'"
             >
-              <i class="ri-medical-line"></i>
+              <i class="ri-user-heart-line me-2"></i>
               <span>Perfil Médico</span>
             </a>
           </li>
@@ -132,7 +132,6 @@
                     <DxRequiredRule />
                   </DxColumn>
 
-                  <!-- Especialidad Médica (editable) -->
                   <!-- Especialidad Médica (editable) -->
                   <DxColumn
                     data-field="especialidadMedica"
@@ -254,176 +253,10 @@
                     </q-item>
                   </q-list>
                 </div>
-
-                <!-- Sección: Horarios de Atención -->
-                <q-separator class="q-my-md" />
-                <div class="horarios-container">
-                  <div class="horarios-header">
-                    <h6 class="text-primary">Horarios de Atención</h6>
-                    <q-btn
-                      label="Agregar Horario"
-                      color="primary"
-                      icon="add"
-                      @click="abrirModalCrearHorario()"
-                      flat
-                    />
-                  </div>
-
-                  <!-- DxDataGrid para Horarios de Atención -->
-                  <DxDataGrid
-                    :data-source="horariosAtencion"
-                    :allow-column-reordering="true"
-                    :row-alternation-enabled="true"
-                    :show-borders="true"
-                    key-expr="id"
-                    :column-auto-width="true"
-                    :column-min-width="90"
-                    class="custom-data-grid"
-                  >
-                    <DxEditing
-                      :allow-updating="false"
-                      :allow-adding="false"
-                      :allow-deleting="false"
-                      mode="row"
-                    />
-                    <DxPaging :enabled="true" :page-size="7" />
-
-                    <!-- Columnas Horarios -->
-                    <DxColumn
-                      data-field="dia_semana"
-                      caption="Día de la Semana"
-                      data-type="string"
-                      min-width="150"
-                    />
-                    <DxColumn
-                      data-field="hora_inicio"
-                      caption="Hora de Inicio"
-                      data-type="time"
-                      min-width="120"
-                    />
-                    <DxColumn
-                      data-field="hora_fin"
-                      caption="Hora de Fin"
-                      data-type="time"
-                      min-width="120"
-                    />
-                    <DxColumn
-                      data-field="intervalo_min"
-                      caption="Intervalo (min)"
-                      data-type="number"
-                      min-width="120"
-                    />
-
-                    <!-- Botones de acción -->
-                    <DxColumn type="buttons" width="150">
-                      <DxButton
-                        name="edit"
-                        icon="edit"
-                        hint="Editar Horario"
-                        @click="editarHorarioAtencion(row)"
-                      />
-                      <DxButton
-                        name="delete"
-                        icon="delete"
-                        hint="Eliminar Horario"
-                        @click="eliminarHorarioAtencion(row)"
-                      />
-                    </DxColumn>
-                  </DxDataGrid>
-                </div>
               </q-card-section>
             </q-card>
-
-            <!-- Modal para Agregar/Editar Horario -->
-            <q-dialog v-model="abrirModalHorario" persistent>
-              <q-card class="form-container widthModalHorarios">
-                <q-card-section>
-                  <div class="text-h6">
-                    {{ esEditar ? "Editar" : "Agregar" }} Horario de Atención
-                  </div>
-                </q-card-section>
-
-                <q-card-section>
-                  <q-form
-                    @submit.prevent="
-                      esEditar ? actualizarHorario() : crearHorario()
-                    "
-                  >
-                    <div class="q-gutter-md">
-                      <!-- Día de la Semana -->
-                      <div>
-                        <label for="dia_semana">Día de la Semana</label>
-                        <select
-                          id="dia_semana"
-                          name="dia_semana"
-                          v-model="formHorario.dia_semana"
-                          required
-                          class="form-select custom-select-height"
-                        >
-                          <option value="" disabled>Seleccionar un día</option>
-                          <option
-                            v-for="dia in diasSemana"
-                            :key="dia"
-                            :value="dia"
-                          >
-                            {{ dia }}
-                          </option>
-                        </select>
-                      </div>
-
-                      <!-- Hora de Inicio y Hora de Fin -->
-                      <div class="row-horizontal">
-                        <div class="time-picker">
-                          <label for="hora_inicio">Hora de Inicio</label>
-                          <input
-                            type="time"
-                            id="hora_inicio"
-                            v-model="formHorario.hora_inicio"
-                            required
-                          />
-                        </div>
-                        <div class="time-picker">
-                          <label for="hora_fin">Hora de Fin</label>
-                          <input
-                            type="time"
-                            id="hora_fin"
-                            v-model="formHorario.hora_fin"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <!-- Intervalo entre Citas -->
-                      <div>
-                        <label for="intervalo_min">Intervalo (minutos)</label>
-                        <input
-                          id="intervalo_min"
-                          name="intervalo_min"
-                          type="number"
-                          min="5"
-                          v-model.number="formHorario.intervalo_min"
-                          class="form-control"
-                          required
-                          placeholder="Intervalo entre Citas (minutos)"
-                        />
-                      </div>
-                    </div>
-                  </q-form>
-                </q-card-section>
-
-                <q-card-actions align="right">
-                  <q-btn flat label="Cancelar" @click="cerrarModalHorario" />
-                  <q-btn
-                    label="Guardar"
-                    color="primary"
-                    @click="esEditar ? actualizarHorario() : crearHorario()"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
           </div>
 
-          <!-- Pestaña Perfil Médico -->
           <div
             :class="[
               'tab-pane',
@@ -435,6 +268,8 @@
             <!-- Solo se muestra PerfilMedico cuando la pestaña está activa -->
             <PerfilMedico class="hsize" v-if="activeTab === 'perfilMedico'" />
           </div>
+          <!-- Pestaña Configuraciones -->
+          <!--  -->
         </div>
       </div>
     </div>
@@ -442,7 +277,7 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
-import { useQuasar } from "quasar";
+import { useQuasar, Notify } from "quasar";
 import { storeToRefs } from "pinia";
 
 // **Stores**
@@ -486,9 +321,10 @@ const especialidadMedicaStore = useEspecialidadMedicaStore();
 const authStore = useAuthStore();
 
 // Desestructurar states
-const { users } = storeToRefs(crearUsuariosStore);
-const { organizaciones, horariosAtencion } = storeToRefs(organizacionStore);
-const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
+const { users, horariosAtencion } = storeToRefs(crearUsuariosStore);
+const { organizaciones } = storeToRefs(organizacionStore);
+const { user, userId, tenant_id, role, isAuthenticated } =
+  storeToRefs(authStore);
 const { especialidades } = storeToRefs(especialidadMedicaStore);
 
 // Roles
@@ -567,7 +403,7 @@ const onRowInserting = async (e) => {
       observaciones: data.observaciones,
       especialidadMedica: data.especialidadMedica,
       esMarcado: data.esMarcado, // Nuevo campo
-      tenant_id: tenant_id.value,
+      userId: userId.value,
     });
 
     // Llamar a la función de la store
@@ -579,7 +415,7 @@ const onRowInserting = async (e) => {
       observaciones: data.observaciones,
       especialidadMedica: data.especialidadMedica, // Asegurar que la especialidad se guarda
       esMarcado: data.esMarcado, // Asegurar que la bandera se guarda
-      tenant_id: tenant_id.value,
+      userId: userId.value,
     });
 
     // Cancelamos la inserción local para no duplicar
@@ -650,204 +486,13 @@ const onRowDeleting = async (e) => {
   }
 };
 
-/** Abrir el modal de nuevo horario */
-const abrirModalCrearHorario = () => {
-  esEditar.value = false;
-  formHorario.id = null;
-  formHorario.dia_semana = "";
-  formHorario.hora_inicio = "";
-  formHorario.hora_fin = "";
-  formHorario.intervalo_min = 15;
-  abrirModalHorario.value = true;
-};
-
-/** Editar horario existente */
-const editarHorarioAtencion = (row) => {
-  esEditar.value = true;
-  formHorario.id = row.data.id;
-  formHorario.dia_semana = row.data.dia_semana;
-  formHorario.hora_inicio = row.data.hora_inicio;
-  formHorario.hora_fin = row.data.hora_fin;
-  formHorario.intervalo_min = row.data.intervalo_min;
-  abrirModalHorario.value = true;
-};
-
-/** Cerrar modal */
-const cerrarModalHorario = () => {
-  abrirModalHorario.value = false;
-};
-
-/** Crear horario */
-const crearHorario = async () => {
-  if (
-    !formHorario.dia_semana ||
-    !formHorario.hora_inicio ||
-    !formHorario.hora_fin ||
-    !formHorario.intervalo_min
-  ) {
-    $q.notify({
-      type: "negative",
-      message: "Por favor, completa todos los campos.",
-      position: "top-right",
-    });
-    return;
-  }
-  if (formHorario.hora_fin <= formHorario.hora_inicio) {
-    $q.notify({
-      type: "negative",
-      message: "La hora de fin debe ser mayor que la hora de inicio.",
-      position: "top-right",
-    });
-    return;
-  }
-  if (!tenant_id.value) {
-    $q.notify({
-      type: "negative",
-      message: "Error: La organización no está definida o es inválida.",
-      position: "top-right",
-    });
-    return;
-  }
-
-  const nuevoHorario = {
-    dia_semana: formHorario.dia_semana,
-    hora_inicio: formHorario.hora_inicio,
-    hora_fin: formHorario.hora_fin,
-    intervalo_min: formHorario.intervalo_min,
-    tenant_id: tenant_id.value,
-  };
-
-  try {
-    await organizacionStore.crearHorarioAtencion(nuevoHorario);
-    cerrarModalHorario();
-    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
-    $q.notify({
-      type: "positive",
-      message: "Horario de atención creado exitosamente.",
-      position: "top-right",
-    });
-  } catch (error) {
-    console.error("Error creando horario:", error);
-    $q.notify({
-      type: "negative",
-      message: "Error al crear el horario de atención.",
-      position: "top-right",
-    });
-  }
-};
-
-/** Actualizar horario */
-const actualizarHorario = async () => {
-  if (
-    !formHorario.dia_semana ||
-    !formHorario.hora_inicio ||
-    !formHorario.hora_fin ||
-    !formHorario.intervalo_min
-  ) {
-    $q.notify({
-      type: "negative",
-      message: "Por favor, completa todos los campos.",
-      position: "top-right",
-    });
-    return;
-  }
-  if (formHorario.hora_fin <= formHorario.hora_inicio) {
-    $q.notify({
-      type: "negative",
-      message: "La hora de fin debe ser mayor que la hora de inicio.",
-      position: "top-right",
-    });
-    return;
-  }
-  if (!tenant_id.value) {
-    $q.notify({
-      type: "negative",
-      message: "Error: La organización no está definida o es inválida.",
-      position: "top-right",
-    });
-    return;
-  }
-
-  const horarioActualizado = {
-    dia_semana: formHorario.dia_semana,
-    hora_inicio: formHorario.hora_inicio,
-    hora_fin: formHorario.hora_fin,
-    intervalo_min: formHorario.intervalo_min,
-    tenant_id: tenant_id.value,
-  };
-
-  try {
-    await organizacionStore.actualizarHorarioAtencion(
-      formHorario.id,
-      horarioActualizado
-    );
-    cerrarModalHorario();
-    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
-    $q.notify({
-      type: "positive",
-      message: "Horario de atención actualizado exitosamente.",
-      position: "top-right",
-    });
-  } catch (error) {
-    console.error("Error actualizando horario:", error);
-    $q.notify({
-      type: "negative",
-      message: "Error al actualizar el horario de atención.",
-      position: "top-right",
-    });
-  }
-};
-
-/** Eliminar horario */
-const eliminarHorarioAtencion = async (row) => {
-  const horario = row.data;
-  if (
-    confirm(
-      `¿Estás seguro de eliminar el horario de ${
-        horario.dia_semana
-      } de ${formatTime(horario.hora_inicio)} a ${formatTime(
-        horario.hora_fin
-      )}?`
-    )
-  ) {
-    try {
-      await organizacionStore.eliminarHorarioAtencion(horario.id);
-      await organizacionStore.cargarHorariosAtencion(tenant_id.value);
-      $q.notify({
-        type: "positive",
-        message: "Horario de atención eliminado exitosamente.",
-        position: "top-right",
-      });
-    } catch (error) {
-      console.error("Error eliminando horario:", error);
-      $q.notify({
-        type: "negative",
-        message: "Error al eliminar el horario de atención.",
-        position: "top-right",
-      });
-    }
-  }
-};
-
-/** Formatea la hora HH:mm a AM/PM */
-const formatTime = (timeStr) => {
-  try {
-    const [hour, minute] = timeStr.split(":").map(Number);
-    const suffix = hour >= 12 ? "PM" : "AM";
-    const adjHour = hour % 12 || 12;
-    return `${adjHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
-  } catch {
-    return timeStr;
-  }
-};
-
 /** Watch: Cargar organización y horarios al cambiar tenant_id */
 watch(
   () => tenant_id.value,
   async (newTenantId) => {
     if (newTenantId) {
       await organizacionStore.cargarOrganizaciones();
-      await organizacionStore.cargarHorariosAtencion(newTenantId);
+      await crearUsuariosStore.cargarHorariosAtencion(newTenantId);
     } else {
       organizacionStore.organizaciones = [];
       organizacionStore.horariosAtencion = [];
@@ -864,19 +509,21 @@ watch(
 /** onMounted: cargarUsuarios, cargarOrganizaciones */
 onMounted(async () => {
   await crearUsuariosStore.cargarUsuarios();
+  await crearUsuariosStore.cargarHorariosAtencion();
+
   await organizacionStore.cargarOrganizaciones();
   await especialidadMedicaStore.cargarEspecialidades();
 
   // Debug: Verificar las especialidades cargadas
   console.log("Especialidades Cargadas (onMounted):", especialidades.value);
 
-  console.log("User Auth:", user.value?.email);
+  console.log("User Auth:", users[0].value.nombreCompleto);
   console.log("Organizaciones: ", organizaciones.value);
   console.log("tenant_id onMounted:", tenant_id.value);
   console.log("ESPECIALIDADES MEDICAS: ", especialidades.value);
-
+  console.log("Nombre del medico: ", users.nombreCompleto);
   if (tenant_id.value) {
-    await organizacionStore.cargarHorariosAtencion(tenant_id.value);
+    await crearUsuariosStore.cargarHorariosAtencion(tenant_id.value);
   } else {
     $q.notify({
       type: "negative",
@@ -921,10 +568,12 @@ const onFlaggedChange = async (user) => {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  width: 99%;
+  width: 100%;
+  margin-right: 150px;
   position: relative;
-  left: 135px;
-  height: 90vh; /* Ajusta según tu preferencia */
+  left: 120px;
+  /* height: 100vh; */
+  height: 100%;
 }
 
 .custom-data-grid {

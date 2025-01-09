@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient"; // Ajusta la ruta si es necesario
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
 import axios from "axios"; // Para eliminar usuarios en Auth vía backend
-
+import { Notify } from "quasar";
 export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   const authStore = useAuthStore();
 
@@ -13,6 +13,11 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   const error = ref(null);
   const success = ref(null);
   const users = ref([]);
+  // --- Nuevas variables de configuración de Scheduler ---
+  // const cellDurationConfig = ref(15);
+  // const startDayHourConfig = ref(12);
+  // const endDayHourConfig = ref(18);
+  const horariosAtencion = ref([]);
 
   /**
    * Carga la lista de usuarios desde la tabla `users`, filtrando por tenant_id.
@@ -267,17 +272,200 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
       loading.value = false;
     }
   };
+  function convertirHoraANumero(horaStr) {
+    if (!horaStr) return null;
+    const [horas, minutos, segundos] = horaStr.split(":").map(Number);
+    return horas + minutos / 60 + segundos / 3600;
+  }
 
+  const startDayHourConfig = ref(1);
+  const cellDurationConfig = ref(10);
+  const endDayHourConfig = ref(2);
+
+  const cargarHorariosAtencion = async () => {
+    const userId = authStore.userId;
+    if (!userId) {
+      console.error("Error: userId es inválido.");
+      Notify.create({
+        message: "Error: userId es inválido.",
+        color: "negative",
+      });
+      return;
+    }
+
+    loading.value = true;
+    error.value = null;
+    try {
+      const { data, error: fetchError } = await supabase
+        .from("horarios_atencion")
+        .select("*")
+        .eq("userId", userId)
+        .order("dia_semana", { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      horariosAtencion.value = data;
+      console.log("Horarios de Atención Cargados:", horariosAtencion.value);
+
+      if (data && data.length > 0) {
+        const primerHorario = data[0];
+
+        if (primerHorario.intervalo_min) {
+          cellDurationConfig.value = primerHorario.intervalo_min;
+          console.log(
+            "cellDurationConfig actualizado a:",
+            cellDurationConfig.value
+          );
+        }
+        if (primerHorario.hora_inicio) {
+          const horaInicioNum = convertirHoraANumero(primerHorario.hora_inicio);
+          startDayHourConfig.value = horaInicioNum;
+          console.log(
+            "startDayHourConfig actualizado a:",
+            startDayHourConfig.value
+          );
+        }
+        if (primerHorario.hora_fin) {
+          const horaFinNum = convertirHoraANumero(primerHorario.hora_fin);
+          endDayHourConfig.value = horaFinNum;
+          console.log(
+            "endDayHourConfig actualizado a:",
+            endDayHourConfig.value
+          );
+        }
+      } else {
+        console.log("No se encontraron horarios de atención para el usuario.");
+      }
+    } catch (err) {
+      error.value = err.message || "Error al cargar horarios de atención.";
+      console.error("Error:", error.value);
+      Notify.create({ message: error.value, color: "negative" });
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const crearHorarioAtencion = async (nuevoHorario) => {
+    const userId = authStore.userId;
+    if (!nuevoHorario) {
+      console.error("Error: nuevoHorario es inválido.");
+      Notify.create({
+        message: "Error: datos del horario son inválidos.",
+        color: "negative",
+        position: "top-right",
+      });
+      return;
+    }
+    if (!userId) {
+      console.error("Error: userId es inválido.");
+      Notify.create({
+        message: "Error: userId es inválido.",
+        color: "negative",
+        position: "top-right",
+      });
+      return;
+    }
+
+    // Asociar el horario al userId
+    nuevoHorario.userId = userId;
+
+    loading.value = true;
+    error.value = null;
+    try {
+      const { data, error: insertError } = await supabase
+        .from("horarios_atencion")
+        .insert([nuevoHorario])
+        .select()
+        .single();
+      if (insertError) throw insertError;
+      horariosAtencion.value.push(data);
+      console.log("Horario de Atención Creado:", data);
+    } catch (err) {
+      console.error("Error al crear horario de atención:", err);
+      error.value = err.message || "Error al crear horario de atención.";
+      Notify.create({
+        message: error.value,
+        color: "negative",
+        position: "top-right",
+      });
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const actualizarHorarioAtencion = async (id, horarioActualizado) => {
+    try {
+      const { data, error: updateError } = await supabase
+        .from("horarios_atencion")
+        .update(horarioActualizado)
+        .eq("id", id)
+        .select()
+        .single();
+      if (updateError) throw updateError;
+      const index = horariosAtencion.value.findIndex((h) => h.id === id);
+      if (index !== -1) {
+        horariosAtencion.value[index] = data;
+      }
+      Notify.create({
+        message: "Horario de atención actualizado exitosamente.",
+        color: "positive",
+        position: "top-right",
+      });
+    } catch (err) {
+      console.error("Error al actualizar horario de atención:", err);
+      Notify.create({
+        message: `Error al actualizar horario de atención: ${err.message}`,
+        color: "negative",
+        position: "top-right",
+      });
+      throw err;
+    }
+  };
+
+  const eliminarHorarioAtencion = async (id) => {
+    try {
+      const { error: deleteError } = await supabase
+        .from("horarios_atencion")
+        .delete()
+        .eq("id", id);
+      if (deleteError) throw deleteError;
+      horariosAtencion.value = horariosAtencion.value.filter(
+        (h) => h.id !== id
+      );
+      Notify.create({
+        message: "Horario de atención eliminado exitosamente.",
+        color: "positive",
+        position: "top-right",
+      });
+    } catch (err) {
+      console.error("Error al eliminar horario de atención:", err);
+      Notify.create({
+        message: `Error al eliminar horario de atención: ${err.message}`,
+        color: "negative",
+        position: "top-right",
+      });
+      throw err;
+    }
+  };
   return {
     loading,
     error,
     success,
     users,
+    horariosAtencion, // Exponer horarios
     cargarUsuarios,
     cargarUsuarioPerfil,
-    // Método principal para crear usuario (Auth + tabla `users`)
     crearUsuario,
     actualizarUsuario,
     eliminarUsuario,
+    cellDurationConfig,
+    startDayHourConfig,
+    endDayHourConfig,
+    // Nuevas funciones de horarios:
+    cargarHorariosAtencion,
+    crearHorarioAtencion,
+    actualizarHorarioAtencion,
+    eliminarHorarioAtencion,
   };
 });
