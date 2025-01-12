@@ -82,6 +82,7 @@
                   @row-inserting="onRowInserting"
                   @row-updating="onRowUpdating"
                   @row-deleting="onRowDeleting"
+                  @init-new-row="onInitNewRow"
                 >
                   <DxEditing
                     :allow-updating="true"
@@ -95,13 +96,12 @@
                   <DxColumn
                     data-field="created_at"
                     caption="Creado en"
-                    :calculate-cell-value="
-                      (data) => formatDate(data.created_at)
-                    "
                     :allow-sorting="true"
                     :allow-editing="false"
+                    data-type="date"
                     min-width="150"
-                  />
+                  >
+                  </DxColumn>
 
                   <!-- Correo (editable) -->
                   <DxColumn
@@ -216,7 +216,9 @@
           >
             <q-card class="form-container">
               <q-card-section class="header bg-primary text-white">
-                <div class="text-h6">Organización</div>
+                <div class="text-h6">
+                  Organización: {{ organizaciones[0]?.nombre }}
+                </div>
               </q-card-section>
               <q-card-section>
                 <div v-if="organizaciones.length">
@@ -363,7 +365,10 @@ const formatDate = (dateString) => {
     return "Fecha no válida";
   }
 };
-
+const onInitNewRow = (e) => {
+  // Asigna la fecha actual
+  e.data.created_at = new Date();
+};
 /**
  * Genera una contraseña aleatoria con mayúsculas, minúsculas, dígitos y símbolos.
  * @param {number} length - Longitud de la contraseña, por defecto 12
@@ -492,7 +497,7 @@ watch(
   async (newTenantId) => {
     if (newTenantId) {
       await organizacionStore.cargarOrganizaciones();
-      await crearUsuariosStore.cargarHorariosAtencion(newTenantId);
+      await crearUsuariosStore.cargarConfiguraciones(newTenantId);
     } else {
       organizacionStore.organizaciones = [];
       organizacionStore.horariosAtencion = [];
@@ -508,11 +513,10 @@ watch(
 
 /** onMounted: cargarUsuarios, cargarOrganizaciones */
 onMounted(async () => {
-  await crearUsuariosStore.cargarUsuarios();
-  await crearUsuariosStore.cargarHorariosAtencion();
-
-  await organizacionStore.cargarOrganizaciones();
   await especialidadMedicaStore.cargarEspecialidades();
+  await organizacionStore.cargarOrganizaciones();
+  await crearUsuariosStore.cargarConfiguraciones();
+  await crearUsuariosStore.cargarUsuarios();
 
   // Debug: Verificar las especialidades cargadas
   console.log("Especialidades Cargadas (onMounted):", especialidades.value);
@@ -523,7 +527,7 @@ onMounted(async () => {
   console.log("ESPECIALIDADES MEDICAS: ", especialidades.value);
   console.log("Nombre del medico: ", users.nombreCompleto);
   if (tenant_id.value) {
-    await crearUsuariosStore.cargarHorariosAtencion(tenant_id.value);
+    await crearUsuariosStore.cargarConfiguraciones(tenant_id.value);
   } else {
     $q.notify({
       type: "negative",
@@ -568,12 +572,13 @@ const onFlaggedChange = async (user) => {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  width: 100%;
-  margin-right: 150px;
+  width: 93%;
+  /* margin-right: 150px; */
   position: relative;
-  left: 120px;
-  /* height: 100vh; */
-  height: 100%;
+  left: 5%;
+  top: 10%;
+  height: 90vh;
+  /* height: 100%; */
 }
 
 .custom-data-grid {
@@ -601,12 +606,13 @@ const onFlaggedChange = async (user) => {
 }
 
 .content-container {
-  padding: 20px;
+  width: 88%;
 }
 
 .form-container {
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  /* width: 120%; */
 }
 
 .header {

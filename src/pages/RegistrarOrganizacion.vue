@@ -109,7 +109,7 @@
                             <i class="ri-lock-line"></i>
                           </div>
                           <input
-                            type="password"
+                            :type="showPassword ? 'text' : 'password'"
                             id="admin_password"
                             v-model="admin_password"
                             class="form-control"
@@ -117,6 +117,17 @@
                             required
                             @input="validatePassword"
                           />
+                          <button
+                            type="button"
+                            class="separadoInput btn btn-outline-secondary"
+                            @click="togglePasswordVisibility"
+                          >
+                            <i
+                              :class="
+                                showPassword ? 'ri-eye-off-line' : 'ri-eye-line'
+                              "
+                            ></i>
+                          </button>
                         </div>
                       </div>
 
@@ -169,6 +180,7 @@ const email_contacto = ref("");
 const numero_telefono = ref("");
 const admin_email = ref("");
 const admin_password = ref("");
+const showPassword = ref(false);
 
 // Estado del formulario
 const organizacionStore = useOrganizacionStore();
@@ -256,7 +268,9 @@ const handleSubmit = async () => {
     cargando.value = false;
   }
 };
-
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 onMounted(() => {
   // Definir el tema light
   themeStore.colorThemeFn("light");
@@ -272,7 +286,10 @@ onMounted(() => {
 .page {
   min-height: 100vh;
 }
-
+.separadoInput {
+  position: relative;
+  left: 1px;
+}
 .details {
   position: relative;
   padding: 20px;

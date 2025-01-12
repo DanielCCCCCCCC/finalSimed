@@ -225,6 +225,7 @@ import { supabase } from "../supabaseClient";
 import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
 import { storeToRefs } from "pinia";
 import { useOrganizacionStore } from "../stores/organizacionStore";
+import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth";
 import { Notify } from "quasar";
 
@@ -238,9 +239,10 @@ const { buscarPacientePorDni } = fichaIdentificacionStore;
 
 // Store de organización
 const organizacionStore = useOrganizacionStore();
-const { horariosAtencion } = storeToRefs(organizacionStore);
 const { cargarHorariosAtencion } = organizacionStore;
-
+const crearUsuariosStore = useCrearUsuariosStore();
+const { users, loading, error, horariosAtencion, permitirSuperposicion } =
+  storeToRefs(crearUsuariosStore);
 // Store de autenticación
 const authStore = useAuthStore();
 const { tenant_id, user } = storeToRefs(authStore);
@@ -249,7 +251,7 @@ const { tenant_id, user } = storeToRefs(authStore);
 const doctorData = ref(null);
 const organization = ref(null);
 
-const loading = ref(true);
+// const loading = ref(true);
 const success = ref(false);
 const errorMsg = ref("");
 
@@ -500,31 +502,59 @@ function generateAvailableTimes(horaInicio, horaFin, intervaloMin) {
 
 const allTimes = ref([]);
 async function fetchOccupiedTimes() {
+  console.log("Iniciando fetchOccupiedTimes");
+
+  // Validar que la fecha y el doctorId estén definidos
   if (!form.value.date || !doctorId.value) {
+    console.log(
+      "Fecha o doctorId no definidos:",
+      form.value.date,
+      doctorId.value
+    );
     availableTimes.value = [];
     return;
   }
 
   const selectedDate = form.value.date;
-  const dayOfWeek = getDayOfWeek(selectedDate);
-  const dayName = dayOfWeekNames[dayOfWeek];
+  console.log("Fecha seleccionada:", selectedDate);
 
-  const horario = horariosAtencion.value.find(
-    (h) => h.dia_semana.toLowerCase() === dayName.toLowerCase()
-  );
-  if (!horario) {
+  // Obtener la primera configuración de horarios disponible
+  const primeraConfiguracion = horariosAtencion.value[0];
+  if (!primeraConfiguracion) {
+    console.error("No se encontraron configuraciones de horarios.");
+    errorMsg.value = "No se encontraron configuraciones de horarios.";
     availableTimes.value = [];
-    errorMsg.value = "No hay horarios de atención para el día seleccionado.";
     return;
   }
 
-  const { hora_inicio, hora_fin, intervalo_min } = horario;
-  allTimes.value = generateAvailableTimes(hora_inicio, hora_fin, intervalo_min);
+  const { hora_inicio, hora_fin, intervalo_min, autoSuperPosicion } =
+    primeraConfiguracion;
+  console.log("Configuración obtenida:", hora_inicio, hora_fin, intervalo_min);
 
+  // Actualizar la variable permitirSuperposicion desde la configuración
+  permitirSuperposicion.value = autoSuperPosicion;
+
+  // Generar todos los tiempos disponibles según la configuración dinámica
+  allTimes.value = generateAvailableTimes(hora_inicio, hora_fin, intervalo_min);
+  console.log("Todos los tiempos generados:", allTimes.value);
+
+  // Si no se permite superposición, asignar todos los tiempos disponibles sin filtrado
+  console.log("permitirSuperposicion:", permitirSuperposicion.value);
+  if (permitirSuperposicion.value) {
+    console.log("Superposición no permitida, no se filtrarán horas ocupadas.");
+    availableTimes.value = allTimes.value;
+    errorMsg.value = "";
+    console.log("Horas disponibles:", availableTimes.value);
+    return;
+  }
+
+  // Preparar rango de fechas para consultar citas en Supabase
   const nextDate = new Date(selectedDate);
   nextDate.setDate(nextDate.getDate() + 1);
   const nextDateStr = nextDate.toISOString().split("T")[0];
+  console.log("Próxima fecha:", nextDateStr);
 
+  // Consultar citas existentes en la base de datos para el doctor en la fecha seleccionada
   const { data, error } = await supabase
     .from("appointments")
     .select("startDate")
@@ -534,21 +564,27 @@ async function fetchOccupiedTimes() {
     .lt("startDate", `${nextDateStr}T00:00:00`);
 
   if (error) {
+    console.error("Error al obtener citas existentes:", error);
     errorMsg.value = "Error al obtener las citas existentes.";
     return;
   }
 
+  // Extraer las horas ocupadas de las citas existentes
   const occupiedTimes = data.map((appt) => {
     const date = new Date(appt.startDate);
     const hh = String(date.getHours()).padStart(2, "0");
     const mm = String(date.getMinutes()).padStart(2, "0");
     return `${hh}:${mm}`;
   });
+  console.log("Horas ocupadas:", occupiedTimes);
 
+  // Filtrar las horas disponibles eliminando las que ya están ocupadas
   availableTimes.value = allTimes.value.filter(
     (t) => !occupiedTimes.includes(t)
   );
+  console.log("Horas disponibles después del filtrado:", availableTimes.value);
 
+  // Actualizar mensaje de error si no hay horas disponibles
   if (availableTimes.value.length === 0) {
     errorMsg.value = "No hay horarios disponibles para la fecha seleccionada.";
   } else {
@@ -588,17 +624,14 @@ async function handleSubmit() {
     return;
   }
 
-  const dayOfWeek = getDayOfWeek(form.value.date);
-  const dayName = dayOfWeekNames[dayOfWeek];
-  const horario = horariosAtencion.value.find(
-    (h) => h.dia_semana.toLowerCase() === dayName.toLowerCase()
-  );
-  if (!horario) {
-    errorMsg.value = "No hay horarios de atención para el día seleccionado.";
+  // En lugar de buscar el horario por día, obtenemos la primera configuración disponible.
+  const primeraConfiguracion = horariosAtencion.value[0];
+  if (!primeraConfiguracion) {
+    errorMsg.value = "No se encontraron configuraciones de horarios.";
     return;
   }
+  const { intervalo_min } = primeraConfiguracion;
 
-  const { intervalo_min } = horario;
   const startDateStr = `${form.value.date}T${form.value.time}:00`;
   const endDate = new Date(`${form.value.date}T${form.value.time}:00`);
   endDate.setMinutes(endDate.getMinutes() + intervalo_min);
@@ -723,11 +756,12 @@ async function reloadData() {
 
   await fetchOrganizationInfo();
   await fetchDoctorData();
+  await crearUsuariosStore.cargarConfiguraciones();
   await fichaIdentificacionStore.cargarDatosPorDoctor(
     tenant_id.value,
     doctorId.value
   );
-  await cargarHorariosAtencion(tenant_id.value);
+  await cargarConfiguraciones(tenant_id.value);
   loading.value = false;
 
   // Asignar fecha de hoy
@@ -740,11 +774,14 @@ async function reloadData() {
 onMounted(async () => {
   await fetchOrganizationInfo();
   await fetchDoctorData();
+  await crearUsuariosStore.cargarConfiguraciones();
+
   await fichaIdentificacionStore.cargarDatosPorDoctor(
     tenant_id.value,
     doctorId.value
   );
-  await cargarHorariosAtencion(tenant_id.value);
+  console.log("PACIENTES SUPERPOSICION : ", permitirSuperposicion.value);
+  // await cargarConfiguraciones(tenant_id.value);
 
   loading.value = false;
   const today = new Date().toISOString().split("T")[0];

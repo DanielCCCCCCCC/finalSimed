@@ -140,28 +140,6 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
       cargando.value = false;
     }
   };
-  // const cargarOrganizaciones = async () => {
-  //   cargando.value = true;
-  //   error.value = null;
-  //   try {
-  //     const { data, error: fetchError } = await supabase
-  //       .from("organizacion")
-  //       .select("*");
-  //     if (fetchError) throw fetchError;
-  //     organizaciones.value = data;
-  //   } catch (err) {
-  //     console.error("Error al cargar organizaciones:", err);
-  //     error.value = err.message || "Error al cargar organizaciones.";
-  //     Notify.create({
-  //       message: error.value,
-  //       color: "negative",
-  //       position: "top-right",
-  //     });
-  //   } finally {
-  //     cargando.value = false;
-  //   }
-  // };
-  //
 
   watch(
     () => authStore.tenant_id,

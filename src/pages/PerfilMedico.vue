@@ -11,184 +11,202 @@
           <h3 class="profile-name">Dr. {{ users[0]?.nombreCompleto }}</h3>
         </div>
 
-        <!-- Pestañas debajo de la foto de perfil -->
-        <div class="q-pa-md flex justify-center">
-          <q-tabs
-            v-model="tab"
-            class="bg-primary profile-nav-line tabs-menu custom-tabs"
-            dense
-            align="justify"
-            active-color="white"
-          >
-            <q-tab name="info" label="Información del médico" />
-            <q-tab name="qr" label="Código QR" />
-            <q-tab name="horarios" label="Horarios de Atención" />
-          </q-tabs>
+        <!-- Estructura "Static Pills" -->
+        <div class="col-xl-6">
+          <div class="custom-card">
+            <div class="card-body">
+              <ul class="nav nav-pills">
+                <!-- Pestaña 1 -->
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    :class="{ active: tab === 'info' }"
+                    href="javascript:void(0);"
+                    @click="tab = 'info'"
+                  >
+                    Información del médico
+                  </a>
+                </li>
+                <!-- Pestaña 2 -->
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    :class="{ active: tab === 'qr' }"
+                    href="javascript:void(0);"
+                    @click="tab = 'qr'"
+                  >
+                    Código QR
+                  </a>
+                </li>
+                <!-- Pestaña 3 -->
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    :class="{ active: tab === 'configuraciones' }"
+                    href="javascript:void(0);"
+                    @click="tab = 'configuraciones'"
+                  >
+                    Configuraciones del perfil
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Contenido de las Pestañas -->
       <q-card class="custom-card main-content-body-profile">
-        <q-tab-panels animated v-model="tab">
-          <!-- Pestaña de Información del Médico -->
-          <q-tab-panel name="info">
-            <q-card-section class="doctor-info">
-              <h4 class="fs-15 text-uppercase mb-3">Información del Médico</h4>
+        <!-- Tab INFO -->
+        <div v-show="tab === 'info'">
+          <q-card-section class="doctor-info">
+            <h4 class="fs-15 text-uppercase mb-3">Información del Médico</h4>
+            <div v-if="loading">
+              <q-spinner size="50px" color="primary" />
+              <p>Cargando información del médico...</p>
+            </div>
+            <div v-else-if="users[0]" class="table-responsive">
+              <q-list dense bordered separator>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label><strong>ID:</strong></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{ users[0]?.id }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label
+                      ><strong>Nombre Completo:</strong></q-item-label
+                    >
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{ users[0]?.nombreCompleto }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label><strong>Rol:</strong></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{ users[0]?.role }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label><strong>Email:</strong></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{ users[0]?.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label><strong>Dirección:</strong></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{ users[0]?.direccion }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label><strong>Observación:</strong></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>{{
+                      users[0]?.observaciones || "Sin observaciones."
+                    }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
 
-              <!-- Estado de carga -->
-              <div v-if="loading">
+            <!-- Manejo de errores -->
+            <div v-else-if="error">
+              <q-banner class="bg-red text-white" dense>
+                {{ error }}
+              </q-banner>
+            </div>
+          </q-card-section>
+        </div>
+
+        <!-- Tab QR -->
+        <div v-show="tab === 'qr'">
+          <q-card-section class="q-pa-md flex flex-center">
+            <div class="qr-container">
+              <h2>Código QR de Agenda</h2>
+
+              <div v-if="loadingQR" class="spinner">
                 <q-spinner size="50px" color="primary" />
-                <p>Cargando información del médico...</p>
+                <p>Cargando código QR...</p>
               </div>
 
-              <!-- Tabla con la información del usuario -->
-              <div v-else-if="users[0]" class="table-responsive">
-                <q-list dense bordered separator>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label><strong>ID:</strong></q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{ users[0]?.id }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label
-                        ><strong>Nombre Completo:</strong></q-item-label
-                      >
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{
-                        users[0]?.nombreCompleto
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label><strong>Rol:</strong></q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{ users[0]?.role }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label><strong>Email:</strong></q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{ users[0]?.email }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
+              <div v-else-if="qrCodeUrl">
+                <img
+                  :src="qrCodeUrl"
+                  alt="Código QR"
+                  width="200"
+                  height="200"
+                />
+                <p>Escanea el código QR para agendar una cita.</p>
 
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label><strong>Dirección:</strong></q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{ users[0]?.direccion }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
+                <div class="url-container">
+                  <q-input
+                    filled
+                    v-model="fullUrl"
+                    readonly
+                    class="url-input"
+                    label="URL de Agenda"
+                  />
+                  <div class="buttons-container">
+                    <q-btn
+                      icon="content_copy"
+                      label="Copiar URL"
+                      color="primary"
+                      class="anchoBotonesQR"
+                      @click="copyToClipboard"
+                    />
+                    <q-btn
+                      icon="download"
+                      label="Descargar QR"
+                      color="info"
+                      class="anchoBotonesQR"
+                      @click="downloadQRCode"
+                    />
+                  </div>
+                </div>
 
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label><strong>Observación:</strong></q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>{{
-                        users[0]?.observaciones || "Sin observaciones."
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-
-              <!-- Manejo de errores -->
-              <div v-else-if="error">
-                <q-banner class="bg-red text-white" dense>
-                  {{ error }}
+                <q-banner
+                  v-if="copySuccess"
+                  class="bg-green text-white"
+                  dense
+                  inline-actions
+                >
+                  URL copiada al portapapeles.
+                  <template v-slot:action>
+                    <q-btn
+                      flat
+                      dense
+                      icon="close"
+                      @click="copySuccess = false"
+                    />
+                  </template>
                 </q-banner>
               </div>
-            </q-card-section>
-          </q-tab-panel>
 
-          <!-- Pestaña de Código QR -->
-          <q-tab-panel name="qr">
-            <q-card-section class="q-pa-md flex flex-center">
-              <div class="qr-container">
-                <h2>Código QR de Agenda</h2>
-
-                <div v-if="loadingQR" class="spinner">
-                  <q-spinner size="50px" color="primary" />
-                  <p>Cargando código QR...</p>
-                </div>
-
-                <div v-else-if="qrCodeUrl">
-                  <img
-                    :src="qrCodeUrl"
-                    alt="Código QR"
-                    width="200"
-                    height="200"
-                  />
-                  <p>Escanea el código QR para agendar una cita.</p>
-
-                  <!-- Contenedor para el campo de URL y botones -->
-                  <div class="url-container">
-                    <q-input
-                      filled
-                      v-model="fullUrl"
-                      readonly
-                      class="url-input"
-                      label="URL de Agenda"
-                    />
-                    <div class="buttons-container">
-                      <q-btn
-                        icon="content_copy"
-                        label="Copiar URL"
-                        color="primary"
-                        class="anchoBotonesQR"
-                        @click="copyToClipboard"
-                      />
-                      <q-btn
-                        icon="download"
-                        label="Descargar QR"
-                        color="info"
-                        class="anchoBotonesQR"
-                        @click="downloadQRCode"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Mensaje de Éxito al Copiar -->
-                  <q-banner
-                    v-if="copySuccess"
-                    class="bg-green text-white"
-                    dense
-                    inline-actions
-                  >
-                    URL copiada al portapapeles.
-                    <template v-slot:action>
-                      <q-btn
-                        flat
-                        dense
-                        icon="close"
-                        @click="copySuccess = false"
-                      />
-                    </template>
-                  </q-banner>
-                </div>
-
-                <div v-else-if="errorMsgQR" class="alert alert-danger">
-                  {{ errorMsgQR }}
-                </div>
+              <div v-else-if="errorMsgQR" class="alert alert-danger">
+                {{ errorMsgQR }}
               </div>
-            </q-card-section>
-          </q-tab-panel>
-          <!-- Nueva Pestaña: Horarios de Atención -->
-          <q-tab-panel name="horarios">
+            </div>
+          </q-card-section>
+        </div>
+
+        <!-- Tab CONFIGURACIONES -->
+        <div v-show="tab === 'configuraciones'">
+          <div class="borderBton">
             <q-card-section>
               <div class="horarios-container">
-                <!-- Contenedor flex para título y botón -->
                 <div class="horarios-header">
                   <h4 class="fs-15 text-uppercase mb-3">
                     Horarios de Atención
@@ -197,231 +215,201 @@
                     label="Agregar Horario"
                     color="primary"
                     icon="add"
-                    @click="abrirModalCrearHorario()"
+                    @click="abrirModalcrearConfiguraciones()"
                     flat
                   />
                 </div>
-                <!-- DxDataGrid para Horarios de Atención -->
+
+                <!-- DataGrid con eventos @editingStart y @rowRemoving -->
                 <DxDataGrid
                   :data-source="horariosAtencion"
-                  :allow-column-reordering="true"
-                  :row-alternation-enabled="true"
-                  :show-borders="true"
-                  key-expr="id"
-                  :column-auto-width="true"
-                  :column-min-width="90"
-                  class="custom-data-grid"
+                  keyExpr="id"
+                  show-borders
+                  @editingStart="onEditingStart"
+                  @rowRemoving="onRowRemoving"
+                  width="96%"
                 >
+                  <!-- Config Edición/Eliminación -->
                   <DxEditing
-                    :allow-updating="false"
-                    :allow-adding="false"
-                    :allow-deleting="false"
+                    :allow-updating="true"
+                    :allow-deleting="true"
                     mode="row"
                   />
-                  <DxPaging :enabled="true" :page-size="7" />
+
+                  <DxColumn dataField="hora_inicio" caption="Hora de Inicio" />
+                  <DxColumn dataField="hora_fin" caption="Hora de Fin" />
                   <DxColumn
-                    data-field="dia_semana"
-                    caption="Día de la Semana"
-                    data-type="string"
-                    min-width="150"
-                  />
-                  <DxColumn
-                    data-field="hora_inicio"
-                    caption="Hora de Inicio"
-                    data-type="time"
-                    min-width="120"
-                  />
-                  <DxColumn
-                    data-field="hora_fin"
-                    caption="Hora de Fin"
-                    data-type="time"
-                    min-width="120"
-                  />
-                  <DxColumn
-                    data-field="intervalo_min"
+                    dataField="intervalo_min"
                     caption="Intervalo (min)"
-                    data-type="number"
-                    min-width="120"
                   />
-                  <DxColumn type="buttons" width="150">
-                    <DxButton
-                      name="edit"
-                      icon="edit"
-                      hint="Editar Horario"
-                      @click="editarHorarioAtencion(row)"
-                    />
-                    <DxButton
-                      name="delete"
-                      icon="delete"
-                      hint="Eliminar Horario"
-                      @click="eliminarHorarioAtencion(row)"
-                    />
+
+                  <!-- Botones de editar y eliminar -->
+                  <DxColumn type="buttons" :width="100">
+                    <DxButton name="edit" icon="edit" />
+                    <DxButton name="delete" icon="trash" />
                   </DxColumn>
                 </DxDataGrid>
               </div>
             </q-card-section>
+          </div>
 
-            <!-- Modal para Agregar/Editar Horario -->
-            <!-- Dentro de la pestaña "Horarios de Atención" -->
-            <q-dialog v-model="abrirModalHorario" persistent>
-              <q-card class="form-container widthModalHorarios">
-                <q-card-section>
-                  <div class="text-h6">
-                    {{ esEditar ? "Editar" : "Agregar" }} Horario de Atención
-                  </div>
-                </q-card-section>
-                <q-card-section>
-                  <q-form
-                    @submit.prevent="
-                      esEditar ? actualizarHorario() : crearHorario()
-                    "
-                  >
-                    <div class="q-gutter-md">
-                      <!-- Día de la Semana -->
-                      <div>
-                        <label for="dia_semana">Día de la Semana</label>
-                        <select
-                          id="dia_semana"
-                          name="dia_semana"
-                          v-model="formHorario.dia_semana"
-                          required
-                          class="form-select custom-select-height"
-                        >
-                          <option value="" disabled>Seleccionar un día</option>
-                          <option
-                            v-for="dia in diasSemana"
-                            :key="dia"
-                            :value="dia"
-                          >
-                            {{ dia }}
-                          </option>
-                        </select>
-                      </div>
-                      <!-- Hora de Inicio y Hora de Fin -->
-                      <div class="row-horizontal">
-                        <div class="time-picker">
-                          <label for="hora_inicio">Hora de Inicio</label>
-                          <input
-                            type="time"
-                            id="hora_inicio"
-                            v-model="formHorario.hora_inicio"
-                            required
-                          />
-                        </div>
-                        <div class="time-picker">
-                          <label for="hora_fin">Hora de Fin</label>
-                          <input
-                            type="time"
-                            id="hora_fin"
-                            v-model="formHorario.hora_fin"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <!-- Intervalo entre Citas -->
-                      <div>
-                        <label for="intervalo_min">Intervalo (minutos)</label>
+          <div class="borderBton">
+            <q-card-section>
+              <div class="horarios-container">
+                <span class="checkbox-label">Subir foto de perfil médico</span>
+                <i
+                  class="fas fa-upload checkRight upload-icon"
+                  @click="subirFoto"
+                  title="Subir foto"
+                ></i>
+              </div>
+            </q-card-section>
+          </div>
+          <div class="borderBton">
+            <q-card-section>
+              <div class="horarios-container">
+                <span class="checkbox-label"
+                  >Permitir superposición de Auto-citas</span
+                >
+                <input
+                  type="checkbox"
+                  class="checkRight"
+                  v-model="permitirSuperposicion"
+                />
+              </div>
+            </q-card-section>
+          </div>
+          <!-- Modal: Editar/Crear Horario -->
+          <q-dialog v-model="abrirModalHorario" persistent>
+            <q-card class="form-container widthModalHorarios">
+              <q-card-section>
+                <div class="text-h6">
+                  {{ esEditar ? "Editar" : "Agregar" }} Horario de Atención
+                </div>
+              </q-card-section>
+              <q-card-section>
+                <q-form
+                  @submit.prevent="
+                    esEditar ? actualizarHorario() : crearConfiguraciones()
+                  "
+                >
+                  <div class="q-gutter-md">
+                    <div class="row-horizontal">
+                      <div class="time-picker">
+                        <label for="hora_inicio">Hora de Inicio</label>
                         <input
-                          id="intervalo_min"
-                          name="intervalo_min"
-                          type="number"
-                          min="5"
-                          v-model.number="formHorario.intervalo_min"
-                          class="form-control"
+                          type="time"
+                          id="hora_inicio"
+                          v-model="formHorario.hora_inicio"
                           required
-                          placeholder="Intervalo entre Citas (minutos)"
+                        />
+                      </div>
+                      <div class="time-picker">
+                        <label for="hora_fin">Hora de Fin</label>
+                        <input
+                          type="time"
+                          id="hora_fin"
+                          v-model="formHorario.hora_fin"
+                          required
                         />
                       </div>
                     </div>
-                  </q-form>
-                </q-card-section>
-                <q-card-actions align="right">
-                  <q-btn flat label="Cancelar" @click="cerrarModalHorario" />
-                  <q-btn
-                    label="Guardar"
-                    color="primary"
-                    @click="esEditar ? actualizarHorario() : crearHorario()"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </q-tab-panel>
-        </q-tab-panels>
+                    <div>
+                      <label for="intervalo_min">Intervalo (minutos)</label>
+                      <input
+                        id="intervalo_min"
+                        name="intervalo_min"
+                        type="number"
+                        min="5"
+                        v-model.number="formHorario.intervalo_min"
+                        class="form-control"
+                        required
+                        placeholder="Intervalo entre Citas (minutos)"
+                      />
+                    </div>
+                  </div>
+                </q-form>
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn flat label="Cancelar" @click="cerrarModalHorario" />
+                <q-btn
+                  label="Guardar"
+                  color="primary"
+                  @click="
+                    esEditar ? actualizarHorario() : crearConfiguraciones()
+                  "
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
       </q-card>
     </div>
   </q-page>
 </template>
+
 <script setup>
 import { ref, onMounted, watch, reactive } from "vue";
 import QRCode from "qrcode";
 import { useAuthStore } from "../stores/auth";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
-import { useQuasar } from "quasar";
+import { useQuasar, Notify } from "quasar";
 import { storeToRefs } from "pinia";
+
 import {
   DxDataGrid,
   DxEditing,
-  DxPaging,
   DxColumn,
   DxButton,
-  DxRequiredRule,
-  DxEmailRule,
-  DxLookup,
+  // ... (otros componentes de devextreme-vue/data-grid si los necesitas)
 } from "devextreme-vue/data-grid";
 
+import { supabase } from "../supabaseClient";
+
+// Store
 const crearUsuariosStore = useCrearUsuariosStore();
-const { users, loading, error, horariosAtencion } =
+const { users, loading, error, horariosAtencion, permitirSuperposicion } =
   storeToRefs(crearUsuariosStore);
 
+// Quasar
 const $q = useQuasar();
 
+// Pestaña activa
 const tab = ref("info");
 
-// Acceder a la store de autenticación
+// Auth
 const authStore = useAuthStore();
 const organizationId = ref(authStore.tenant_id || "defaultOrgId");
 const doctorId = ref(authStore.userId || "defaultDoctorId");
 const { tenant_id } = storeToRefs(authStore);
 
-// Estado para el código QR
+// QR
 const qrCodeUrl = ref("");
 const loadingQR = ref(true);
 const errorMsgQR = ref("");
-
-// Estado para la copia del URL
 const copySuccess = ref(false);
+const fullUrl = ref("");
+
+// Formulario del Horario
 const formHorario = reactive({
   id: null,
   dia_semana: "",
   hora_inicio: "",
   hora_fin: "",
   intervalo_min: 15,
+  autoSuperPosicion: false,
 });
 const esEditar = ref(false);
-const diasSemana = ref([
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-  "Domingo",
-]);
 const abrirModalHorario = ref(false);
-// Definir la base URL
-const baseUrl =
-  import.meta.env.VITE_BASE_URL || "http://localhost:9000/schedule";
 
-// URL completa: /schedule/:organizationId/:doctorId
-const fullUrl = ref(`${baseUrl}/${organizationId.value}/${doctorId.value}`);
-
-// Genera el QR
+// Generar QR
 async function generateQRCode() {
   try {
-    const urlString = fullUrl.value;
-    console.log("Generando QR para:", urlString);
+    const baseUrl =
+      import.meta.env.VITE_BASE_URL || "http://localhost:9000/schedule";
+    fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
 
-    qrCodeUrl.value = await QRCode.toDataURL(urlString, {
+    qrCodeUrl.value = await QRCode.toDataURL(fullUrl.value, {
       width: 300,
       margin: 2,
       color: {
@@ -437,7 +425,7 @@ async function generateQRCode() {
   }
 }
 
-// Copiar al portapapeles
+// Copiar URL
 async function copyToClipboard() {
   try {
     await navigator.clipboard.writeText(fullUrl.value);
@@ -470,39 +458,25 @@ function downloadQRCode() {
   link.click();
   document.body.removeChild(link);
 }
-// Horarios
 
-/** Abrir el modal de nuevo horario */
-const abrirModalCrearHorario = () => {
+/** Abrir Modal para Crear */
+function abrirModalcrearConfiguraciones() {
   esEditar.value = false;
   formHorario.id = null;
-  formHorario.dia_semana = "";
   formHorario.hora_inicio = "";
   formHorario.hora_fin = "";
   formHorario.intervalo_min = 15;
   abrirModalHorario.value = true;
-};
+}
 
-/** Editar horario existente */
-const editarHorarioAtencion = (row) => {
-  esEditar.value = true;
-  formHorario.id = row.data.id;
-  formHorario.dia_semana = row.data.dia_semana;
-  formHorario.hora_inicio = row.data.hora_inicio;
-  formHorario.hora_fin = row.data.hora_fin;
-  formHorario.intervalo_min = row.data.intervalo_min;
-  abrirModalHorario.value = true;
-};
-
-/** Cerrar modal */
-const cerrarModalHorario = () => {
+/** Cerrar Modal */
+function cerrarModalHorario() {
   abrirModalHorario.value = false;
-};
+}
 
-/** Crear horario */
-const crearHorario = async () => {
+/** Crear */
+async function crearConfiguraciones() {
   if (
-    !formHorario.dia_semana ||
     !formHorario.hora_inicio ||
     !formHorario.hora_fin ||
     !formHorario.intervalo_min
@@ -532,17 +506,17 @@ const crearHorario = async () => {
   }
 
   const nuevoHorario = {
-    dia_semana: formHorario.dia_semana,
     hora_inicio: formHorario.hora_inicio,
     hora_fin: formHorario.hora_fin,
     intervalo_min: formHorario.intervalo_min,
+    autoSuperPosicion: false,
     tenant_id: tenant_id.value,
   };
 
   try {
-    await crearUsuariosStore.crearHorarioAtencion(nuevoHorario);
+    await crearUsuariosStore.crearConfiguraciones(nuevoHorario);
     cerrarModalHorario();
-    await crearUsuariosStore.cargarHorariosAtencion(tenant_id.value);
+    await crearUsuariosStore.cargarConfiguraciones(tenant_id.value);
     $q.notify({
       type: "positive",
       message: "Horario de atención creado exitosamente.",
@@ -556,12 +530,11 @@ const crearHorario = async () => {
       position: "top-right",
     });
   }
-};
+}
 
-/** Actualizar horario */
-const actualizarHorario = async () => {
+/** Actualizar */
+async function actualizarHorario() {
   if (
-    !formHorario.dia_semana ||
     !formHorario.hora_inicio ||
     !formHorario.hora_fin ||
     !formHorario.intervalo_min
@@ -591,10 +564,10 @@ const actualizarHorario = async () => {
   }
 
   const horarioActualizado = {
-    dia_semana: formHorario.dia_semana,
     hora_inicio: formHorario.hora_inicio,
     hora_fin: formHorario.hora_fin,
     intervalo_min: formHorario.intervalo_min,
+    autoSuperPosicion: formHorario.autoSuperPosicion,
     tenant_id: tenant_id.value,
   };
 
@@ -604,7 +577,7 @@ const actualizarHorario = async () => {
       horarioActualizado
     );
     cerrarModalHorario();
-    await crearUsuariosStore.cargarHorariosAtencion(tenant_id.value);
+    await crearUsuariosStore.cargarConfiguraciones(tenant_id.value);
     $q.notify({
       type: "positive",
       message: "Horario de atención actualizado exitosamente.",
@@ -618,83 +591,89 @@ const actualizarHorario = async () => {
       position: "top-right",
     });
   }
-};
+}
 
-/** Eliminar horario */
-const eliminarHorarioAtencion = async (row) => {
-  const horario = row.data;
-  if (
-    confirm(
-      `¿Estás seguro de eliminar el horario de ${
-        horario.dia_semana
-      } de ${formatTime(horario.hora_inicio)} a ${formatTime(
-        horario.hora_fin
-      )}?`
-    )
-  ) {
-    try {
-      await organizacionStore.eliminarHorarioAtencion(horario.id);
-      await crearUsuariosStore.cargarHorariosAtencion(tenant_id.value);
-      $q.notify({
-        type: "positive",
-        message: "Horario de atención eliminado exitosamente.",
-        position: "top-right",
-      });
-    } catch (error) {
-      console.error("Error eliminando horario:", error);
-      $q.notify({
-        type: "negative",
-        message: "Error al eliminar el horario de atención.",
-        position: "top-right",
-      });
-    }
-  }
-};
+/**
+ * Evento: Editar
+ * - Se dispara cuando el DataGrid detecta que el usuario hace clic en "Editar"
+ */
+function onEditingStart(e) {
+  // Cancelamos la edición nativa de DevExtreme
+  e.cancel = true;
 
-/** Formatea la hora HH:mm a AM/PM */
-const formatTime = (timeStr) => {
-  try {
-    const [hour, minute] = timeStr.split(":").map(Number);
-    const suffix = hour >= 12 ? "PM" : "AM";
-    const adjHour = hour % 12 || 12;
-    return `${adjHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
-  } catch {
-    return timeStr;
-  }
-};
+  // Llenamos nuestro formHorario con los datos del row
+  esEditar.value = true;
+  formHorario.id = e.data.id;
+  formHorario.hora_inicio = e.data.hora_inicio;
+  formHorario.hora_fin = e.data.hora_fin;
+  formHorario.intervalo_min = e.data.intervalo_min;
+  formHorario.autoSuperPosicion = e.data.autoSuperPosicion || false;
 
-// Obtener el usuario actual y generar QR al montar el componente
+  // Abrimos el modal para edición
+  abrirModalHorario.value = true;
+}
+
+/**
+ * Evento: Eliminar
+ * - Se dispara cuando el DataGrid detecta que el usuario hace clic en "Eliminar"
+ */
+function onRowRemoving(e) {
+  // Cancelamos la eliminación nativa de DevExtreme
+  e.cancel = true;
+
+  // Mostramos diálogo de confirmación con Quasar
+  $q.dialog({
+    title: "Confirmar",
+    message: "¿Deseas eliminar este horario?",
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(async () => {
+      try {
+        await crearUsuariosStore.eliminarHorarioAtencion(e.data.id);
+        await crearUsuariosStore.cargarConfiguraciones(tenant_id.value);
+        $q.notify({
+          type: "positive",
+          message: "Horario de atención eliminado correctamente.",
+        });
+      } catch (error) {
+        console.error("Error al eliminar horario:", error);
+      }
+    })
+    .onCancel(() => {
+      // Si el usuario cancela, no hacemos nada
+      console.log("Eliminación cancelada.");
+    });
+}
+
+// onMounted
 onMounted(async () => {
-  // Verificar si userId está disponible
   if (authStore.userId) {
     await crearUsuariosStore.cargarUsuarioPerfil();
-    await crearUsuariosStore.cargarHorariosAtencion();
-
+    await crearUsuariosStore.cargarConfiguraciones();
+    // Forzar leer valor de permitirSuperposicion
+    await crearUsuariosStore.permitirSuperposicion;
     await generateQRCode();
-    console.log("Nombr completo del medico: ", users[0]?.nombreCompleto);
-    console.log("USER DE PERFIL MEDICO: ", crearUsuariosStore.users.value);
+    console.log("Nombre completo del médico: ", users.value[0]?.nombreCompleto);
   } else {
-    console.warn(
-      "userId no está disponible en authStore al montar el componente."
-    );
+    console.warn("userId no disponible en authStore al montar el componente.");
   }
 });
 
-// Si cambia tenant_id o userId en la store, regeneramos el QR
+// Watch tenant_id
 watch(
   () => authStore.tenant_id,
   (newOrg) => {
     organizationId.value = newOrg;
-    fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
     generateQRCode();
   }
 );
 
+// Watch userId
 watch(
   () => authStore.userId,
   async (newDoc) => {
     doctorId.value = newDoc;
-    fullUrl.value = `${baseUrl}/${organizationId.value}/${doctorId.value}`;
     if (newDoc) {
       await crearUsuariosStore.cargarUsuarioPerfil();
       generateQRCode();
@@ -704,9 +683,9 @@ watch(
 </script>
 
 <style scoped>
+/* ------------------------- Estilos Principales ------------------------- */
 .profile-container {
   position: relative;
-  top: -40px;
   max-width: 1900px;
   margin: 0 auto;
   background-color: #ffffff;
@@ -731,126 +710,22 @@ watch(
   font-weight: bold;
 }
 
-.profile-buttons {
-  margin-top: 15px;
-}
-.form-container {
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-.widthModalHorarios {
-  width: 40%;
-  height: auto;
-  max-width: 1400px;
+/* Estructura "Static Pills" (Bootstrap) */
+.nav-pills .nav-link {
+  border-radius: 0.25rem;
 }
 
-.horarios-container {
-  margin-top: 10px;
+.nav-pills .nav-link.active {
+  color: #fff;
+  background-color: bg-prmary; /* Azul estilo Bootstrap */
 }
 
-.horarios-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* margin-bottom: 20px; */
-}
-
-.horarios-header h6 {
-  font-size: 18px;
-  color: #2c3e50;
-}
-
-.horarios-header .q-btn {
-  min-width: 150px;
-}
-.custom-data-grid {
-  height: 300px;
-  margin-top: 10px;
-}
-.time-picker {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-@media (max-width: 768px) {
-  .row-horizontal {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .time-picker input[type="time"] {
-    width: 100%;
-  }
-  .horarios-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .horarios-header .q-btn {
-    width: 100%;
-    margin-top: 10px;
-  }
-  .custom-data-grid {
-    min-height: 300px;
-  }
-}
-
-/* .profile-stats {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-top: 20px;
-} */
-/*
-.profile-stats div {
-  text-align: center;
-}
-
-.profile-stats strong {
-  display: block;
-  font-size: 1.2rem;
-} */
-
-.tabs-menu {
-  margin-top: 20px;
-  padding-top: 10px;
-  width: 100%;
-  border: #ffffff;
-}
-
-.custom-tabs {
-  border-radius: 8px;
-}
-
-.q-tab--active .q-tab__content {
-  font-weight: bold;
-  color: #ffffff;
-}
-
-.q-tab {
-  color: rgba(255, 255, 255, 0.75);
-  transition: color 0.3s;
-}
-
-.q-tab:hover .q-tab__content {
-  color: #ffffff;
-}
-
-.q-tab__indicator {
-  height: 3px;
-}
-
+/* ------------------------- Contenidos QR ------------------------- */
 .qr-container {
   text-align: center;
   max-width: 350px;
   width: 100%;
 }
-/*
-.spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 250px;
-} */
 
 .url-container {
   display: flex;
@@ -869,11 +744,21 @@ watch(
 .buttons-container {
   display: flex;
   gap: 10px;
-  /* width: 100%; */
 }
+
 .anchoBotonesQR {
   width: 150px;
 }
+
+/* ------------------------- Banners Éxito/Error ------------------------- */
+.bg-green {
+  background-color: #4caf50 !important;
+}
+.bg-red {
+  background-color: #f44336 !important;
+}
+
+/* ------------------------- Info del Doctor ------------------------- */
 .doctor-info {
   width: 100%;
 }
@@ -883,114 +768,104 @@ watch(
   overflow-x: auto;
 }
 
-/* .info-table {
-  width: 100%;
-  border-collapse: collapse;
-} */
-
-.info-table th,
-.info-table td {
-  padding: 12px 15px;
-  text-align: left;
-}
-
-.info-table th {
-  background-color: #1976d2;
-  color: #ffffff;
-  width: 20%;
-}
-
-.info-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.info-table tr:hover {
-  background-color: #e6f7ff;
-}
-
-/* Responsividad */
-@media (min-width: 600px) {
-  .url-container {
-    flex-wrap: nowrap;
-    width: auto;
-  }
-
-  .url-input {
-    margin-bottom: 0;
-    min-width: 300px;
-  }
-}
-
-.bg-green {
-  background-color: #4caf50 !important;
-}
-
-.bg-red {
-  background-color: #f44336 !important;
-}
-
-.q-item-section label {
-  font-weight: bold;
-  color: #555555;
-}
-
-.q-item-section q-item-label:last-child {
-  color: #333333;
-}
-
-.menu-container {
-  background: #f8f9fa;
-  border-radius: 8px;
-  height: 86vh;
-  width: 200px;
-}
-
-.vertical-tabs .nav-link {
-  font-size: 14px;
-  padding: 10px;
-  margin-bottom: 5px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-.vertical-tabs .nav-link.active {
-  background: #e74c3c;
-  color: #fff;
-}
-
-.content-container {
-  padding: 20px;
-}
-
-.form-container {
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header {
-  border-radius: 8px 8px 0 0;
-}
-
-.custom-data-grid {
-  height: 250px;
-  width: 100%;
-  /* margin-top: 10px; */
-}
-
-.hsize {
-  height: 600px;
-  position: relative;
-  top: -10px;
-}
-
-.q-btn {
-  width: 100%;
-}
-
+/* ------------------------- Horarios ------------------------- */
 .widthModalHorarios {
   width: 40%;
   height: auto;
   max-width: 1400px;
+}
+
+.horarios-container {
+  margin-top: 10px;
+}
+
+.horarios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.horarios-header h6 {
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.horarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.horarios-table th,
+.horarios-table td {
+  border: 1px solid #f5f2f2;
+  padding: 8px;
+  text-align: center;
+}
+.upload-icon {
+  font-size: 24px;
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.upload-icon:hover {
+  color: #0056b3;
+}
+
+.horarios-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.horarios-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.horarios-table tr:hover {
+  background-color: #ddd;
+}
+
+.horarios-table button {
+  margin: 0 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.horarios-table button:first-of-type {
+  background-color: #1976d2;
+  color: white;
+}
+
+.horarios-table button:last-of-type {
+  background-color: #d32f2f;
+  color: white;
+}
+
+/* ------------------------- Checkboxes y Superposición ------------------------- */
+.checkbox-label {
+  font-size: 16px;
+  color: #333;
+}
+.checkRight {
+  position: relative;
+  left: -7%;
+  float: right;
+}
+.borderBton {
+  border-bottom: 1px solid #e2dbdb;
+  /* height: 120%; */
+  margin-top: 10px;
+  padding-bottom: 15px;
+}
+
+/* ------------------------- Layout y Form ------------------------- */
+.form-container {
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .row-horizontal {
@@ -1018,26 +893,7 @@ watch(
   font-size: 16px;
 }
 
-.horarios-container {
-  margin-top: 10px;
-}
-
-.horarios-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.horarios-header h6 {
-  font-size: 18px;
-  color: #2c3e50;
-}
-
-.horarios-header .q-btn {
-  min-width: 150px;
-}
-
+/* ------------------------- Responsividad ------------------------- */
 @media (max-width: 768px) {
   .row-horizontal {
     flex-direction: column;
@@ -1054,17 +910,5 @@ watch(
     width: 100%;
     margin-top: 10px;
   }
-  .custom-data-grid {
-    min-height: 400px;
-  }
-}
-
-.required {
-  color: red;
-  margin-left: 4px;
-}
-
-.text-h6 {
-  font-size: 1.25rem;
 }
 </style>

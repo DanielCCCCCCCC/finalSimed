@@ -58,13 +58,15 @@
           <div
             class="header-element bajarIconoNotificaciones notifications-dropdown"
           >
-            <!-- Trigger para el menú de notificaciones -->
+            <!-- Botón con ícono de campanita -->
             <q-btn
               flat
               round
               icon="notifications"
+              color="dark"
               @click="toggleNotificationMenu"
             >
+              <!-- Badge con el conteo de pendientes -->
               <q-badge
                 color="secondary"
                 floating
@@ -82,16 +84,19 @@
                     <div class="text-h6">Notificaciones</div>
                     <q-badge
                       color="secondary"
-                      label="Unread: {{ pendingAppointmentsCount }}"
+                      :label="`Unread: ${pendingAppointmentsCount}`"
                     />
                   </div>
                 </q-card-section>
                 <q-separator />
+
+                <!-- Lista de Notificaciones -->
                 <q-card-section class="q-pa-none">
                   <simplebar
                     data-simplebar-auto-hide="false"
                     style="max-height: 300px"
                   >
+                    <!-- Si hay notificaciones pendientes... -->
                     <q-list v-if="notificationList.length">
                       <q-item
                         v-for="item in notificationList"
@@ -112,33 +117,39 @@
                           <q-btn
                             flat
                             icon="close"
+                            size="sm"
                             @click.stop="removeNotification(item)"
                           />
                         </q-item-section>
                       </q-item>
                     </q-list>
+
+                    <!-- Si no hay notificaciones... -->
+                    <div v-else class="q-pa-sm text-center">
+                      <q-avatar
+                        size="80px"
+                        class="bg-secondary-transparent q-mb-md"
+                      >
+                        <i class="ri-notification-off-line fs-2"></i>
+                      </q-avatar>
+                      <div>No New Notifications</div>
+                    </div>
                   </simplebar>
                 </q-card-section>
-                <q-separator />
-                <q-card-section v-if="notificationList.length" class="q-pa-sm">
-                  <router-link
-                    :to="`${url}advancedui/notifications`"
-                    class="full-width"
-                  >
+
+                <!-- Botón "View All" si hay notificaciones -->
+                <q-separator v-if="notificationList.length" />
+                <q-card-section
+                  v-if="notificationList.length"
+                  class="q-pa-sm text-center"
+                >
+                  <router-link :to="`${url}advancedui/notifications`">
                     <q-btn
                       label="View All"
                       color="primary"
                       class="full-width"
                     />
                   </router-link>
-                </q-card-section>
-                <q-card-section v-else class="q-pa-sm text-center">
-                  <div class="q-mb-md">
-                    <q-avatar size="80px" class="bg-secondary-transparent">
-                      <i class="ri-notification-off-line fs-2"></i>
-                    </q-avatar>
-                  </div>
-                  <div>No New Notifications</div>
                 </q-card-section>
               </q-card>
             </q-menu>
@@ -165,8 +176,6 @@
                     class="rounded-circle"
                   />
                 </div>
-                <!-- En caso de querer mostrar algo adicional a la derecha del avatar,
-                     lo puedes poner aquí, pero se mantiene oculto con d-none por ahora -->
                 <div class="d-none">
                   <p class="fw-semibold mb-0">Angelica</p>
                   <span class="op-7 fw-normal d-block fs-11">Web Designer</span>
@@ -174,7 +183,6 @@
               </div>
             </a>
 
-            <!-- Menú desplegable -->
             <q-menu
               v-model="menuVisible"
               anchor="bottom right"
@@ -190,7 +198,6 @@
               >
                 <li>
                   <div class="header-navheading border-bottom">
-                    <!-- Aquí mostramos el nombre dinámico según el rol -->
                     <h6 class="main-notification-title">{{ displayName }}</h6>
                     <p class="main-notification-text mb-0">{{ role }}</p>
                   </div>
@@ -267,7 +274,7 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "../../stores/auth";
 import { useOrganizacionStore } from "../../stores/organizacionStore";
 import { useCrearUsuariosStore } from "../../stores/crearUsuarios";
-import { useAppointmentsStore } from "../../stores/AppointmentsStore"; // Nuevo store para citas
+import { useAppointmentsStore } from "../../stores/AppointmentsStore"; // Store de citas
 
 // Variables reactivas
 const isFullScreen = ref(false);
@@ -281,15 +288,17 @@ const url = import.meta.env.BASE_URL;
 const authStore = useAuthStore();
 const organizacionStore = useOrganizacionStore();
 const crearUsuariosStore = useCrearUsuariosStore();
-const appointmentsStore = useAppointmentsStore(); // Nuevo store para citas
+const appointmentsStore = useAppointmentsStore(); // Store de citas
 
-// De las stores, extraemos propiedades reactivas y métodos correctamente
+// De las stores, extraemos propiedades reactivas y métodos
 const { organizaciones } = storeToRefs(organizacionStore);
 const { users } = storeToRefs(crearUsuariosStore);
 const { user, tenant_id, role, isAuthenticated } = storeToRefs(authStore);
-const { appointments, loading, error, fetchAutoAppointments } =
+
+// De AppointmentsStore: extraemos el array de citas y el método fetchAutoAppointments
+const { appointments, loading, error, pendingAppointmentsCount } =
   storeToRefs(appointmentsStore);
-const { deleteAppointment } = appointmentsStore; // Acceso directo a métodos
+const { fetchAutoAppointments, deleteAppointment } = appointmentsStore; // métodos
 
 // Router
 const router = useRouter();
@@ -297,33 +306,27 @@ const router = useRouter();
 // Emitir evento "toggle-drawer" al padre si es necesario
 const emit = defineEmits(["toggle-drawer"]);
 
+/**
+ * currentUser: buscar el usuario logueado en users
+ */
 const currentUser = computed(() => {
   if (!user.value?.id) return null;
   return users.value.find((u) => u.id === user.value.id) || null;
 });
+
+/**
+ * displayName: mostrar nombreCompleto o email
+ */
 const displayName = computed(() => {
-  // Verificar si hay un usuario actual con nombreCompleto
   if (currentUser.value?.nombreCompleto) {
     return currentUser.value.nombreCompleto;
   }
-  // Fallback al email si no hay nombreCompleto
   return currentUser.value?.email ?? "Usuario sin datos";
 });
 
 /**
- * Computed: pendingAppointmentsCount
- * Cuenta las citas que están pendientes (asegurando consistencia en el estado)
- */
-const pendingAppointmentsCount = computed(
-  () =>
-    appointments.value.filter(
-      (appointment) => appointment.status === "Pendiente"
-    ).length
-);
-
-/**
- * Computed: notificationList
- * Personaliza la lista de notificaciones según las citas pendientes
+ * notificationList: Listado de citas "Pendientes" (autoCita o no),
+ * o personalizar a tu gusto
  */
 const notificationList = computed(() =>
   appointments.value
@@ -332,8 +335,7 @@ const notificationList = computed(() =>
       id: appointment.id,
       title: `Cita pendiente: ${appointment.description}`,
       time: new Date(appointment.created_at).toLocaleString(),
-      icon: "/path/to/icon.png", // Asegúrate de que esta ruta es correcta
-      isOnline: true, // O cualquier lógica que determines
+      icon: "/path/to/icon.png", // Ajusta el ícono o usa un set de íconos
     }))
 );
 
@@ -406,7 +408,6 @@ function toggleFullScreen() {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement
   ) {
-    // Salir de fullscreen
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
@@ -415,7 +416,6 @@ function toggleFullScreen() {
       document.webkitExitFullscreen();
     }
   } else {
-    // Entrar a fullscreen
     if (element.requestFullscreen) {
       element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
@@ -480,10 +480,8 @@ async function logout() {
   }
 }
 
-/** Remove Notification */
+/** Eliminar la 'notificación' => en realidad, borrar la cita Pendiente */
 function removeNotification(notification) {
-  // Implementa la lógica para eliminar la notificación
-  // Aquí simplemente eliminamos la cita correspondiente
   deleteAppointment(notification.id)
     .then(() => {
       Notify.create({
@@ -502,17 +500,18 @@ function removeNotification(notification) {
     });
 }
 
-/** Navegar a la página de notificaciones */
+/** Ir a la página de notificaciones */
 function goToNotification(item) {
   router.push({ path: `${url}advancedui/notifications` });
-  // Opcionalmente, podrías marcar la notificación como leída aquí
+  // O marcar la notificación como leída
 }
 
 /** onMounted: cargar data y listeners */
 onMounted(async () => {
   await organizacionStore.cargarOrganizaciones();
   await crearUsuariosStore.cargarUsuarios();
-  await appointmentsStore.fetchAutoAppointments(); // Cargar citas al montar
+  // Cargar citas auto-agendadas (si en tu store fetchAutoAppointments hace eso)
+  await appointmentsStore.fetchAutoAppointments();
   console.log("Organizaciones: ", organizaciones.value);
   console.log("Users: ", users.value);
   console.log("Appointments: ", appointments.value);
@@ -541,11 +540,12 @@ onUnmounted(() => {
 }
 /* Fijar un ancho mínimo para el menú desplegable */
 .fixed-width-menu {
-  min-width: 220px; /* Ajusta a tu preferencia */
+  min-width: 220px;
 }
 .bajarIconoNotificaciones {
   position: relative;
-  top: 10px;
+  top: 5px;
+  left: 5px;
 }
 .bajarIconoFullScreen {
   position: relative;

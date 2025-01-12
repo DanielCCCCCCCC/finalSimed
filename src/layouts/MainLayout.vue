@@ -135,7 +135,7 @@ watch(
 }
 
 .app-container {
-  background-color: #eaedf7;
+  background-color: #e9ecf7;
 }
 
 /* Estilo para el botón flotante */

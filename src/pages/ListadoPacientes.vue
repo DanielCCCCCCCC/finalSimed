@@ -274,7 +274,7 @@
                       <q-form class="row">
                         <!-- Nombres -->
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Nombres</label>
+                          <label class="form-label">Nombre</label>
                           <input
                             v-model="pacienteSeleccionado.nombres"
                             class="form-control"

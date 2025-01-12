@@ -33,12 +33,14 @@ import NotAuthorized from "../pages/NotAuthorized.vue";
 import ListadoTipoEstadoCivil from "../pages/ListadoTipoEstadoCivil.vue";
 import pacientesPrueba from "../pages/pacientesPrueba.vue";
 import Configuraciones from "../pages/Configuraciones.vue";
+import SetPassword from "../pages/SetPassword.vue";
 import ResetPassword from "../pages/ResetPassword.vue";
 import RecoverPassword from "../pages/RecoverPassword.vue";
 import PerfilMedico from "../pages/PerfilMedico.vue";
 import PacientesScheduleAppointment from "../pages/PacientesScheduleAppointment.vue";
 import SolicitudesCitasPendientes from "../pages/SolicitudesCitasPendientes.vue";
 import ConfirmarCuenta from "../pages/ConfirmarCuenta.vue";
+
 const routes = [
   {
     path: "/",
@@ -229,6 +231,12 @@ const routes = [
     path: "/recover-password",
     name: "RecoverPassword",
     component: RecoverPassword,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/set-password",
+    name: "SetPassword",
+    component: SetPassword,
     meta: { requiresAuth: false },
   },
   {
