@@ -24,7 +24,7 @@ export const useContactStore = defineStore("contactStore", () => {
   const cargarContactos = async () => {
     try {
       const { data, error } = await supabase
-        .from("contactos")
+        .from("DirContactos")
         .select("*")
         // .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
@@ -44,7 +44,7 @@ export const useContactStore = defineStore("contactStore", () => {
 
     try {
       const { data, error } = await supabase
-        .from("contactos")
+        .from("DirContactos")
         .insert([{ ...contacto, tenant_id: authStore.tenant_id }])
         .select();
 
@@ -66,7 +66,7 @@ export const useContactStore = defineStore("contactStore", () => {
 
     try {
       const { error } = await supabase
-        .from("contactos")
+        .from("DirContactos")
         .delete()
         .eq("id", contactoId)
         .eq("tenant_id", authStore.tenant_id);
@@ -94,7 +94,7 @@ export const useContactStore = defineStore("contactStore", () => {
 
     try {
       const { data, error } = await supabase
-        .from("contactos")
+        .from("DirContactos")
         .update(contactoActualizado)
         .eq("id", contactoActualizado.id)
         .eq("tenant_id", authStore.tenant_id);

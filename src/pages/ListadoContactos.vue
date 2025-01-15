@@ -394,7 +394,7 @@ const contactosConDetalles = computed(() => {
       (dept) => dept.id === Number(contacto.departamentoIdContacto)
     );
     const municipio = (municipios.value || []).find(
-      (mun) => mun.id === Number(contacto.municipioIdContacto)
+      (mun) => mun.MunicipioId === Number(contacto.municipioIdContacto)
     );
     return {
       ...contacto,
@@ -402,7 +402,7 @@ const contactosConDetalles = computed(() => {
         ? departamento.descripcion
         : "Departamento no encontrado",
       municipioDescripcion: municipio
-        ? municipio.descripcion
+        ? municipio.Descripcion
         : "Municipio no encontrado",
     };
   });
@@ -413,7 +413,7 @@ const filteredMunicipios = computed(() => {
   if (!formData.value.departamentoIdContacto) return [];
   return municipios.value.filter(
     (municipio) =>
-      municipio.departamentoId === Number(formData.value.departamentoIdContacto)
+      municipio.EstadoId === Number(formData.value.departamentoIdContacto)
   );
 });
 
@@ -569,9 +569,9 @@ async function guardarcontact() {
   if (!contactData.departamentoIdContacto) {
     formErrors.value.departamentoIdContacto = "El departamento es obligatorio.";
   }
-  if (!contactData.municipioIdContacto) {
-    formErrors.value.municipioIdContacto = "El municipio es obligatorio.";
-  }
+  // if (!contactData.municipioIdContacto) {
+  //   formErrors.value.municipioIdContacto = "El municipio es obligatorio.";
+  // }
   if (!contactData.emailContacto) {
     formErrors.value.emailContacto = "El email es obligatorio.";
   }

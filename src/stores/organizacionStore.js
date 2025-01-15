@@ -53,6 +53,11 @@ export const useOrganizacionStore = defineStore("organizacion", () => {
       const { data: authUser, error: authError } = await supabase.auth.signUp({
         email: datosAdmin.email,
         password: datosAdmin.password,
+        options: {
+          data: {
+            display_name: datosAdmin.nombre,
+          },
+        },
       });
 
       if (authError) {

@@ -49,7 +49,7 @@
               placeholder="Buscar nombres, Apellido o Cédula"
             />
             <DxSelection mode="single" />
-            <DxColumn data-field="nombres" caption="Nombres" />
+            <DxColumn data-field="Nombre" caption="Nombres" />
             <DxColumn
               data-field="PacienteIdentificacion"
               caption="PacienteIdentificacion"
@@ -254,7 +254,6 @@
     </q-dialog>
   </div>
 </template>
-
 <script setup>
 /* -------------------------------------
    Imports y librerías
@@ -270,26 +269,27 @@ import {
 import { Notify } from "quasar";
 import { onMounted, ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta es correcta
+import { supabase } from "../supabaseClient"; // Ajusta la ruta si es necesario
 
 /* -------------------------------------
    Imports de Stores (Pinia)
 ------------------------------------- */
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
-import { useMedicoStore } from "../stores/MedicoStores";
+import { useMedicoStore } from "../stores/DirMedico";
 import {
   useEspecialidadMedicaStore,
   useTiposCitasStore,
 } from "../stores/ConfiMedicasStores";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth"; // Importación de useAuthStore
 import { useOrganizacionStore } from "../stores/organizacionStore";
+
 /* -------------------------------------
    Inicializar authStore y fichaIdentificacionStore
 ------------------------------------- */
 const authStore = useAuthStore();
-const fichaIdentificacionStore = useFichaIdentificacionStore();
+const dirPacientesStore = useDirPacientesStore();
 
 /* -------------------------------------
    Variables reactivas para modales
@@ -324,14 +324,14 @@ const especialidadMedicaStore = useEspecialidadMedicaStore();
 const tiposCitasStore = useTiposCitasStore();
 const crearUsuariosStore = useCrearUsuariosStore();
 const organizacionStore = useOrganizacionStore();
+
 /* -------------------------------------
    Desestructuramos las variables reactivas
 ------------------------------------- */
 const { medicos } = storeToRefs(medicoStore);
 const { especialidades } = storeToRefs(especialidadMedicaStore);
 const { citas } = storeToRefs(tiposCitasStore);
-const { formIdentificacion, buscarPacientePorPacienteIdentificacion } =
-  storeToRefs(fichaIdentificacionStore);
+const { formIdentificacion } = storeToRefs(dirPacientesStore);
 const {
   users,
   horariosAtencion,
@@ -356,31 +356,13 @@ const sexOptions = [
 const medicosConEspecialidad = computed(() => {
   if (!users.value || !especialidades.value) return [];
   return users.value
-    .filter((usuario) => usuario.role === "medico" || usuario.esMarcado)
+    .filter((usuario) => usuario.role === "medico" || usuario.EsMedico)
     .map((medico) => {
-      // Depuración: mostrar valores de especialidadMedica para el médico
-      console.log(
-        `Medico ID: ${medico.id}, EspecialidadMedica: ${medico.especialidadMedica}`
-      );
-
-      // Buscar la especialidad que coincida con la propiedad especialidadMedica del médico
       const especialidad = especialidades.value.find(
         (esp) => esp.id === parseInt(medico.especialidadMedica)
       );
-
-      // Depuración: si no se encuentra la especialidad, mostrar información
-      if (!especialidad) {
-        console.warn(
-          `No se encontró la especialidad para el médico ID: ${medico.especialidadMedica}`
-        );
-      }
-      console.log(
-        "especialidadDescripcion: ",
-        especialidad ? especialidad.descripcion : "Sin especialidad"
-      );
       return {
         ...medico,
-        // Usamos nombreCompleto como nombre para mostrar en la UI
         nombre: medico.nombreCompleto,
         especialidadDescripcion: especialidad
           ? especialidad.descripcion
@@ -395,34 +377,24 @@ const medicosConEspecialidad = computed(() => {
 const currentDate = ref(new Date());
 const currentView = ref("day");
 
-// const views = ["day", "week", "workWeek", "month", "agenda"];
-// const views = [
-//   { type: "day", name: "Día", cellDuration: 15 },
-//   { type: "workWeek", name: "Días Laborales", cellDuration: 15 },
-//   { type: "week", name: "Semana", cellDuration: 15 },
-// ];
-
-function obtenerDiaSemanaEnEspanol(fecha) {
-  const opciones = { weekday: "long" };
-  // Obtener el día de la semana en español, con la primera letra en mayúscula
-  return fecha
-    .toLocaleDateString("es-ES", opciones)
-    .replace(/^\w/, (c) => c.toUpperCase());
+function convertirHoraANumero(hora) {
+  if (!hora) return 0;
+  const [h, m] = hora.split(":");
+  return parseFloat(h) + parseFloat(m) / 60;
 }
 
+// Escuchamos cambios de fecha para ajustar la configuración
 watch(currentDate, (nuevaFecha) => {
-  // Obtener el nombre del día en español
-  const diaSemana = obtenerDiaSemanaEnEspanol(nuevaFecha);
-  console.log("Día actual:", diaSemana);
+  const opciones = { weekday: "long" };
+  const diaSemana = nuevaFecha
+    .toLocaleDateString("es-ES", opciones)
+    .replace(/^\w/, (c) => c.toUpperCase());
 
-  // Buscar el horario correspondiente en la lista de horariosAtencion
   const horarioDelDia = horariosAtencion.value.find(
     (h) => h.dia_semana.toLowerCase() === diaSemana.toLowerCase()
   );
 
   if (horarioDelDia) {
-    console.log("Horario encontrado para", diaSemana, ":", horarioDelDia);
-
     if (horarioDelDia.intervalo_min) {
       cellDurationConfig.value = horarioDelDia.intervalo_min;
     }
@@ -434,8 +406,6 @@ watch(currentDate, (nuevaFecha) => {
     if (horarioDelDia.hora_fin) {
       endDayHourConfig.value = convertirHoraANumero(horarioDelDia.hora_fin);
     }
-  } else {
-    console.warn("No se encontró horario para", diaSemana);
   }
 });
 
@@ -445,39 +415,52 @@ const schedulerKey = computed(() => {
 });
 
 /**
- * Filtramos SOLO las "Aceptadas"
- * y mapeamos la info del paciente y médico al texto de la cita.
+ * NOTA IMPORTANTE:
+ * - DevExtreme (Scheduler) utiliza internamente las propiedades `startDate`, `endDate`, `allDay`, etc.
+ * - Tus columnas en BD ahora son `CitaFechaInicio`, `CitaFechaFinal`, `CitaTodoElDia`, `CitaRepetir`.
+ * Por eso, mapeamos de un lado a otro:
+ *   - Para mostrar en el scheduler → `startDate`, `endDate`, `allDay`, ...
+ *   - Para guardar en BD → `CitaFechaInicio`, `CitaFechaFinal`, `CitaTodoElDia`, ...
  */
 const computedAppointments = computed(() =>
   appointments.value
     .filter((appt) => appt.CitaStatus === "Aceptada")
     .map((appointment) => {
-      const pacienteId = parseInt(appointment.PacienteNombre, 10);
-
-      const paciente = fichaIdentificacionStore.formIdentificacion.find(
-        (p) => p.id === pacienteId
+      // Buscar datos del paciente
+      const pacienteId = parseInt(appointment.PacienteNombreId, 10);
+      const paciente = dirPacientesStore.formIdentificacion.find(
+        (p) => p.PacienteId === pacienteId
       );
       const nombresPaciente = paciente
-        ? `${paciente.nombres}`
+        ? paciente.Nombre
         : "Paciente no asignado";
 
-      const IdMedico = appointment.IdMedico;
+      // Buscar datos del médico
+      const UsuarioMedicoId = appointment.UsuarioMedicoId;
       const medico = users.value.find(
-        (m) => (m.role === "medico" || m.role === "admin") && m.id === IdMedico
+        (m) =>
+          (m.role === "medico" || m.role === "admin") &&
+          m.id === UsuarioMedicoId
       );
-
       const nombreMedico = medico
-        ? `${medico.nombreCompleto}`
+        ? medico.nombreCompleto
         : "Médico no asignado";
 
       return {
         ...appointment,
-        text: `${appointment.CitaTitle} - ${nombresPaciente} - ${nombreMedico}`,
-        startDate: new Date(appointment.startDate),
-        endDate: new Date(appointment.endDate),
+        // Asignamos las propiedades que usa el Scheduler (frontend)
+        startDate: new Date(appointment.CitaFechaInicio),
+        endDate: new Date(appointment.CitaFechaFinal),
+        allDay: appointment.CitaTodoElDia,
+        repeat: appointment.CitaRepetir,
+
+        // Lo que se mostrará en la tarjeta/label de la cita
+        text: `${appointment.CitaTitulo} - ${nombresPaciente} - ${nombreMedico}`,
       };
     })
 );
+
+// Escuchar cambios en appointments
 watch(appointments, (newVal) => {
   console.log("Citas actualizadas:", newVal);
 });
@@ -507,23 +490,32 @@ const formatDate = (date) => {
 };
 
 /* -------------------------------------
-   Verificar superposiciones
-   (paciente y/o médico)
+   Verificar superposiciones (paciente y/o médico)
 ------------------------------------- */
 const checkAppointmentOverlap = async (appointment) => {
-  // Todavía se usa 'medico' en vez de 'medicoId'
-  const { startDate, endDate, IdMedico, PacienteNombre, id } = appointment;
-  const start = formatDate(startDate);
-  const end = formatDate(endDate);
+  // Ajustamos para las nuevas columnas
+  const {
+    CitaFechaInicio,
+    CitaFechaFinal,
+    UsuarioMedicoId,
+    PacienteNombreId,
+    id,
+  } = appointment;
+  const start = formatDate(CitaFechaInicio);
+  const end = formatDate(CitaFechaFinal);
 
-  // Aquí usas 'medicoId' que no está definido en la desestructuración
+  // Busca cualquier cita (excepto la actual, si es edición) que comparta
+  // el mismo paciente o médico y se solape en horario
   const { data: overlappingAppointments, error } = await supabase
-    .from("appointments")
+    .from("Appointments")
     .select("*")
     .neq("id", id || 0)
-    .or(`IdMedico.eq.${IdMedico},PacienteNombre.eq.${PacienteNombre}`)
-    .lt("startDate", end)
-    .gt("endDate", start);
+    .or(
+      `UsuarioMedicoId.eq.${UsuarioMedicoId},PacienteNombreId.eq.${PacienteNombreId}`
+    )
+    .lt("CitaFechaInicio", end)
+    .gt("CitaFechaFinal", start);
+
   if (error) {
     console.error("Error al verificar superposiciones:", error);
     throw error;
@@ -539,32 +531,32 @@ const onAppointmentFormOpening = (e) => {
   appointmentForm.value = form;
   currentAppointmentData.value = e.appointmentData;
 
+  // Nota: DevExtreme usa `allDay` internamente
   const isAllDay = e.appointmentData.allDay || false;
 
   // Cargar info de paciente/doctor si ya viene en la cita
-  if (currentAppointmentData.value.nombre) {
-    // 'nombre' es cadena de ID
+  if (currentAppointmentData.value?.PacienteNombreId) {
     const pacienteId = parseInt(
-      currentAppointmentData.value.PacienteNombre,
+      currentAppointmentData.value.PacienteNombreId,
       10
     );
-    const pac = fichaIdentificacionStore.formIdentificacion.find(
-      (p) => p.id === pacienteId
+    const pac = dirPacientesStore.formIdentificacion.find(
+      (p) => p.PacienteId === pacienteId
     );
     if (pac) {
-      selectedPatient.value = `${pac.nombres}`;
-      selectedPatientId.value = pac.id;
+      selectedPatient.value = pac.Nombre;
+      selectedPatientId.value = pac.PacienteId;
     } else {
       selectedPatient.value = "No seleccionado";
       selectedPatientId.value = null;
     }
   }
-  if (currentAppointmentData.value.medico) {
-    // 'medico' es un UUID, usarlo directamente
-    const medicoId = currentAppointmentData.value.medicoId;
-    const doc = medicosConEspecialidad.value.find((d) => d.id === medicoId);
+  if (currentAppointmentData.value?.UsuarioMedicoId) {
+    const doc = medicosConEspecialidad.value.find(
+      (d) => d.id === currentAppointmentData.value.UsuarioMedicoId
+    );
     if (doc) {
-      selectedDoctor.value = doc.nombreCompleto; // Usar nombreCompleto si es necesario
+      selectedDoctor.value = doc.nombreCompleto;
       selectedDoctorId.value = doc.id;
     } else {
       selectedDoctor.value = "No seleccionado";
@@ -579,11 +571,11 @@ const onAppointmentFormOpening = (e) => {
       colCount: 1,
       items: [
         {
-          dataField: "CitaTitle",
+          dataField: "CitaTitulo",
           editorType: "dxTextBox",
           label: { text: "Asunto de la cita" },
           editorOptions: {
-            value: e.appointmentData.CitaTitle || e.appointmentData.text,
+            value: e.appointmentData.CitaTitulo || e.appointmentData.text,
           },
         },
         {
@@ -639,14 +631,14 @@ const onAppointmentFormOpening = (e) => {
           },
         },
         {
-          dataField: "CitaTipo",
+          dataField: "TipoId",
           editorType: "dxSelectBox",
           label: { text: "Tipo de Cita" },
           editorOptions: {
             dataSource: citas.value,
             displayExpr: "descripcion",
             valueExpr: "id",
-            value: parseInt(e.appointmentData.CitaTipo),
+            value: parseInt(e.appointmentData.TipoId),
             placeholder: "Selecciona un tipo de cita",
           },
         },
@@ -654,7 +646,6 @@ const onAppointmentFormOpening = (e) => {
     },
     {
       itemType: "group",
-      // caption: "Información del Paciente y Médico",
       colCount: 1,
       items: [
         {
@@ -671,8 +662,8 @@ const onAppointmentFormOpening = (e) => {
           template: () => {
             const container = document.createElement("div");
             container.style.display = "flex";
-            container.style.justifyContent = "flex-start"; // Alinear a la izquierda
-            container.style.gap = "8px"; // Espaciado entre botones
+            container.style.justifyContent = "flex-start";
+            container.style.gap = "8px";
 
             const selectButton = document.createElement("button");
             selectButton.textContent = "Seleccionar ";
@@ -722,11 +713,15 @@ const onAppointmentFormOpening = (e) => {
     },
   ]);
 };
+
+/* -------------------------------------
+   Checkbox 'EsMedico' (opcional)
+------------------------------------- */
 const onMarcadoChange = async (usuario) => {
   try {
     await crearUsuariosStore.actualizarUsuario({
       id: usuario.id,
-      esMarcado: usuario.esMarcado,
+      EsMedico: usuario.EsMedico,
     });
     await crearUsuariosStore.cargarUsuarios();
     Notify.create({
@@ -743,8 +738,9 @@ const onMarcadoChange = async (usuario) => {
     });
   }
 };
+
 /* -------------------------------------
-   CRUD de citas
+   CRUD de citas (Scheduler)
 ------------------------------------- */
 
 // Agregar cita
@@ -783,27 +779,27 @@ const onAppointmentAdded = async (e) => {
       throw new Error("tenant_id o userId faltante.");
     }
 
-    // Armamos el objeto de cita
+    // Armamos el objeto de cita con las columnas nuevas
     const newAppointment = {
-      CitaTitle: appointmentData.CitaTitle || appointmentData.text,
-      startDate: appointmentData.allDay
+      CitaTitulo: appointmentData.CitaTitulo || appointmentData.text,
+      CitaFechaInicio: appointmentData.allDay
         ? formatDate(getStartOfDay(appointmentData.startDate))
         : formatDate(appointmentData.startDate),
-      endDate: appointmentData.allDay
+      CitaFechaFinal: appointmentData.allDay
         ? formatDate(getEndOfDay(appointmentData.startDate))
         : formatDate(appointmentData.endDate),
-      allDay: appointmentData.allDay || false,
-      repeat: appointmentData.repeat || false,
+      CitaTodoElDia: appointmentData.allDay || false,
+      CitaRepetir: appointmentData.repeat || false,
       CitaDescripcion: appointmentData.CitaDescripcion || "",
-      PacienteNombre: selectedPatientId.value.toString(), // Asignar ID como cadena
-      IdMedico: selectedDoctorId.value.toString(),
-      CitaTipo: appointmentData.CitaTipo,
+      PacienteNombreId: selectedPatientId.value.toString(),
+      UsuarioMedicoId: selectedDoctorId.value.toString(),
+      TipoId: appointmentData.TipoId,
       tenant_id: tenant_id_val,
       userId: userId_val,
-      CitaStatus: "Aceptada",
+      CitaStatus: "Aceptada", // Por defecto
     };
 
-    // Verificar superposición
+    // Verificar superposición de citas (paciente/médico)
     const hasOverlap = await checkAppointmentOverlap({
       ...newAppointment,
       id: 0, // es nuevo
@@ -826,7 +822,7 @@ const onAppointmentAdded = async (e) => {
       position: "top-right",
     });
 
-    // Refrescar
+    // Refrescar listado de citas
     await appointmentsStore.fetchAppointments();
   } catch (error) {
     console.error("Error al agregar la cita:", error);
@@ -843,27 +839,26 @@ const onAppointmentUpdated = async (e) => {
   try {
     const appointmentData = e.appointmentData;
 
-    // Construimos el objeto para update
+    // Armamos el objeto con las nuevas columnas
     const updatedAppointment = {
-      CitaTitle: appointmentData.CitaTitle || appointmentData.text,
-      startDate: appointmentData.allDay
+      CitaTitulo: appointmentData.CitaTitulo || appointmentData.text,
+      CitaFechaInicio: appointmentData.allDay
         ? formatDate(getStartOfDay(appointmentData.startDate))
         : formatDate(appointmentData.startDate),
-      endDate: appointmentData.allDay
+      CitaFechaFinal: appointmentData.allDay
         ? formatDate(getEndOfDay(appointmentData.startDate))
         : formatDate(appointmentData.endDate),
-      allDay: appointmentData.allDay || false,
-      repeat: appointmentData.repeat || false,
+      CitaTodoElDia: appointmentData.allDay || false,
+      CitaRepetir: appointmentData.repeat || false,
       CitaDescripcion: appointmentData.CitaDescripcion || "",
-      PacienteNombre: selectedPatientId.value
+      // Si no se han vuelto a seleccionar, dejamos los que ya existen
+      PacienteNombreId: selectedPatientId.value
         ? selectedPatientId.value.toString()
-        : appointmentData.PacienteNombre, // Asignar ID como cadena si existe
-      IdMedico: selectedDoctorId.value
+        : appointmentData.PacienteNombreId,
+      UsuarioMedicoId: selectedDoctorId.value
         ? selectedDoctorId.value.toString()
-        : appointmentData.IdMedico,
-
-      // Asignar ID como cadena si existe
-      CitaTipo: appointmentData.CitaTipo,
+        : appointmentData.UsuarioMedicoId,
+      TipoId: appointmentData.TipoId,
     };
 
     // Verificar superposición
@@ -880,7 +875,7 @@ const onAppointmentUpdated = async (e) => {
       throw new Error("Superposición de citas detectada.");
     }
 
-    // Usar el store para actualizar
+    // Actualizar en la BD
     await appointmentsStore.updateAppointment(
       appointmentData.id,
       updatedAppointment
@@ -930,12 +925,13 @@ const onAppointmentDeleted = async (e) => {
 const onPatientSelected = (e) => {
   const patient = e.selectedRowsData[0];
   if (patient) {
-    const { nombres, apellidos, id } = patient;
-    selectedPatient.value = `${nombres} ${apellidos || ""}`;
-    selectedPatientId.value = id;
+    const { Nombre, PacienteId } = patient;
+    selectedPatient.value = `${Nombre} `;
+    selectedPatientId.value = PacienteId;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.nombre = id.toString();
+      // Asignar la columna PacienteNombreId (ID)
+      currentAppointmentData.value.PacienteNombreId = PacienteId.toString();
       appointmentForm.value.updateData(
         "selectedPatientName",
         selectedPatient.value
@@ -951,13 +947,12 @@ const onPatientSelected = (e) => {
 const onDoctorSelected = (e) => {
   const doctor = e.selectedRowsData[0];
   if (doctor) {
-    console.log("Doctor seleccionado:", doctor);
     const { nombre, id } = doctor;
     selectedDoctor.value = nombre;
     selectedDoctorId.value = id;
 
     if (appointmentForm.value && currentAppointmentData.value) {
-      currentAppointmentData.value.IdMedico = id.toString();
+      currentAppointmentData.value.UsuarioMedicoId = id.toString();
       appointmentForm.value.updateData(
         "selectedDoctorName",
         selectedDoctor.value
@@ -966,21 +961,15 @@ const onDoctorSelected = (e) => {
     isDoctorModalOpen.value = false;
   }
 };
+
 /* -------------------------------------
    Colorear la cita según el tipo
-   (Usamos la columna 'color' de tu tabla)
 ------------------------------------- */
 const onAppointmentRendered = (e) => {
   const appointmentData = e.appointmentData;
   const appointmentElement = e.appointmentElement;
-
-  // Obtenemos el id del tipo de cita
-  const CitaTipoId = parseInt(appointmentData.CitaTipo, 10);
-
-  // Buscamos en 'citas.value' el que coincida
-  const CitaTipoObj = citas.value.find((c) => c.id === CitaTipoId);
-
-  // Si existe, tomamos su color; si no, un color por defecto
+  const TipoId = parseInt(appointmentData.TipoId, 10);
+  const CitaTipoObj = citas.value.find((c) => c.id === TipoId);
   const bgColor =
     CitaTipoObj && CitaTipoObj.color ? CitaTipoObj.color : "#FFFFFF";
 
@@ -1016,9 +1005,10 @@ onMounted(async () => {
     await especialidadMedicaStore.cargarEspecialidades();
     await medicoStore.cargarMedicos();
     await tiposCitasStore.cargarCitas();
-    await fichaIdentificacionStore.cargarDatos();
+    await dirPacientesStore.cargarDatos();
     await crearUsuariosStore.cargarUsuarios();
     await appointmentsStore.fetchAppointments();
+
     console.log("Citas cargadas: ", appointments.value);
     console.log("Datos iniciales cargados correctamente.");
   } catch (error) {
@@ -1045,7 +1035,6 @@ const openDoctorModal = () => {
   isDoctorModalOpen.value = true;
 };
 const openCreatePatientModal = () => {
-  // Reiniciar los campos del nuevo paciente
   newPatient.value = {
     codigo: "",
     nombres: "",
@@ -1072,8 +1061,7 @@ const newPatient = ref({
 
 const submitNewPatient = async () => {
   try {
-    // Validar que los campos obligatorios estén llenos
-    if (!newPatient.value.codigo || !newPatient.value.codigo.trim()) {
+    if (!newPatient.value.codigo.trim()) {
       Notify.create({
         message: "El código es obligatorio.",
         color: "warning",
@@ -1081,7 +1069,7 @@ const submitNewPatient = async () => {
       });
       return;
     }
-    if (!newPatient.value.nombres || !newPatient.value.nombres.trim()) {
+    if (!newPatient.value.nombres.trim()) {
       Notify.create({
         message: "El nombre es obligatorio.",
         color: "warning",
@@ -1097,7 +1085,7 @@ const submitNewPatient = async () => {
       });
       return;
     }
-    if (!newPatient.value.PacienteIdentificacion) {
+    if (!newPatient.value.PacienteIdentificacion.trim()) {
       Notify.create({
         message: "La identificación es obligatoria.",
         color: "warning",
@@ -1106,27 +1094,21 @@ const submitNewPatient = async () => {
       return;
     }
 
-    // Depurar el valor de 'sexo'
-    console.log("Valor de sexo antes de asignar:", newPatient.value.sexo);
-
-    // Preparar los datos del nuevo paciente
     const patientToCreate = {
       codigo: newPatient.value.codigo.trim(),
       nombres: newPatient.value.nombres.trim(),
       fechaNacimiento: newPatient.value.fechaNacimiento,
-      sexo: newPatient.value.sexo || null, // Ahora 'sexo' es una cadena
+      sexo: newPatient.value.sexo || null,
       PacienteIdentificacion: newPatient.value.PacienteIdentificacion.trim(),
       telPersonal: newPatient.value.telPersonal
         ? newPatient.value.telPersonal.trim()
         : null,
-      tenant_id: authStore.tenant_id, // Asumiendo que el paciente está asociado a un tenant
+      tenant_id: authStore.tenant_id,
       userId: authStore.userId,
       activo: true,
-      // Otros campos pueden ser agregados aquí si es necesario
     };
 
-    // Usar el store para agregar el nuevo paciente
-    const result = await fichaIdentificacionStore.guardarDatos(patientToCreate);
+    const result = await dirPacientesStore.guardarDatos(patientToCreate);
 
     if (result) {
       Notify.create({
@@ -1138,18 +1120,19 @@ const submitNewPatient = async () => {
       // Cerrar el modal
       isCreatePatientModalOpen.value = false;
 
-      // Actualizar la lista de pacientes
-      await fichaIdentificacionStore.cargarDatos();
+      // Volver a cargar los pacientes
+      await dirPacientesStore.cargarDatos();
 
-      // Seleccionar automáticamente el nuevo paciente
-      const createdPatient =
-        fichaIdentificacionStore.formIdentificacion.slice(-1)[0];
+      // Tomar el último creado
+      const createdPatient = dirPacientesStore.formIdentificacion.slice(-1)[0];
       if (createdPatient) {
         selectedPatient.value = `${createdPatient.nombres}`;
         selectedPatientId.value = createdPatient.id;
 
+        // Si hay un form abierto, asignamos el paciente recien creado
         if (appointmentForm.value && currentAppointmentData.value) {
-          currentAppointmentData.value.nombre = createdPatient.id.toString(); // Asignar ID como cadena
+          currentAppointmentData.value.PacienteNombreId =
+            createdPatient.id.toString();
           appointmentForm.value.updateData(
             "selectedPatientName",
             selectedPatient.value

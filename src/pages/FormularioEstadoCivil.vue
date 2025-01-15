@@ -23,7 +23,7 @@
 </template>
 <script setup>
 import { reactive } from "vue";
-import { useEstadoCivilStore } from "../stores/DatosGeneralesStores";
+// import { useEstadoCivilStore } from "../stores/DatosGeneralesStores";
 import { Notify } from "quasar";
 
 // Inicializar tienda

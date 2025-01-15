@@ -5,140 +5,6 @@ import { supabase } from "../supabaseClient";
 import { useAuthStore } from "./auth";
 
 // -----------------------------------------------------------------------------
-// Tienda para Hospitales
-// -----------------------------------------------------------------------------
-export const useHospitalStore = defineStore("hospitalStore", () => {
-  const hospitales = ref([]);
-  const hospitalSeleccionado = ref(null);
-  const authStore = useAuthStore();
-
-  const setHospitalSeleccionado = (hospital) => {
-    hospitalSeleccionado.value = { ...hospital };
-  };
-
-  const cargarHospitales = async () => {
-    if (!authStore.tenant_id) return;
-
-    const { data, error } = await supabase
-      .from("hospitales")
-      .select("*")
-      .eq("tenant_id", authStore.tenant_id)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error al cargar hospitales:", error);
-    } else if (data) {
-      hospitales.value = data;
-    }
-  };
-
-  const agregarHospital = async (hospitalInfo) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error("El usuario no tiene permisos para agregar hospitales.");
-      return;
-    }
-
-    const hospitalConTenant = {
-      ...hospitalInfo,
-      tenant_id: authStore.tenant_id,
-    };
-
-    const { data, error } = await supabase
-      .from("hospitales")
-      .insert([hospitalConTenant], { returning: "representation" });
-
-    if (error) {
-      console.error("Error al agregar un hospital:", error);
-    } else if (data && data.length > 0) {
-      hospitales.value.push(data[0]);
-    }
-  };
-
-  const eliminarHospital = async (id) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return false;
-    }
-    if (authStore.role !== "admin") {
-      console.error("El usuario no tiene permisos para eliminar hospitales.");
-      return false;
-    }
-
-    try {
-      const { error } = await supabase.from("hospitales").delete().eq("id", id);
-
-      if (error) {
-        console.error("Error al eliminar hospital:", error);
-        return false;
-      } else {
-        hospitales.value = hospitales.value.filter((h) => h.id !== id);
-        return true;
-      }
-    } catch (err) {
-      console.error("Error en eliminarHospital:", err.message);
-      return false;
-    }
-  };
-
-  const actualizarHospital = async (hospitalInfo) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error("El usuario no tiene permisos para actualizar hospitales.");
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from("hospitales")
-        .update(hospitalInfo)
-        .eq("id", hospitalInfo.id);
-      if (error) {
-        console.error("Error al actualizar hospital:", error);
-        throw error;
-      } else if (data && data[0]) {
-        const index = hospitales.value.findIndex(
-          (h) => h.id === hospitalInfo.id
-        );
-        if (index !== -1) {
-          hospitales.value[index] = { ...data[0] };
-        }
-        hospitalSeleccionado.value = null;
-      }
-    } catch (err) {
-      console.error("Error en actualizarHospital:", err.message);
-      throw err;
-    }
-  };
-
-  watch(
-    () => authStore.tenant_id,
-    (newTenantId) => {
-      if (newTenantId) {
-        cargarHospitales();
-      }
-    },
-    { immediate: true }
-  );
-
-  return {
-    hospitales,
-    hospitalSeleccionado,
-    setHospitalSeleccionado,
-    cargarHospitales,
-    agregarHospital,
-    eliminarHospital,
-    actualizarHospital,
-  };
-});
-
-// -----------------------------------------------------------------------------
 // Tienda para Medicamentos
 // -----------------------------------------------------------------------------
 export const useMedicamentoStore = defineStore("medicamentoStore", () => {
@@ -285,7 +151,7 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
     if (!authStore.tenant_id) return;
     try {
       const { data, error } = await supabase
-        .from("examenesEstudios")
+        .from("DirEstudios")
         .select("*")
         .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
@@ -310,7 +176,7 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
       return;
     }
 
-    const { data, error } = await supabase.from("examenesEstudios").insert([
+    const { data, error } = await supabase.from("DirEstudios").insert([
       {
         ...estudioInfo,
         tenant_id: authStore.tenant_id,
@@ -336,14 +202,16 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
     }
 
     const { error } = await supabase
-      .from("examenesEstudios")
+      .from("DirEstudios")
       .delete()
-      .eq("id", id);
+      .eq("EstudioId", id);
 
     if (error) {
       console.error("Error al eliminar el estudio:", error);
     } else {
-      estudios.value = estudios.value.filter((e) => e.id !== id);
+      estudios.value = estudios.value.filter(
+        (estudios) => estudios.EstudioId !== id
+      );
     }
   };
 
@@ -359,12 +227,12 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
 
     try {
       const { data, error } = await supabase
-        .from("examenesEstudios")
+        .from("DirEstudios")
         .update({
           ...estudioInfo,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", estudioInfo.id);
+        .eq("EstudioId", estudioInfo.id);
 
       if (error) {
         console.error("Error al actualizar estudio:", error);
@@ -372,7 +240,9 @@ export const useEstudioStore = defineStore("examenesEstudios", () => {
       }
 
       if (data && data.length > 0) {
-        const index = estudios.value.findIndex((e) => e.id === estudioInfo.id);
+        const index = estudios.value.findIndex(
+          (estudio) => estudio.EstudioId === estudioInfo.id
+        );
         if (index !== -1) {
           estudios.value[index] = { ...data[0] };
         }

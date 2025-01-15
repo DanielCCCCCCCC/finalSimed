@@ -23,7 +23,7 @@
       <DxDataGrid
         ref="dataGrid"
         :data-source="municipios"
-        key-expr="id"
+        key-expr="MunicipioId"
         :allow-column-resizing="true"
         :column-auto-width="true"
         :allow-column-reordering="true"
@@ -41,7 +41,7 @@
           form: {
             items: [
               {
-                dataField: 'descripcion',
+                dataField: 'Descripcion',
                 label: { text: 'Municipio' },
                 validationRules: [
                   {
@@ -51,12 +51,12 @@
                 ],
               },
               {
-                dataField: 'departamentoId',
+                dataField: 'EstadoId',
                 editorType: 'dxSelectBox',
                 label: { text: 'Departamento' },
                 editorOptions: {
                   dataSource: departamentos,
-                  displayExpr: 'descripcion',
+                  displayExpr: 'Descripcion',
                   valueExpr: 'id',
                   searchEnabled: true,
                 },
@@ -72,22 +72,22 @@
         @rowRemoving="onRowRemoving"
         class="custom-data-grid"
       >
-        <!-- Agrupación por departamentoId con DxLookup -->
+        <!-- Agrupación por EstadoId con DxLookup -->
         <DxColumn
-          data-field="departamentoId"
+          data-field="EstadoId"
           :group-index="0"
           sort-order="asc"
           caption="Departamento"
         >
           <DxLookup
             :data-source="departamentos"
-            value-expr="id"
-            display-expr="descripcion"
+            value-expr="DepartamentoId"
+            display-expr="Descripcion"
           />
         </DxColumn>
 
         <!-- Columna para el nombre del municipio -->
-        <DxColumn data-field="descripcion" caption="Municipio"> </DxColumn>
+        <DxColumn data-field="Descripcion" caption="Municipio"> </DxColumn>
 
         <!-- Columna de botones de acción -->
         <DxColumn type="buttons">
@@ -193,11 +193,11 @@
                       <div class="row q-col-gutter-sm">
                         <div class="col-12 mb-3">
                           <q-input
-                            v-model="departamentoForm.descripcion"
+                            v-model="departamentoForm.Descripcion"
                             label="Descripción del Departamento"
                             outlined
-                            :error="!!erroresDepartamento.descripcion"
-                            :error-message="erroresDepartamento.descripcion"
+                            :error="!!erroresDepartamento.Descripcion"
+                            :error-message="erroresDepartamento.Descripcion"
                             required
                           />
                         </div>
@@ -224,46 +224,84 @@
                     id="municipios-tab"
                     role="tabpanel"
                   >
-                    <q-form @submit.prevent="guardarMunicipio">
+                    <form @submit.prevent="guardarMunicipio">
                       <div class="row q-col-gutter-sm">
                         <div class="col-12 col-md-6 mb-3">
-                          <q-input
-                            v-model="municipioForm.descripcion"
-                            label="Descripción del Municipio"
-                            outlined
-                            :error="!!erroresMunicipio.descripcion"
-                            :error-message="erroresMunicipio.descripcion"
-                            required
-                          />
+                          <label
+                            for="descMun"
+                            class="form-label fs-14 text-dark"
+                          >
+                            Descripción del Municipio<span class="required"
+                              >*</span
+                            >
+                          </label>
+                          <div class="input-group">
+                            <div class="input-group-text">
+                              <i class="ri-text-wrap"></i>
+                            </div>
+                            <input
+                              type="text"
+                              id="descMun"
+                              class="form-control"
+                              v-model="municipioForm.Descripcion"
+                              placeholder="Ingrese descripción del municipio"
+                              required
+                            />
+                          </div>
+                          <div
+                            v-if="erroresMunicipio.Descripcion"
+                            class="text-danger fs-13 mt-1"
+                          >
+                            {{ erroresMunicipio.Descripcion }}
+                          </div>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
-                          <q-select
-                            v-model="municipioForm.departamentoId"
-                            :options="departamentos"
-                            option-value="id"
-                            option-label="descripcion"
-                            label="Departamento"
-                            outlined
-                            dense
-                            :error="!!erroresMunicipio.departamentoId"
-                            :error-message="erroresMunicipio.departamentoId"
-                            required
-                            emit-value
-                            map-options
-                            placeholder="Seleccione un departamento"
-                          />
+                          <label
+                            for="departamentoSelect"
+                            class="form-label fs-14 text-dark"
+                          >
+                            Departamento<span class="required">*</span>
+                          </label>
+                          <div class="input-group">
+                            <div class="input-group-text">
+                              <i class="ri-map-pin-line"></i>
+                            </div>
+                            <select
+                              id="departamentoSelect"
+                              class="form-select"
+                              v-model="municipioForm.EstadoId"
+                              required
+                            >
+                              <option disabled value="">
+                                Seleccione un departamento
+                              </option>
+                              <option
+                                v-for="dept in departamentos"
+                                :key="dept.DepartamentoId"
+                                :value="dept.DepartamentoId"
+                              >
+                                {{ dept.Descripcion }}
+                              </option>
+                            </select>
+                          </div>
+                          <div
+                            v-if="erroresMunicipio.EstadoId"
+                            class="text-danger fs-13 mt-1"
+                          >
+                            {{ erroresMunicipio.EstadoId }}
+                          </div>
                         </div>
                       </div>
                       <div class="flex justify-end q-mt-sm">
-                        <q-btn
-                          label="Guardar Municipio"
-                          color="primary"
+                        <button
                           type="submit"
-                          class="btn-primary"
+                          class="btn btn-primary"
                           style="font-size: 14px; padding: 8px 16px"
-                        />
+                        >
+                          Guardar Municipio
+                        </button>
                       </div>
-                    </q-form>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -315,20 +353,20 @@ const activeSubTab = ref("departamentos");
 
 // Formulario para Departamento
 const departamentoForm = ref({
-  descripcion: "",
+  Descripcion: "",
 });
 const erroresDepartamento = reactive({
-  descripcion: "",
+  Descripcion: "",
 });
 
 // Formulario para Municipio
 const municipioForm = ref({
-  descripcion: "",
-  departamentoId: null,
+  Descripcion: "",
+  EstadoId: null,
 });
 const erroresMunicipio = reactive({
-  descripcion: "",
-  departamentoId: "",
+  Descripcion: "",
+  EstadoId: "",
 });
 
 // Cargar datos al montar el componente
@@ -361,28 +399,28 @@ const cerrarDialogoAgregar = () => {
 
 // Resetear formulario de Departamento
 const resetFormularioDepartamento = () => {
-  departamentoForm.value.descripcion = "";
-  erroresDepartamento.descripcion = "";
+  departamentoForm.value.Descripcion = "";
+  erroresDepartamento.Descripcion = "";
 };
 
 // Resetear formulario de Municipio
 const resetFormularioMunicipio = () => {
-  municipioForm.value.descripcion = "";
-  municipioForm.value.departamentoId = null;
-  erroresMunicipio.descripcion = "";
-  erroresMunicipio.departamentoId = "";
+  municipioForm.value.Descripcion = "";
+  municipioForm.value.EstadoId = null;
+  erroresMunicipio.Descripcion = "";
+  erroresMunicipio.EstadoId = "";
 };
 
 // Guardar Departamento (Agregar)
 const guardarDepartamento = async () => {
-  const { descripcion } = departamentoForm.value;
+  const { Descripcion } = departamentoForm.value;
 
   // Resetear errores
-  erroresDepartamento.descripcion = "";
+  erroresDepartamento.Descripcion = "";
 
   // Validar campos requeridos
-  if (!descripcion.trim()) {
-    erroresDepartamento.descripcion = "La descripción es obligatoria.";
+  if (!Descripcion.trim()) {
+    erroresDepartamento.Descripcion = "La descripción es obligatoria.";
     Notify.create({
       message:
         "Por favor, corrige los errores en el formulario de Departamentos.",
@@ -393,7 +431,7 @@ const guardarDepartamento = async () => {
   }
 
   try {
-    await departamentoStore.agregarDepartamento(descripcion.trim());
+    await departamentoStore.agregarDepartamento(Descripcion.trim());
     Notify.create({
       type: "positive",
       message: "Departamento agregado exitosamente",
@@ -413,20 +451,20 @@ const guardarDepartamento = async () => {
 
 // Guardar Municipio (Agregar)
 const guardarMunicipio = async () => {
-  const { descripcion, departamentoId } = municipioForm.value;
+  const { Descripcion, EstadoId } = municipioForm.value;
 
   // Resetear errores
-  erroresMunicipio.descripcion = "";
-  erroresMunicipio.departamentoId = "";
+  erroresMunicipio.Descripcion = "";
+  erroresMunicipio.EstadoId = "";
 
   // Validar campos requeridos
   let tieneErrores = false;
-  if (!descripcion.trim()) {
-    erroresMunicipio.descripcion = "La descripción es obligatoria.";
+  if (!Descripcion.trim()) {
+    erroresMunicipio.Descripcion = "La descripción es obligatoria.";
     tieneErrores = true;
   }
-  if (!departamentoId) {
-    erroresMunicipio.departamentoId = "Seleccione un departamento.";
+  if (!EstadoId) {
+    erroresMunicipio.EstadoId = "Seleccione un departamento.";
     tieneErrores = true;
   }
 
@@ -440,7 +478,7 @@ const guardarMunicipio = async () => {
   }
 
   try {
-    await municipioStore.agregarMunicipio(descripcion.trim(), departamentoId);
+    await municipioStore.agregarMunicipio(Descripcion.trim(), EstadoId);
     Notify.create({
       type: "positive",
       message: "Municipio agregado exitosamente",
@@ -461,8 +499,8 @@ const guardarMunicipio = async () => {
 // Manejar la inserción de un nuevo municipio (desde el grid)
 const onRowInserting = async (e) => {
   try {
-    const { descripcion, departamentoId } = e.data;
-    await municipioStore.agregarMunicipio(descripcion, departamentoId);
+    const { Descripcion, EstadoId } = e.data;
+    await municipioStore.agregarMunicipio(Descripcion, EstadoId);
     Notify.create({
       type: "positive",
       message: "Municipio agregado exitosamente",
@@ -483,8 +521,8 @@ const onRowInserting = async (e) => {
 const onRowUpdating = async (e) => {
   try {
     const id = e.oldData.id;
-    const { descripcion, departamentoId } = { ...e.oldData, ...e.newData };
-    await municipioStore.actualizarMunicipio(id, descripcion, departamentoId);
+    const { Descripcion, EstadoId } = { ...e.oldData, ...e.newData };
+    await municipioStore.actualizarMunicipio(id, Descripcion, EstadoId);
     Notify.create({
       type: "positive",
       message: "Municipio actualizado exitosamente",
@@ -564,17 +602,7 @@ const actualizarSubTab = (tabName) => {
   list-style: none;
   padding-left: 0;
 }
-/*
-.nav-link {
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  margin-bottom: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-} */
+
 .custom-data-grid {
   background-color: #ffffff;
   border-radius: 8px;

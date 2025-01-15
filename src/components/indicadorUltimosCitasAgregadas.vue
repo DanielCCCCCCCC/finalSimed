@@ -49,21 +49,21 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
-import { useMedicoStore } from "../stores/MedicoStores";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useMedicoStore } from "../stores/DirMedico";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { useTiposCitasStore } from "../stores/ConfiMedicasStores";
 
 import { QAvatar, QIcon, QList, QItem, QItemSection, QItemLabel } from "quasar";
 
 const AppointmentsStore = useAppointmentsStore();
 const MedicoStore = useMedicoStore();
-const FichaIdentificacionStore = useFichaIdentificacionStore();
+const dirPacientesStore = useDirPacientesStore();
 const TiposCitasStore = useTiposCitasStore();
 
 onMounted(() => {
   AppointmentsStore.fetchAppointments();
   MedicoStore.cargarMedicos();
-  FichaIdentificacionStore.cargarDatos();
+  dirPacientesStore.cargarDatos();
   TiposCitasStore.cargarCitas();
 });
 
@@ -73,9 +73,7 @@ const getCita = (id) => {
 };
 
 const getPacienteName = (id) => {
-  const paciente = FichaIdentificacionStore.formIdentificacion.find(
-    (p) => p.id == id
-  );
+  const paciente = dirPacientesStore.formIdentificacion.find((p) => p.id == id);
   return paciente ? `${paciente.nombres} ${paciente.apellidos}` : "Desconocido";
 };
 

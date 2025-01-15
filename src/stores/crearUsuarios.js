@@ -113,7 +113,12 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
     return new Promise(async (resolve, reject) => {
       try {
-        if (!email || !password || !extraData.role) {
+        if (
+          !email ||
+          !password ||
+          !extraData.role ||
+          !extraData.nombreCompleto
+        ) {
           throw new Error("Email, contraseña y role son obligatorios.");
         }
 
@@ -123,6 +128,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
             "No se pudo obtener el tenant_id del usuario autenticado."
           );
         }
+        console.log("PARA EL DISPLAY NAME: ", extraData.nombreCompleto);
 
         // 1) Crear usuario en Auth
         const { data: authData, error: signUpError } =
@@ -130,6 +136,9 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
             email,
             password,
             options: {
+              data: {
+                display_name: extraData.nombreCompleto,
+              },
               emailRedirectTo: "http://localhost:9000/set-password",
             },
           });
@@ -153,7 +162,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
               telefono: extraData.telefono || null,
               observaciones: extraData.observaciones || null,
               especialidadMedica: extraData.especialidadMedica || null,
-              esMarcado: extraData.esMarcado,
+              EsMedico: extraData.EsMedico,
             },
           ]);
 
@@ -197,27 +206,30 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
           if (!emailRegex.test(payload.email)) {
             throw new Error("Formato de email inválido.");
           }
-          updates.email = payload.email;
+          updates.email = payload?.email;
         }
         if (payload.role) {
-          updates.role = payload.role;
+          updates.role = payload?.role;
         }
         if (payload.nombreCompleto !== undefined) {
-          updates.nombreCompleto = payload.nombreCompleto;
+          updates.nombreCompleto = payload?.nombreCompleto;
         }
         if (payload.direccion !== undefined) {
-          updates.direccion = payload.direccion;
+          updates.direccion = payload?.direccion;
         }
         if (payload.telefono !== undefined) {
-          updates.telefono = payload.telefono;
+          updates.telefono = payload?.telefono;
         }
         if (payload.observaciones !== undefined) {
-          updates.observaciones = payload.observaciones;
+          updates.observaciones = payload?.observaciones;
         }
         if (payload.especialidadMedica !== undefined) {
-          updates.especialidadMedica = payload.especialidadMedica;
+          updates.especialidadMedica = payload?.especialidadMedica;
         }
-
+        if (payload.EsMedico !== undefined) {
+          updates.EsMedico = payload?.EsMedico;
+        }
+        console.log("ESMEDICO DESDE STORE DE USUARIOS: ", payload.EsMedico);
         // 1) Actualizar en la tabla `users`
         const { data: userData, error: updateError } = await supabase
           .from("users")
@@ -241,8 +253,8 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
         // 3) Actualizar en Auth si cambió password
         if (payload.password) {
-          if (payload.password.length < 6) {
-            throw new Error("La contraseña debe tener al menos 6 caracteres.");
+          if (payload.password.length < 8) {
+            throw new Error("La contraseña debe tener al menos 8 caracteres.");
           }
           const { error: updateAuthPassError } = await supabase.auth.updateUser(
             {
@@ -340,7 +352,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
         }
 
         const { data, error: fetchError } = await supabase
-          .from("configuraciones")
+          .from("SAConfiguraciones")
           .select("*")
           .eq("userId", userId);
 
@@ -367,7 +379,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
             );
           }
           permitirSuperposicion.value = primerHorario.autoSuperPosicion;
-          configuracionId.value = primerHorario.id;
+          configuracionId.value = primerHorario.ConfiguracionesId;
 
           console.log(
             "PERMITIR SUPERPOSICION STORE ",
@@ -440,7 +452,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
         nuevoHorario.userId = userId;
 
         const { data, error: insertError } = await supabase
-          .from("configuraciones")
+          .from("SAConfiguraciones")
           .insert([nuevoHorario])
           .select()
           .single();
@@ -471,17 +483,19 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   /**
    * Actualiza un registro de `configuraciones` (un horario) por su ID.
    */
-  const actualizarHorarioAtencion = (id, horarioActualizado) => {
+  const actualizarConfiguraciones = (id, horarioActualizado) => {
     loading.value = true;
     error.value = null;
     success.value = null;
-
+    if (!id) {
+      throw new Error("El ID de configuración es indefinido.");
+    }
     return new Promise(async (resolve, reject) => {
       try {
         const { data, error: updateError } = await supabase
-          .from("configuraciones")
+          .from("SAConfiguraciones")
           .update(horarioActualizado)
-          .eq("id", id)
+          .eq("ConfiguracionesId", id)
           .select()
           .single();
 
@@ -489,7 +503,9 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
           throw updateError;
         }
 
-        const index = horariosAtencion.value.findIndex((h) => h.id === id);
+        const index = horariosAtencion.value.findIndex(
+          (h) => h.ConfiguracionesId === id
+        );
         if (index !== -1) {
           horariosAtencion.value[index] = data;
         }
@@ -517,7 +533,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
   /**
    * Elimina un registro de `configuraciones` (un horario) por su ID.
    */
-  const eliminarHorarioAtencion = (id) => {
+  const eliminarConfiguraciones = (id) => {
     loading.value = true;
     error.value = null;
     success.value = null;
@@ -525,15 +541,15 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
     return new Promise(async (resolve, reject) => {
       try {
         const { error: deleteError } = await supabase
-          .from("configuraciones")
+          .from("SAConfiguraciones")
           .delete()
-          .eq("id", id);
+          .eq("ConfiguracionesId", id);
         if (deleteError) {
           throw deleteError;
         }
 
         horariosAtencion.value = horariosAtencion.value.filter(
-          (h) => h.id !== id
+          (h) => h.ConfiguracionesId !== id
         );
 
         Notify.create({
@@ -567,9 +583,9 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
         return;
       }
       const { error: supaError } = await supabase
-        .from("configuraciones")
+        .from("SAConfiguraciones")
         .update({ autoSuperPosicion: nuevoValor })
-        .eq("id", configuracionId.value);
+        .eq("ConfiguracionesId", configuracionId.value);
 
       if (supaError) {
         console.error("Error al actualizar autoSuperPosicion:", supaError);
@@ -615,7 +631,7 @@ export const useCrearUsuariosStore = defineStore("crearUsuarios", () => {
 
     cargarConfiguraciones,
     crearConfiguraciones,
-    actualizarHorarioAtencion,
-    eliminarHorarioAtencion,
+    actualizarConfiguraciones,
+    eliminarConfiguraciones,
   };
 });

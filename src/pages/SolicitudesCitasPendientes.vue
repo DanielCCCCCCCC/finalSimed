@@ -22,7 +22,7 @@
       >
         <!-- Columna de Identificación (opcional) -->
         <DxColumn
-          data-field="identificacion"
+          data-field="PacienteIdentificacion"
           caption="Identificación"
           :allow-sorting="true"
           width="150px"
@@ -35,36 +35,38 @@
           width="100px"
         />
         <DxColumn
-          data-field="title"
+          data-field="CitaTitulo"
           caption="Título"
           :allow-sorting="true"
           width="250px "
         />
         <DxColumn
-          data-field="nombre"
+          data-field="PacienteNombreId"
           caption="Nombre Paciente (ID)"
           :allow-sorting="true"
           :calculate-cell-value="lookupPatientName"
         />
         <DxColumn
-          data-field="startDate"
+          data-field="CitaFechaInicio"
           caption="Fecha/Hora Inicio"
           :allow-sorting="true"
+          :calculate-cell-value="formatCitaFechaInicioConAllDay"
         />
+
         <DxColumn
-          data-field="description"
+          data-field="CitaDescripcion"
           caption="Descripción"
           :allow-sorting="true"
           min-width="200"
           width="300"
         />
         <DxColumn
-          data-field="patientphone"
+          data-field="PacienteTel"
           caption="Teléfono de Contacto"
           :allow-sorting="true"
         />
         <DxColumn
-          data-field="status"
+          data-field="CitaStatus"
           caption="Estado"
           :allow-sorting="true"
           width="120px"
@@ -82,14 +84,15 @@
           <DxButton
             icon="edit"
             hint="Editar"
-            @click="(e) => openEditModal(e.row.data)"
+            @click="(e) => openEditModal(e.row.data.id)"
           />
           <!-- Botón Rechazar -->
+          <!-- Botón Rechazar -->
           <DxButton
-            icon="delete"
+            icon="trash"
             hint="Rechazar"
             class="q-mx-xs"
-            @click="() => rejectAppointmentAndRefresh(data.id)"
+            @click="(e) => rejectAppointmentAndRefresh(e.row.data.id)"
           />
         </DxColumn>
 
@@ -111,7 +114,7 @@
             id="titleInput"
             class="form-input"
             type="text"
-            v-model="editingAppointment.title"
+            v-model="editingAppointment.CitaTitulo"
           />
 
           <!-- 2. Todo el día (allDay) -->
@@ -120,7 +123,7 @@
               id="allDayCheck"
               class="form-checkbox"
               type="checkbox"
-              v-model="editingAppointment.allDay"
+              v-model="editingAppointment.CitaTodoElDia"
             />
             <label class="checkbox-label" for="allDayCheck">Todo el día</label>
           </div>
@@ -131,8 +134,8 @@
             id="startInput"
             class="form-input"
             type="datetime-local"
-            :disabled="editingAppointment.allDay"
-            v-model="editingAppointment.startDate"
+            :disabled="editingAppointment.CitaTodoElDia"
+            v-model="editingAppointment.CitaFechaInicio"
             @input="handleStartDateChange"
           />
 
@@ -142,8 +145,8 @@
             id="endInput"
             class="form-input"
             type="datetime-local"
-            :disabled="editingAppointment.allDay"
-            v-model="editingAppointment.endDate"
+            :disabled="editingAppointment.CitaTodoElDia"
+            v-model="editingAppointment.CitaFechaFinal"
           />
 
           <!-- 5. Tipo de Cita (Select) -->
@@ -226,28 +229,23 @@ import {
 // Store de citas
 import { useAppointmentsStore } from "../stores/AppointmentsStore";
 import { useTiposCitasStore } from "../stores/ConfiMedicasStores";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 // Para notificaciones (opcional: si usas Quasar)
 import { useQuasar } from "quasar";
 
 /* --- SETUP --- */
 const appointmentsStore = useAppointmentsStore();
 const tiposCitasStore = useTiposCitasStore();
-const fichaIdentificacionStore = useFichaIdentificacionStore();
+const dirPacientesStore = useDirPacientesStore();
 
 const $q = useQuasar(); // si quieres notificar con Quasar
 
-const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
-const { getPatientNameById } = fichaIdentificacionStore;
+const { formIdentificacion } = storeToRefs(dirPacientesStore);
+const { getPatientNameById } = dirPacientesStore;
 
 const { citas } = storeToRefs(tiposCitasStore);
 const { appointments } = storeToRefs(appointmentsStore);
 
-/**
- * Filtra o muestra todas las citas automáticas.
- * Ajusta según tu caso (p.ej. si quieres solo las "Pendientes",
- * filtra appointments.value.filter(a => a.status === "Pendiente") ).
- */
 const pendingAppointments = computed(() => {
   return appointments.value;
 });
@@ -260,25 +258,64 @@ const showEditModal = ref(false);
 
 const editingAppointment = ref({
   id: null,
-  title: "",
-  description: "",
-  allDay: false,
-  startDate: "",
-  endDate: "",
-  tipoCita: null,
-  nombre: null, // Paciente
-  medico: null, // Médico
+  CitaTitulo: "",
+  CitaDescripcion: "",
+  CitaTodoElDia: false,
+  CitaFechaInicio: "",
+  CitaFechaFinal: "",
+  TipoId: null,
+  PacienteNombreId: null, // Paciente
+  UsuarioMedicoId: null, // Médico
 });
 
 // Opciones para tipo de cita (ahora dinámicas)
 const tipoCitaOptions = computed(() => citas.value);
 
-// Opciones para tipo de cita
-// const tipoCitaOptions = ref([
-//   { id: 1, descripcion: "Primera vez" },
-//   { id: 2, descripcion: "Seguimiento" },
-//   { id: 3, descripcion: "Consulta" },
-// ]);
+function formatCitaFechaInicio(rowData) {
+  if (!rowData || !rowData.CitaFechaInicio) return "";
+  const date = new Date(rowData.CitaFechaInicio);
+  // Verifica que la fecha sea válida
+  if (isNaN(date)) return rowData.CitaFechaInicio;
+
+  // Formatea la fecha según tus necesidades.
+  // Por ejemplo, formato dd/MM/yyyy HH:mm usando toLocaleString:
+  return date.toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+function formatCitaFechaInicioConAllDay(rowData) {
+  if (!rowData || !rowData.CitaFechaInicio) return "";
+
+  const date = new Date(rowData.CitaFechaInicio);
+  if (isNaN(date)) return rowData.CitaFechaInicio;
+
+  // Formatear fecha como dd/MM/yyyy
+  const formattedDate = date.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  // Verificar si es todo el día
+  if (rowData.CitaTodoElDia) {
+    return `${formattedDate} - Todo el día`;
+  } else {
+    // Si no es todo el día, incluir también la hora
+    const formattedTime = date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    return `${formattedDate} ${formattedTime}`;
+  }
+}
 
 // Al montar, cargar las citas automáticas
 onMounted(async () => {
@@ -286,7 +323,7 @@ onMounted(async () => {
     console.log("Cargando citas automáticas...");
     await appointmentsStore.fetchAutoAppointments();
     await tiposCitasStore.cargarCitas();
-    await fichaIdentificacionStore.cargarDatos();
+    await dirPacientesStore.cargarDatos();
     console.log(
       "PACIENTES DESDE Solicitudes de citas pacientes: ",
       formIdentificacion.value
@@ -301,9 +338,9 @@ onMounted(async () => {
 });
 // Función local para la columna "nombre"
 function lookupPatientName(rowData) {
-  if (!rowData || !rowData.nombre) return "";
+  if (!rowData || !rowData.PacienteNombreId) return "";
   // rowData.nombre = ID del paciente (almacenado en la DB)
-  return getPatientNameById(rowData.nombre);
+  return getPatientNameById(rowData.PacienteNombreId);
 }
 /* --- MÉTODOS: Aceptar / Rechazar / Editar / Guardar Cita --- */
 async function acceptAppointmentAndRefresh(appointmentId) {
@@ -326,6 +363,8 @@ async function acceptAppointmentAndRefresh(appointmentId) {
 async function rejectAppointmentAndRefresh(appointmentId) {
   try {
     await appointmentsStore.rejectAppointment(appointmentId);
+    console.log("ID recibido para cancelar:", e.row.data.id);
+
     await appointmentsStore.fetchAutoAppointments();
     if ($q) {
       $q.notify({ color: "warning", message: "Cita rechazada." });
@@ -409,9 +448,9 @@ function openDoctorModal() {
 }
 
 /** Manejo de la fecha/hora inicio (opcional) */
-function handleStartDateChange(value) {
-  // 'value' es un string "2025-01-31T10:00"
-  editingAppointment.value.startDate = value;
+function handleStartDateChange(event) {
+  const value = event.target.value; // Obtener el valor desde el input
+  editingAppointment.value.CitaFechaInicio = value;
 }
 </script>
 

@@ -31,7 +31,6 @@ import RegistrarOrganizacion from "../pages/RegistrarOrganizacion.vue";
 import AdminPanel from "../pages/AdminPanel.vue";
 import NotAuthorized from "../pages/NotAuthorized.vue";
 import ListadoTipoEstadoCivil from "../pages/ListadoTipoEstadoCivil.vue";
-import pacientesPrueba from "../pages/pacientesPrueba.vue";
 import Configuraciones from "../pages/Configuraciones.vue";
 import SetPassword from "../pages/SetPassword.vue";
 import ResetPassword from "../pages/ResetPassword.vue";
@@ -145,12 +144,6 @@ const routes = [
         component: ListadoTipoPacientes,
         meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-      {
-        path: "pacientes",
-        name: "pacientes",
-        component: pacientesPrueba,
-        meta: { requiresAuth: true, roles: ["admin", "medico", "secretario"] },
-      },
 
       {
         path: "listadotiposcitas",
@@ -182,18 +175,18 @@ const routes = [
         component: ListadoGrupoSanguineo,
         meta: { requiresAuth: true, roles: ["admin", "secretario"] },
       },
-      {
-        path: "listadoescolaridad",
-        name: "listadoescolaridad",
-        component: ListadoTipoEscolaridad,
-        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
-      },
-      {
-        path: "listadotipoestadocivil",
-        name: "listadotipoestadocivil",
-        component: ListadoTipoEstadoCivil,
-        meta: { requiresAuth: true, roles: ["admin", "secretario"] },
-      },
+      // {
+      //   path: "listadoescolaridad",
+      //   name: "listadoescolaridad",
+      //   component: ListadoTipoEscolaridad,
+      //   meta: { requiresAuth: true, roles: ["admin", "secretario"] },
+      // },
+      // {
+      //   path: "listadotipoestadocivil",
+      //   name: "listadotipoestadocivil",
+      //   component: ListadoTipoEstadoCivil,
+      //   meta: { requiresAuth: true, roles: ["admin", "secretario"] },
+      // },
       {
         path: "configuraciones",
         name: "configuraciones",

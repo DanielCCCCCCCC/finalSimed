@@ -326,16 +326,16 @@
 </template>
 <script>
 import { ref, reactive, computed, watch, onMounted } from "vue";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { useTiposPacientesStore } from "../stores/ConfiMedicasStores";
 import {
-  useEstadoCivilStore,
+  // useEstadoCivilStore,
   useDepartamentoStore,
   useMunicipioStore,
   useGrupoSanguineoStore,
-  useEscolaridadStore,
+  // useEscolaridadStore,
 } from "../stores/DatosGeneralesStores";
-import { useMedicoStore } from "src/stores/MedicoStores";
+import { useMedicoStore } from "src/stores/DirMedico";
 import { storeToRefs } from "pinia";
 
 export default {
@@ -348,8 +348,8 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const fichaIdentificacionStore = useFichaIdentificacionStore();
-    const { actualizarPaciente } = fichaIdentificacionStore;
+    const dirPacientesStore = useDirPacientesStore();
+    const { actualizarPaciente } = dirPacientesStore;
     const isEditable = ref(false);
 
     const showCloseDialog = ref(false);

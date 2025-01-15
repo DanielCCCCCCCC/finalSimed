@@ -27,7 +27,7 @@ export const useEspecialidadMedicaStore = defineStore(
     async function cargarEspecialidades() {
       try {
         const { data, error } = await supabase
-          .from("especialidadesMedicas")
+          .from("CatEspecialidadesMedicas")
           .select("*")
           // .eq("tenant_id", authStore.tenant_id)
           .order("created_at", { ascending: true });
@@ -42,8 +42,11 @@ export const useEspecialidadMedicaStore = defineStore(
       if (!verificarRolAdmin(authStore)) return;
       try {
         const { data, error } = await supabase
-          .from("especialidadesMedicas")
-          .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+          .from("CatEspecialidadesMedicas") // Actualizado
+          .insert([
+            { Descripcion: descripcion, tenant_id: authStore.tenant_id },
+          ]);
+        // Usar 'Descripcion' con mayúscula inicial según la tabla
         if (error) throw error;
         if (data && data[0]) especialidades.value.push(data[0]);
       } catch (error) {
@@ -55,12 +58,12 @@ export const useEspecialidadMedicaStore = defineStore(
       if (!verificarRolAdmin(authStore)) return;
       try {
         const { error } = await supabase
-          .from("especialidadesMedicas")
+          .from("CatEspecialidadesMedicas")
           .delete()
-          .eq("id", id);
+          .eq("EspecialidadId", id); // Actualizado a 'EspecialidadId'
         if (error) throw error;
         especialidades.value = especialidades.value.filter(
-          (especialidad) => especialidad.id !== id
+          (especialidad) => especialidad.EspecialidadId !== id // Actualizado
         );
       } catch (error) {
         console.error("Error al eliminar especialidad:", error.message);
@@ -71,11 +74,13 @@ export const useEspecialidadMedicaStore = defineStore(
       if (!verificarRolAdmin(authStore)) return;
       try {
         const { data, error } = await supabase
-          .from("especialidadesMedicas")
-          .update({ descripcion })
-          .eq("id", id);
+          .from("CatEspecialidadesMedicas")
+          .update({ Descripcion: descripcion }) // Actualizado
+          .eq("EspecialidadId", id); // Actualizado
         if (error) throw error;
-        const index = especialidades.value.findIndex((e) => e.id === id);
+        const index = especialidades.value.findIndex(
+          (e) => e.EspecialidadId === id // Actualizado
+        );
         if (index !== -1 && data && data[0]) {
           especialidades.value[index] = data[0];
         }
@@ -83,6 +88,7 @@ export const useEspecialidadMedicaStore = defineStore(
         console.error("Error al actualizar especialidad:", error.message);
       }
     }
+
     watch(
       () => authStore.tenant_id,
       (newTenantId, oldTenantId) => {
@@ -105,17 +111,17 @@ export const useEspecialidadMedicaStore = defineStore(
 
 // Tienda para Tipos de Estudios
 export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
-  const estudios = ref([]);
+  const TipoEstudios = ref([]);
   const authStore = useAuthStore();
 
   async function cargarEstudios() {
     try {
       const { data, error } = await supabase
-        .from("tiposEstudios")
+        .from("CatTiposEstudios")
         .select("*")
         .order("created_at", { ascending: true });
       if (error) throw error;
-      estudios.value = data;
+      TipoEstudios.value = data;
     } catch (error) {
       console.error("Error al cargar estudios:", error.message);
     }
@@ -125,10 +131,10 @@ export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
-        .from("tiposEstudios")
-        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+        .from("CatTiposEstudios")
+        .insert([{ Descripcion: descripcion, tenant_id: authStore.tenant_id }]);
       if (error) throw error;
-      if (data && data[0]) estudios.value.push(data[0]);
+      if (data && data[0]) TipoEstudios.value.push(data[0]);
     } catch (error) {
       console.error("Error al agregar estudio:", error.message);
     }
@@ -138,11 +144,13 @@ export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { error } = await supabase
-        .from("tiposEstudios")
+        .from("CatTiposEstudios")
         .delete()
-        .eq("id", id);
+        .eq("TipoEstudioId", id);
       if (error) throw error;
-      estudios.value = estudios.value.filter((estudio) => estudio.id !== id);
+      TipoEstudios.value = TipoEstudios.value.filter(
+        (estudio) => estudio.TipoEstudioId !== id
+      );
     } catch (error) {
       console.error("Error al eliminar estudio:", error.message);
     }
@@ -152,13 +160,13 @@ export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
-        .from("tiposEstudios")
-        .update({ descripcion })
-        .eq("id", id);
+        .from("CatTiposEstudios")
+        .update({ Descripcion: descripcion })
+        .eq("TipoEstudioId", id);
       if (error) throw error;
-      const index = estudios.value.findIndex((e) => e.id === id);
+      const index = TipoEstudios.value.findIndex((e) => e.TipoEstudioId === id);
       if (index !== -1 && data && data[0]) {
-        estudios.value[index] = data[0];
+        TipoEstudios.value[index] = data[0];
       }
     } catch (error) {
       console.error("Error al actualizar estudio:", error.message);
@@ -175,7 +183,7 @@ export const useTiposEstudiosStore = defineStore("tiposEstudios", () => {
     { immediate: true }
   );
   return {
-    estudios,
+    TipoEstudios,
     cargarEstudios,
     agregarEstudio,
     eliminarEstudio,

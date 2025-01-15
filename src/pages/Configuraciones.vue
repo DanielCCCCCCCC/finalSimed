@@ -143,16 +143,15 @@
                   >
                     <DxLookup
                       :data-source="especialidades"
-                      value-expr="id"
-                      display-expr="descripcion"
-                      @contentReady="onLookupContentReady"
+                      value-expr="EspecialidadId"
+                      display-expr="Descripcion"
                     />
                     <DxRequiredRule />
                   </DxColumn>
                   <!-- Nueva Columna: Bandera (Checkbox) -->
                   <DxColumn
-                    data-field="esMarcado"
-                    caption="Bandera"
+                    data-field="EsMedico"
+                    caption="Es medico?"
                     data-type="boolean"
                     min-width="100"
                     :allow-editing="true"
@@ -160,7 +159,7 @@
                   >
                     <template #cellTemplate="{ data }">
                       <q-checkbox
-                        v-model="data.esMarcado"
+                        v-model="data.EsMedico"
                         @update:model-value="onMarcadoChange(data)"
                         color="primary"
                         dense
@@ -190,7 +189,7 @@
                   />
                   <DxColumn
                     data-field="observaciones"
-                    caption="Observaciones"
+                    caption="observaciones"
                     data-type="string"
                     :allow-sorting="true"
                   />
@@ -389,10 +388,12 @@ function generateRandomPassword(length = 12) {
  */
 const onRowInserting = async (e) => {
   const { data } = e;
+
   try {
     if (!data.email) {
       throw new Error("Debes ingresar un correo electrónico.");
     }
+    console.log("Datos en onRowInserting:", data.value); // Verifica que EsMedico esté aquí
 
     // Generar una contraseña aleatoria robusta
     const generatedPassword = generateRandomPassword(12);
@@ -400,14 +401,14 @@ const onRowInserting = async (e) => {
 
     // Debug: Verificar los datos antes de enviar a la store
     console.log("Datos de Usuario a Crear:", {
-      email: data.email,
+      Email: data.Email,
       role: data.role,
       nombreCompleto: data.nombreCompleto,
       direccion: data.direccion,
       telefono: data.telefono,
       observaciones: data.observaciones,
       especialidadMedica: data.especialidadMedica,
-      esMarcado: data.esMarcado, // Nuevo campo
+      EsMedico: data.EsMedico, // Nuevo campo
       userId: userId.value,
     });
 
@@ -419,7 +420,7 @@ const onRowInserting = async (e) => {
       telefono: data.telefono,
       observaciones: data.observaciones,
       especialidadMedica: data.especialidadMedica, // Asegurar que la especialidad se guarda
-      esMarcado: data.esMarcado, // Asegurar que la bandera se guarda
+      EsMedico: data.EsMedico, // Asegurar que la bandera se guarda
       userId: userId.value,
     });
 
@@ -537,18 +538,12 @@ onMounted(async () => {
   }
 });
 
-/** Método para depurar DxLookup */
-const onLookupContentReady = () => {
-  console.log("DxLookup de Especialidad Médica listo.");
-  console.log("Datos de Especialidades en Lookup:", especialidades.value);
-};
-
 /** Manejar cambios en el checkbox de bandera */
 const onFlaggedChange = async (user) => {
   try {
     await crearUsuariosStore.actualizarUsuario({
       id: user.id,
-      esMarcado: user.esMarcado,
+      EsMedico: user.EsMedico,
     });
     await crearUsuariosStore.cargarUsuarios();
     $q.notify({
@@ -573,12 +568,86 @@ const onFlaggedChange = async (user) => {
   padding: 20px;
   border-radius: 8px;
   width: 93%;
-  /* margin-right: 150px; */
   position: relative;
   left: 5%;
   top: 10%;
   height: 90vh;
-  /* height: 100%; */
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.menu-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  height: 86vh;
+  width: 200px;
+  padding: 10px;
+}
+
+.vertical-tabs .nav-link {
+  font-size: 14px;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.vertical-tabs .nav-link.active {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.content-container {
+  width: 88%;
+  padding: 10px;
+}
+
+.form-container {
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .menu-container {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .content-container {
+    width: 95%;
+  }
+
+  .vertical-tabs .nav-link {
+    font-size: 16px;
+  }
+}
+</style>
+
+<!--
+<style scoped>
+.main-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 93%;
+  position: relative;
+  left: 5%;
+  top: 10%;
+  height: 90vh;
 }
 
 .custom-data-grid {
@@ -714,4 +783,4 @@ const onFlaggedChange = async (user) => {
 .text-h6 {
   font-size: 1.25rem;
 }
-</style>
+</style> -->

@@ -22,7 +22,7 @@
       <!-- DataGrid para Especialidades Médicas -->
       <DxDataGrid
         :data-source="especialidades"
-        key-expr="id"
+        key-expr="EspecialidadId"
         :show-borders="true"
         class="custom-data-grid"
         :allow-column-reordering="true"
@@ -31,7 +31,7 @@
       >
         <!-- Columnas -->
         <DxColumn
-          data-field="descripcion"
+          data-field="Descripcion"
           caption="Especialidad Médica"
           min-width="200"
           width="300"
@@ -89,30 +89,44 @@
 
             <q-form @submit.prevent="guardarCambios">
               <div class="row q-col-gutter-sm">
-                <div class="col-12 col-md-12 mb-3 corridoInput">
-                  <q-input
-                    v-model="especialidadSeleccionada.descripcion"
-                    label="Descripción"
-                    outlined
-                    :error="!!errores.descripcion"
-                    :error-message="errores.descripcion"
-                    required
-                  />
+                <div class="mb-3">
+                  <label for="Descripcion" class="form-label fs-14 text-dark">
+                    Descripción<span class="required">*</span>
+                  </label>
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-text-wrap"></i>
+                    </div>
+                    <input
+                      type="text"
+                      id="Descripcion"
+                      class="form-control"
+                      v-model="especialidadSeleccionada.Descripcion"
+                      placeholder="Ingrese descripción"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="errores.Descripcion"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ errores.Descripcion }}
+                  </div>
                 </div>
               </div>
 
               <div class="flex justify-center q-mt-sm">
-                <q-btn
-                  :label="
-                    isEditMode
-                      ? 'Actualizar Especialidad'
-                      : 'Guardar Especialidad'
-                  "
-                  color="primary"
+                <button
                   type="submit"
-                  class="btn-primary"
+                  class="btn btn-primary"
                   style="font-size: 14px; padding: 8px 16px"
-                />
+                >
+                  {{
+                    isEditMode
+                      ? "Actualizar Especialidad"
+                      : "Guardar Especialidad"
+                  }}
+                </button>
               </div>
             </q-form>
           </q-card-section>
@@ -157,12 +171,12 @@ const mostrarDialogo = ref(false);
 const isEditMode = ref(false);
 const especialidadSeleccionada = ref({
   id: null,
-  descripcion: "",
+  Descripcion: "",
 });
 
 // Errores del formulario
 const errores = ref({
-  descripcion: "",
+  Descripcion: "",
 });
 
 // Cargar especialidades al montar el componente
@@ -183,27 +197,27 @@ const abrirFormularioNuevaEspecialidad = () => {
   isEditMode.value = false;
   especialidadSeleccionada.value = {
     id: null,
-    descripcion: "",
+    Descripcion: "",
   };
   errores.value = {
-    descripcion: "",
+    Descripcion: "",
   };
   mostrarDialogo.value = true;
 };
 
 // Función para guardar los cambios
 const guardarCambios = async () => {
-  const { id, descripcion } = especialidadSeleccionada.value;
+  const { id, Descripcion } = especialidadSeleccionada.value;
 
   // Resetear errores
   errores.value = {
-    descripcion: "",
+    Descripcion: "",
   };
 
   // Validar campos requeridos
   let valid = true;
-  if (!descripcion.trim()) {
-    errores.value.descripcion = "La descripción es obligatoria.";
+  if (!Descripcion.trim()) {
+    errores.value.Descripcion = "La descripción es obligatoria.";
     valid = false;
   }
 
@@ -219,7 +233,7 @@ const guardarCambios = async () => {
   try {
     if (isEditMode.value) {
       // Actualizar especialidad
-      await especialidadesStore.actualizarEspecialidad(id, descripcion.trim());
+      await especialidadesStore.actualizarEspecialidad(id, Descripcion.trim());
       Notify.create({
         type: "positive",
         message: "Especialidad actualizada con éxito",
@@ -227,7 +241,7 @@ const guardarCambios = async () => {
       });
     } else {
       // Agregar nueva especialidad
-      await especialidadesStore.agregarEspecialidad(descripcion.trim());
+      await especialidadesStore.agregarEspecialidad(Descripcion.trim());
       Notify.create({
         type: "positive",
         message: "Especialidad agregada con éxito",
@@ -251,7 +265,7 @@ const guardarCambios = async () => {
 // Función para eliminar especialidad
 const eliminarEspecialidad = async (e) => {
   try {
-    const especialidadId = e.row.data.id;
+    const especialidadId = e.row.data.EspecialidadId;
     await especialidadesStore.eliminarEspecialidad(especialidadId);
     Notify.create({
       type: "positive",
@@ -273,10 +287,10 @@ const cerrarDialogo = () => {
   mostrarDialogo.value = false;
   especialidadSeleccionada.value = {
     id: null,
-    descripcion: "",
+    Descripcion: "",
   };
   errores.value = {
-    descripcion: "",
+    Descripcion: "",
   };
 };
 </script>

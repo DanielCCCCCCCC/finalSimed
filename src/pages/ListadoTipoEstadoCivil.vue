@@ -136,7 +136,7 @@ import {
   DxSummary,
   DxGroupItem,
 } from "devextreme-vue/data-grid";
-import { useEstadoCivilStore } from "../stores/DatosGeneralesStores";
+// import { useEstadoCivilStore } from "../stores/DatosGeneralesStores";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
 import { ref, onMounted } from "vue";

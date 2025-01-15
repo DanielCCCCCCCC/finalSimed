@@ -25,24 +25,24 @@
         :allow-column-reordering="true"
         :row-alternation-enabled="true"
         :show-borders="true"
-        key-expr="id"
+        key-expr="MedicoId"
         :column-auto-width="false"
         :column-min-width="50"
         :width="responsiveWidth"
       >
         <DxColumn
-          data-field="id"
+          data-field="MedicoId"
           caption="ID Médico"
           :allow-sorting="true"
           width="100px"
         />
         <DxColumn
-          data-field="nombre"
+          data-field="NombreMedico"
           caption="Nombre Completo"
           :allow-sorting="true"
         />
         <DxColumn
-          data-field="direccion"
+          data-field="Direccion"
           caption="Dirección"
           :allow-sorting="true"
         />
@@ -52,21 +52,21 @@
           :allow-sorting="true"
         />
         <DxColumn
-          data-field="telefonoPersonal"
+          data-field="TelefonoUno"
           caption="Teléfono"
           :allow-sorting="true"
           :visible="true"
           width="100px"
         />
         <DxColumn
-          data-field="telefonoCasa"
+          data-field="TelefonoDos"
           caption="Celular"
           :allow-sorting="true"
           :visible="true"
           width="100px"
         />
         <DxColumn
-          data-field="email"
+          data-field="Email"
           caption="Correo Electrónico"
           :allow-sorting="true"
         />
@@ -94,7 +94,7 @@
           <DxButton
             name="delete"
             icon="trash"
-            @click="(e) => handleDelete(e.row.data.id)"
+            @click="(e) => handleDelete(e.row.data.MedicoId)"
           />
         </DxColumn>
       </DxDataGrid>
@@ -132,35 +132,34 @@
                 <!-- Nombre -->
                 <label class="form-label">Nombre</label>
                 <input
-                  v-model="formData.nombre"
+                  v-model="formData.NombreMedico"
                   type="text"
                   class="form-control"
-                  :class="{ 'is-invalid': formErrors.nombre }"
+                  :class="{ 'is-invalid': formErrors.NombreMedico }"
                   placeholder="Nombre"
                 />
-                <div v-if="formErrors.nombre" class="invalid-feedback">
-                  {{ formErrors.nombre }}
+                <div v-if="formErrors.NombreMedico" class="invalid-feedback">
+                  {{ formErrors.NombreMedico }}
                 </div>
 
                 <!-- Dirección -->
                 <label class="form-label">Dirección</label>
                 <input
-                  v-model="formData.direccion"
+                  v-model="formData.Direccion"
                   type="text"
                   class="form-control"
-                  :class="{ 'is-invalid': formErrors.direccion }"
+                  :class="{ 'is-invalid': formErrors.Direccion }"
                   placeholder="Dirección"
                 />
-                <div v-if="formErrors.direccion" class="invalid-feedback">
-                  {{ formErrors.direccion }}
+                <div v-if="formErrors.Direccion" class="invalid-feedback">
+                  {{ formErrors.Direccion }}
                 </div>
-
                 <!-- Especialidad -->
                 <label class="form-label">Especialidad</label>
                 <select
-                  v-model="formData.especialidadId"
+                  v-model="formData.EspecialidadId"
                   class="form-select"
-                  :class="{ 'is-invalid': formErrors.especialidadId }"
+                  :class="{ 'is-invalid': formErrors.EspecialidadId }"
                 >
                   <option disabled value="">Seleccione una especialidad</option>
                   <option
@@ -171,8 +170,8 @@
                     {{ esp.descripcion }}
                   </option>
                 </select>
-                <div v-if="formErrors.especialidadId" class="invalid-feedback">
-                  {{ formErrors.especialidadId }}
+                <div v-if="formErrors.EspecialidadId" class="invalid-feedback">
+                  {{ formErrors.EspecialidadId }}
                 </div>
               </div>
             </div>
@@ -183,17 +182,14 @@
               <div class="col-12 col-md-6">
                 <label class="form-label">Teléfono</label>
                 <input
-                  v-model="formData.telefonoPersonal"
+                  v-model="formData.TelefonoUno"
                   type="text"
                   class="form-control"
-                  :class="{ 'is-invalid': formErrors.telefonoPersonal }"
+                  :class="{ 'is-invalid': formErrors.TelefonoUno }"
                   placeholder="####-####"
                 />
-                <div
-                  v-if="formErrors.telefonoPersonal"
-                  class="invalid-feedback"
-                >
-                  {{ formErrors.telefonoPersonal }}
+                <div v-if="formErrors.TelefonoUno" class="invalid-feedback">
+                  {{ formErrors.TelefonoUno }}
                 </div>
               </div>
 
@@ -201,14 +197,14 @@
               <div class="col-12 col-md-6">
                 <label class="form-label">Teléfono Casa</label>
                 <input
-                  v-model="formData.telefonoCasa"
+                  v-model="formData.TelefonoDos"
                   type="text"
                   class="form-control"
-                  :class="{ 'is-invalid': formErrors.telefonoCasa }"
+                  :class="{ 'is-invalid': formErrors.TelefonoDos }"
                   placeholder="####-####"
                 />
-                <div v-if="formErrors.telefonoCasa" class="invalid-feedback">
-                  {{ formErrors.telefonoCasa }}
+                <div v-if="formErrors.TelefonoDos" class="invalid-feedback">
+                  {{ formErrors.TelefonoDos }}
                 </div>
               </div>
             </div>
@@ -218,14 +214,14 @@
               <div class="col-12 col-md-6">
                 <label class="form-label">Email</label>
                 <input
-                  v-model="formData.email"
+                  v-model="formData.Email"
                   type="email"
                   class="form-control"
-                  :class="{ 'is-invalid': formErrors.email }"
+                  :class="{ 'is-invalid': formErrors.Email }"
                   placeholder="Correo electrónico"
                 />
-                <div v-if="formErrors.email" class="invalid-feedback">
-                  {{ formErrors.email }}
+                <div v-if="formErrors.Email" class="invalid-feedback">
+                  {{ formErrors.Email }}
                 </div>
               </div>
             </div>
@@ -264,7 +260,7 @@ import {
 } from "devextreme-vue/data-grid";
 
 // Stores
-import { useMedicoStore } from "../stores/MedicoStores";
+import { useMedicoStore } from "../stores/DirMedico";
 import { useEspecialidadMedicaStore } from "../stores/ConfiMedicasStores";
 
 const $q = useQuasar();
@@ -281,12 +277,12 @@ let selectedMedicoId = null;
 
 // Datos del formulario
 const formData = ref({
-  nombre: "",
-  direccion: "",
-  especialidadId: null,
-  telefonoPersonal: "",
-  telefonoCasa: "",
-  email: "",
+  NombreMedico: "",
+  Direccion: "",
+  EspecialidadId: null,
+  TelefonoUno: "",
+  TelefonoDos: "",
+  Email: "",
 });
 
 // Errores de validación
@@ -306,7 +302,7 @@ onMounted(async () => {
 const medicosConEspecialidad = computed(() => {
   return (medicos.value || []).map((medico) => {
     const esp = (especialidades.value || []).find(
-      (e) => e.id === medico.especialidadId
+      (e) => e.id === medico.EspecialidadId
     );
     return {
       ...medico,
@@ -344,12 +340,12 @@ function cerrarDialogo() {
 
 function resetFormulario() {
   formData.value = {
-    nombre: "",
-    direccion: "",
-    especialidadId: null,
-    telefonoPersonal: "",
-    telefonoCasa: "",
-    email: "",
+    NombreMedico: "",
+    Direccion: "",
+    EspecialidadId: null,
+    TelefonoUno: "",
+    TelefonoDos: "",
+    Email: "",
   };
   formErrors.value = {};
   isEditing.value = false;
@@ -361,7 +357,7 @@ function resetFormulario() {
 // ----------------------------------------------------------
 function cargarMedicoParaEditar(medico) {
   // Verificamos la especialidad
-  const espIdNumerico = Number(medico.especialidadId);
+  const espIdNumerico = Number(medico.EspecialidadId);
   const esp = especialidades.value.find((e) => e.id === espIdNumerico);
 
   if (!esp) {
@@ -371,18 +367,18 @@ function cargarMedicoParaEditar(medico) {
         "La especialidad asociada no se encontró. Selecciona una válida.",
       position: "top-right",
     });
-    formData.value.especialidadId = null;
+    formData.value.EspecialidadId = null;
   } else {
-    formData.value.especialidadId = esp.id;
+    formData.value.EspecialidadId = esp.id;
   }
 
-  formData.value.nombre = medico.nombre || "";
-  formData.value.direccion = medico.direccion || "";
-  formData.value.telefonoPersonal = medico.telefonoPersonal || "";
-  formData.value.telefonoCasa = medico.telefonoCasa || "";
-  formData.value.email = medico.email || "";
+  formData.value.NombreMedico = medico.NombreMedico || "";
+  formData.value.Direccion = medico.Direccion || "";
+  formData.value.TelefonoUno = medico.TelefonoUno || "";
+  formData.value.TelefonoDos = medico.TelefonoDos || "";
+  formData.value.Email = medico.Email || "";
 
-  selectedMedicoId = medico.id || null;
+  selectedMedicoId = medico.MedicoId || null;
   isEditing.value = true;
   dialogoMedico.value = true;
 }
@@ -391,22 +387,18 @@ function cargarMedicoParaEditar(medico) {
 // Guardar o actualizar médico
 // ----------------------------------------------------------
 async function guardarMedico() {
-  // Puedes agregar validaciones personalizadas
   formErrors.value = {};
-  if (!formData.value.nombre.trim()) {
-    formErrors.value.nombre = "El nombre es obligatorio";
+
+  // Validaciones de los campos
+  if (!formData.value.NombreMedico || !formData.value.NombreMedico.trim()) {
+    formErrors.value.NombreMedico = "El nombre es obligatorio";
   }
-  if (!formData.value.direccion.trim()) {
-    formErrors.value.direccion = "La dirección es obligatoria";
+  if (!formData.value.Direccion || !formData.value.Direccion.trim()) {
+    formErrors.value.Direccion = "La dirección es obligatoria";
   }
-  if (!formData.value.especialidadId) {
-    formErrors.value.especialidadId = "La especialidad es obligatoria";
+  if (!formData.value.EspecialidadId) {
+    formErrors.value.EspecialidadId = "La especialidad es obligatoria";
   }
-  // Teléfonos no siempre son obligatorios, depende de tu lógica
-  // Email también, si lo deseas
-  // if (!formData.value.email.trim()) {
-  //   formErrors.value.email = "El email es obligatorio";
-  // }
 
   // Si hay errores, mostrarlos y detener
   if (Object.keys(formErrors.value).length > 0) {
@@ -419,22 +411,22 @@ async function guardarMedico() {
   }
 
   const medicoData = {
-    nombre: formData.value.nombre,
-    direccion: formData.value.direccion,
-    especialidadId:
-      typeof formData.value.especialidadId === "object"
-        ? formData.value.especialidadId.id
-        : formData.value.especialidadId,
-    telefonoCasa: formData.value.telefonoCasa,
-    telefonoPersonal: formData.value.telefonoPersonal,
-    email: formData.value.email,
+    NombreMedico: formData.value.NombreMedico,
+    Direccion: formData.value.Direccion,
+    EspecialidadId:
+      typeof formData.value.EspecialidadId === "object"
+        ? formData.value.EspecialidadId.id
+        : formData.value.EspecialidadId,
+    TelefonoUno: formData.value.TelefonoUno || "",
+    TelefonoDos: formData.value.TelefonoDos || "",
+    Email: formData.value.Email || "",
   };
 
   try {
     if (isEditing.value && selectedMedicoId) {
       // Actualizar
       await medicoStore.actualizarMedico({
-        id: selectedMedicoId,
+        MedicoId: selectedMedicoId,
         ...medicoData,
       });
       $q.notify({

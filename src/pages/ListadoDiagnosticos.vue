@@ -27,7 +27,7 @@
         :column-resizing-mode="'widget'"
         :row-alternation-enabled="true"
         :show-borders="true"
-        key-expr="id"
+        key-expr="DignosticoId"
         class="custom-data-grid"
       >
         <DxPaging :enabled="true" :page-size="10" />
@@ -50,7 +50,7 @@
 
         <!-- Columna para descripción del diagnóstico -->
         <DxColumn
-          data-field="descripcion"
+          data-field="Descripcion"
           caption="Descripción"
           min-width="200"
           width="300"
@@ -60,12 +60,12 @@
 
         <!-- Columna con lookup para mostrar nombre de clasificación -->
         <DxColumn
-          data-field="clasificacionId"
+          data-field="ClasificacionDiagnosticoId"
           caption="Clasificación"
           :lookup="{
             dataSource: clasificaciones,
             valueExpr: 'id',
-            displayExpr: 'nombre',
+            displayExpr: 'Descripcion',
           }"
           min-width="150"
           width="200"
@@ -123,51 +123,73 @@
             </div>
 
             <q-form @submit.prevent="guardarCambios">
-              <div class="row q-col-gutter-sm">
-                <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="diagnosticoSeleccionado.descripcion"
-                    label="Descripción"
-                    outlined
-                    :error="!!errores.descripcion"
-                    :error-message="errores.descripcion"
+              <div class="mb-3">
+                <label for="Descripcion" class="form-label fs-14 text-dark">
+                  Descripción<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <div class="input-group-text">
+                    <i class="ri-text-wrap"></i>
+                  </div>
+                  <input
+                    type="text"
+                    id="Descripcion"
+                    class="form-control"
+                    v-model="diagnosticoSeleccionado.Descripcion"
+                    placeholder="Ingrese descripción"
                     required
                   />
                 </div>
-                <div class="col-12 col-md-6 mb-3">
-                  <q-select
-                    v-model="diagnosticoSeleccionado.clasificacionId"
-                    :options="clasificaciones"
-                    option-value="id"
-                    option-label="nombre"
-                    label="Clasificación"
-                    outlined
-                    required
-                    emit-value
-                    map-options
-                  />
-                  <div
-                    v-if="errores.clasificacionId"
-                    class="text-negative text-caption"
-                  >
-                    {{ errores.clasificacionId }}
-                  </div>
+                <div v-if="errores.Descripcion" class="text-danger fs-13 mt-1">
+                  {{ errores.Descripcion }}
                 </div>
               </div>
 
-              <div class="flex justify-center q-mt-sm">
-                <q-btn
-                  :label="
-                    isEditMode
-                      ? 'Actualizar Diagnóstico'
-                      : 'Guardar Diagnóstico'
-                  "
-                  color="primary"
-                  type="submit"
-                  class="btn-primary"
-                  style="font-size: 14px; padding: 8px 16px"
-                />
+              <div class="mb-3">
+                <label
+                  for="clasificacionSelect"
+                  class="form-label fs-14 text-dark"
+                >
+                  Clasificación<span class="required">*</span>
+                </label>
+                <div class="input-group">
+                  <div class="input-group-text">
+                    <i class="ri-article-line"></i>
+                  </div>
+                  <select
+                    id="clasificacionSelect"
+                    class="form-select"
+                    v-model="diagnosticoSeleccionado.ClasificacionDiagnosticoId"
+                    required
+                  >
+                    <option disabled value="">
+                      Seleccione una clasificación
+                    </option>
+                    <option
+                      v-for="clasificacion in clasificaciones"
+                      :key="clasificacion.ClasificacionDiagnosticoId"
+                      :value="clasificacion.ClasificacionDiagnosticoId"
+                    >
+                      {{ clasificacion.Descripcion }}
+                    </option>
+                  </select>
+                </div>
+                <div
+                  v-if="errores.ClasificacionDiagnosticoId"
+                  class="text-danger fs-13 mt-1"
+                >
+                  {{ errores.ClasificacionDiagnosticoId }}
+                </div>
               </div>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="font-size: 14px; padding: 8px 16px"
+              >
+                {{
+                  isEditMode ? "Actualizar Diagnóstico" : "Guardar Diagnóstico"
+                }}
+              </button>
             </q-form>
           </q-card-section>
         </q-card>
@@ -193,7 +215,7 @@ import {
   DxSelection,
   DxSearchPanel,
 } from "devextreme-vue/data-grid";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { Notify } from "quasar";
 import {
   useDiagnosticosStore,
@@ -216,14 +238,14 @@ const isEditMode = ref(false);
 // Datos del diagnóstico seleccionado
 const diagnosticoSeleccionado = ref({
   id: null,
-  descripcion: "",
-  clasificacionId: null,
+  Descripcion: "",
+  ClasificacionDiagnosticoId: null,
 });
 
 // Errores del formulario
 const errores = ref({
-  descripcion: "",
-  clasificacionId: "",
+  Descripcion: "",
+  ClasificacionDiagnosticoId: "",
 });
 
 // Función para cargar diagnósticos y clasificaciones
@@ -271,22 +293,24 @@ const abrirFormularioEdicion = (e) => {
 
 // Guardar los cambios del formulario (agregar o actualizar)
 const guardarCambios = async () => {
-  const { id, descripcion, clasificacionId } = diagnosticoSeleccionado.value;
+  const { id, Descripcion, ClasificacionDiagnosticoId } =
+    diagnosticoSeleccionado.value;
 
   // Resetear errores
   errores.value = {
-    descripcion: "",
-    clasificacionId: "",
+    Descripcion: "",
+    ClasificacionDiagnosticoId: "",
   };
 
   // Validar campos requeridos
   let valid = true;
-  if (!descripcion.trim()) {
-    errores.value.descripcion = "La descripción es obligatoria.";
+  if (!Descripcion.trim()) {
+    errores.value.Descripcion = "La descripción es obligatoria.";
     valid = false;
   }
-  if (!clasificacionId) {
-    errores.value.clasificacionId = "La clasificación es obligatoria.";
+  if (!ClasificacionDiagnosticoId) {
+    errores.value.ClasificacionDiagnosticoId =
+      "La clasificación es obligatoria.";
     valid = false;
   }
 
@@ -303,8 +327,8 @@ const guardarCambios = async () => {
     if (isEditMode.value) {
       // Actualizar diagnóstico
       await diagnosticosStore.actualizarDiagnostico(id, {
-        descripcion: descripcion.trim(),
-        clasificacionId,
+        Descripcion: Descripcion.trim(),
+        ClasificacionDiagnosticoId,
       });
       Notify.create({
         type: "positive",
@@ -314,8 +338,8 @@ const guardarCambios = async () => {
     } else {
       // Agregar nuevo diagnóstico
       await diagnosticosStore.agregarDiagnostico(
-        descripcion.trim(),
-        clasificacionId
+        Descripcion.trim(),
+        ClasificacionDiagnosticoId
       );
       Notify.create({
         type: "positive",
@@ -347,12 +371,12 @@ const cerrarDialogo = () => {
 const resetFormulario = () => {
   diagnosticoSeleccionado.value = {
     id: null,
-    descripcion: "",
-    clasificacionId: null,
+    Descripcion: "",
+    ClasificacionDiagnosticoId: null,
   };
   errores.value = {
-    descripcion: "",
-    clasificacionId: "",
+    Descripcion: "",
+    ClasificacionDiagnosticoId: "",
   };
 };
 
@@ -360,7 +384,7 @@ const resetFormulario = () => {
 const eliminarDiagnostico = async (e) => {
   const data = e.row.data;
   console.log("Eliminar diagnóstico con datos:", data); // Log para depuración
-  if (!data || !data.id) {
+  if (!data || !data.DignosticoId) {
     Notify.create({
       type: "negative",
       message: "Error al eliminar: el diagnóstico no tiene ID.",
@@ -370,7 +394,7 @@ const eliminarDiagnostico = async (e) => {
   }
 
   try {
-    await diagnosticosStore.eliminarDiagnostico(data.id);
+    await diagnosticosStore.eliminarDiagnostico(data.DignosticoId);
     Notify.create({
       type: "positive",
       message: "Diagnóstico eliminado con éxito",
@@ -386,6 +410,12 @@ const eliminarDiagnostico = async (e) => {
     console.error("Error al eliminar diagnóstico:", error);
   }
 };
+watch(
+  () => diagnosticoSeleccionado.value.ClasificacionDiagnosticoId,
+  (nuevoValor) => {
+    console.log("Clasificación seleccionada:", nuevoValor);
+  }
+);
 
 // Cargar datos al montar el componente
 onMounted(cargarDatos);
@@ -406,7 +436,7 @@ onMounted(cargarDatos);
   width: 100%;
   margin: auto;
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 

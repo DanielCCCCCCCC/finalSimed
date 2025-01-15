@@ -23,8 +23,8 @@
 
       <!-- DataGrid para Tipos de Estudios -->
       <DxDataGrid
-        :data-source="estudios"
-        key-expr="id"
+        :data-source="TipoEstudios"
+        key-expr="TipoEstudioId"
         :show-borders="true"
         class="custom-data-grid"
         :allow-column-reordering="true"
@@ -33,7 +33,7 @@
       >
         <!-- Columnas -->
         <DxColumn
-          data-field="descripcion"
+          data-field="Descripcion"
           caption="Tipo de Estudio"
           min-width="200"
           width="300"
@@ -75,6 +75,13 @@
                     : "Agregar Nuevo Tipo de Estudio"
                 }}
               </h2>
+              <!-- <button
+                type="button"
+                class="btn btn-secondary btnCerrarModal"
+                @click="cerrarDialogo"
+              >
+            </button>
+                <i class="ri-close-line"></i> Cerrar -->
               <q-btn
                 label="Cerrar"
                 color="secondary"
@@ -85,30 +92,47 @@
               />
             </div>
 
-            <q-form @submit.prevent="guardarCambios">
+            <form @submit.prevent="guardarCambios">
               <div class="row q-col-gutter-sm">
                 <div class="col-12 col-md-12 mb-3 corridoInput">
-                  <q-input
-                    v-model="estudioSeleccionado.descripcion"
-                    label="Descripción"
-                    outlined
-                    :error="!!errores.descripcion"
-                    :error-message="errores.descripcion"
-                    required
-                  />
+                  <label
+                    for="descripcionEstudio"
+                    class="form-label fs-14 text-dark"
+                  >
+                    Descripción<span class="required">*</span>
+                  </label>
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-text-wrap"></i>
+                    </div>
+                    <input
+                      type="text"
+                      id="descripcionEstudio"
+                      class="form-control"
+                      v-model="estudioSeleccionado.descripcion"
+                      placeholder="Ingrese descripción"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="errores.descripcion"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ errores.descripcion }}
+                  </div>
                 </div>
               </div>
 
               <div class="flex justify-center q-mt-sm">
-                <q-btn
-                  :label="isEditMode ? 'Actualizar Estudio' : 'Guardar Estudio'"
-                  color="primary"
+                <button
                   type="submit"
-                  class="btn-primary"
+                  class="btn btn-primary"
                   style="font-size: 14px; padding: 8px 16px"
-                />
+                >
+                  {{ isEditMode ? "Actualizar Estudio" : "Guardar Estudio" }}
+                </button>
               </div>
-            </q-form>
+            </form>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -140,7 +164,7 @@ import { ref, onMounted } from "vue";
 
 // Instancia de la tienda y referencias reactivas
 const tiposEstudiosStore = useTiposEstudiosStore();
-const { estudios } = storeToRefs(tiposEstudiosStore);
+const { TipoEstudios } = storeToRefs(tiposEstudiosStore);
 
 // Estados del modal
 const mostrarDialogo = ref(false);
@@ -172,7 +196,7 @@ const abrirDialogoNuevoEstudio = () => {
 const abrirFormularioEdicion = (e) => {
   const data = e.row.data;
   console.log("Abrir edición con datos:", data); // Log para depuración
-  if (!data || !data.id) {
+  if (!data || !data.TipoEstudioId) {
     Notify.create({
       type: "negative",
       message: "Error al abrir el modal: el estudio no tiene ID.",
@@ -248,7 +272,7 @@ const guardarCambios = async () => {
 const eliminarEstudio = async (e) => {
   const data = e.row.data;
   console.log("Eliminar estudio con datos:", data); // Log para depuración
-  if (!data || !data.id) {
+  if (!data || !data.TipoEstudioId) {
     Notify.create({
       type: "negative",
       message: "Error al eliminar: el estudio no tiene ID.",
@@ -258,7 +282,7 @@ const eliminarEstudio = async (e) => {
   }
 
   try {
-    await tiposEstudiosStore.eliminarEstudio(data.id);
+    await tiposEstudiosStore.eliminarEstudio(data.TipoEstudioId);
     Notify.create({
       type: "positive",
       message: "Estudio eliminado con éxito",

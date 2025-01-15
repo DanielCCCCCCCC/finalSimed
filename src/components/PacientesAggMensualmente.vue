@@ -16,13 +16,13 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { storeToRefs } from "pinia";
 import ApexCharts from "vue3-apexcharts";
 
 // Instancia de la tienda
-const fichaIdentificacionStore = useFichaIdentificacionStore();
-const { registrosPorDia } = storeToRefs(fichaIdentificacionStore);
+const dirPacientesStore = useDirPacientesStore();
+const { registrosPorDia } = storeToRefs(dirPacientesStore);
 
 // Configuración de las series del gráfico (reactivo)
 const series = computed(() => [

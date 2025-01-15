@@ -148,37 +148,38 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Código</label>
                           <input
-                            v-model="pacienteSeleccionado.codigo"
+                            v-model="pacienteSeleccionado.Codigo"
                             class="form-control"
                             placeholder="Ingresa código"
                           />
                           <!--
-                          <div v-if="!validaciones.codigo" class="text-danger mt-1">
+                          <div v-if="!validaciones.Codigo" class="text-danger mt-1">
                             El código es obligatorio
                           </div>
                           -->
                         </div>
 
-                        <!-- Paciente activo? -->
+                        <!-- Paciente Activo? -->
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Paciente activo?</label>
+                          <label class="form-label">Paciente Activo?</label>
                           <div class="form-check">
                             <input
                               type="checkbox"
-                              v-model="pacienteSeleccionado.activo"
+                              v-model="pacienteSeleccionado.Activo"
                               class="form-check-input small-checkbox"
                             />
                           </div>
                         </div>
 
                         <!-- Médico -->
+                        <!-- Selección de Médico -->
                         <div class="col-md-6 mb-3">
                           <label for="medicoSelect" class="form-label"
                             >Médico</label
                           >
                           <select
                             id="medicoSelect"
-                            v-model="pacienteSeleccionado.medicoId"
+                            v-model="pacienteSeleccionado.MedicoId"
                             class="form-select custom-select-height"
                             required
                             @blur="validateMedico"
@@ -188,10 +189,10 @@
                             </option>
                             <option
                               v-for="medico in medicos"
-                              :key="medico.id"
-                              :value="medico.id"
+                              :key="medico.MedicoId"
+                              :value="medico.MedicoId"
                             >
-                              {{ medico.nombre }}
+                              {{ medico.NombreMedico }}
                             </option>
                           </select>
                           <div
@@ -209,7 +210,7 @@
                           >
                           <select
                             id="medicoCabeceraSelect"
-                            v-model="pacienteSeleccionado.medicoCabecera"
+                            v-model="pacienteSeleccionado.MedicoCabeceraId"
                             class="form-select custom-select-height"
                             required
                             @blur="validateMedicoCabecera"
@@ -219,14 +220,14 @@
                             </option>
                             <option
                               v-for="medico in medicos"
-                              :key="medico.id"
-                              :value="medico.id"
+                              :key="medico.MedicoId"
+                              :value="medico.MedicoId"
                             >
-                              {{ medico.nombre }}
+                              {{ medico.NombreMedico }}
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.medicoCabecera"
+                            v-if="!validaciones.MedicoCabeceraId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un médico de cabecera
@@ -240,7 +241,7 @@
                           >
                           <select
                             id="referidoPorSelect"
-                            v-model="pacienteSeleccionado.referidoPorId"
+                            v-model="pacienteSeleccionado.ReferidoPorId"
                             class="form-select custom-select-height"
                           >
                             <option disabled value="">
@@ -248,14 +249,14 @@
                             </option>
                             <option
                               v-for="medico in medicos"
-                              :key="medico.id"
-                              :value="medico.id"
+                              :key="medico.MedicoId"
+                              :value="medico.MedicoId"
                             >
-                              {{ medico.nombre }}
+                              {{ medico.NombreMedico }}
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.referidoPorId"
+                            v-if="!validaciones.ReferidoPorId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un médico
@@ -272,27 +273,31 @@
                         <h6 class="text-primary">Información Personal</h6>
                       </div>
                       <q-form class="row">
-                        <!-- Nombres -->
+                        <!-- Nombre -->
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Nombre</label>
                           <input
-                            v-model="pacienteSeleccionado.nombres"
+                            v-model="pacienteSeleccionado.Nombre"
                             class="form-control"
-                            :class="{ 'is-invalid': !validaciones.nombres }"
-                            placeholder="Ingrese los nombres"
+                            :class="{
+                              'is-invalid': !validaciones.Nombre,
+                            }"
+                            placeholder="Ingrese el nombre del paciente"
                           />
                         </div>
 
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Identificación</label>
                           <input
-                            v-model="pacienteSeleccionado.dni"
+                            v-model="pacienteSeleccionado.Identificacion"
                             class="form-control"
-                            :class="{ 'is-invalid': !validaciones.dni }"
+                            :class="{
+                              'is-invalid': !validaciones.Identificacion,
+                            }"
                             placeholder="Ingrese la identificación"
                           />
                           <div
-                            v-if="!validaciones.dni"
+                            v-if="!validaciones.Identificacion"
                             class="text-danger mt-1"
                           >
                             La Identificación es obligatoria.
@@ -301,15 +306,15 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Fecha de Nacimiento</label>
                           <input
-                            v-model="pacienteSeleccionado.fechaNacimiento"
+                            v-model="pacienteSeleccionado.FechaNacimiento"
                             type="date"
                             class="form-control"
                             :class="{
-                              'is-invalid': !validaciones.fechaNacimiento,
+                              'is-invalid': !validaciones.FechaNacimiento,
                             }"
                           />
                           <div
-                            v-if="!validaciones.fechaNacimiento"
+                            v-if="!validaciones.FechaNacimiento"
                             class="invalid-feedback"
                           >
                             Debe ingresar una fecha válida
@@ -318,22 +323,24 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Sexo</label>
                           <select
-                            v-model="pacienteSeleccionado.sexo"
+                            v-model="pacienteSeleccionado.Sexo"
                             class="form-select custom-select-height"
-                            :class="{ 'is-invalid': !validaciones.sexo }"
+                            :class="{
+                              'is-invalid': !validaciones.Sexo,
+                            }"
                           >
                             <option disabled value="">
-                              Seleccione el sexo
+                              Seleccione el Sexo
                             </option>
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
                             <option value="Otro">Otro</option>
                           </select>
                           <div
-                            v-if="!validaciones.sexo"
+                            v-if="!validaciones.Sexo"
                             class="invalid-feedback"
                           >
-                            Debe seleccionar un sexo
+                            Debe seleccionar un Sexo
                           </div>
                         </div>
 
@@ -343,7 +350,7 @@
                           >
                           <select
                             id="estadoCivilSelect"
-                            v-model="pacienteSeleccionado.estadoCivilId"
+                            v-model="pacienteSeleccionado.EstadoCivil"
                             class="form-select custom-select-height"
                             required
                             @blur="validateEstadoCivil"
@@ -352,15 +359,16 @@
                               Seleccione un estado civil
                             </option>
                             <option
-                              v-for="estado in estadosCiviles"
+                              v-for="estado in EstadosCivilesList"
                               :key="estado.id"
                               :value="estado.id"
                             >
                               {{ estado.descripcion }}
                             </option>
                           </select>
+
                           <div
-                            v-if="!validaciones.estadoCivilId"
+                            v-if="!validaciones.EstadoCivil"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un estado civil
@@ -370,18 +378,18 @@
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Observaciones</label>
                           <textarea
-                            v-model="pacienteSeleccionado.observaciones"
+                            v-model="pacienteSeleccionado.Observaciones"
                             class="form-control"
                             :class="{
-                              'is-invalid': !validaciones.observaciones,
+                              'is-invalid': !validaciones.Observaciones,
                             }"
-                            placeholder="Ingrese observaciones"
+                            placeholder="Ingrese Observaciones"
                           ></textarea>
                           <div
-                            v-if="!validaciones.observaciones"
+                            v-if="!validaciones.Observaciones"
                             class="invalid-feedback"
                           >
-                            Debe ingresar observaciones
+                            Debe ingresar Observaciones
                           </div>
                         </div>
                       </q-form>
@@ -398,7 +406,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Dirección</label>
                           <input
-                            v-model="pacienteSeleccionado.direccion"
+                            v-model="pacienteSeleccionado.Direccion"
                             class="form-control"
                             placeholder="Ingrese la dirección"
                           />
@@ -406,7 +414,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Teléfono Hogar</label>
                           <input
-                            v-model="pacienteSeleccionado.telCasa"
+                            v-model="pacienteSeleccionado.TelefonoDos"
                             class="form-control"
                             placeholder="Ingrese el teléfono del hogar"
                           />
@@ -414,13 +422,13 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Teléfono Personal</label>
                           <input
-                            v-model="pacienteSeleccionado.telPersonal"
+                            v-model="pacienteSeleccionado.TelefonoUno"
                             class="form-control"
-                            :class="{ 'is-invalid': !validaciones.telPersonal }"
+                            :class="{ 'is-invalid': !validaciones.TelefonoUno }"
                             placeholder="Ingrese el teléfono personal"
                           />
                           <div
-                            v-if="!validaciones.telPersonal"
+                            v-if="!validaciones.TelefonoUno"
                             class="invalid-feedback"
                           >
                             Debe ingresar un número de teléfono
@@ -429,8 +437,8 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Email</label>
                           <input
-                            v-model="pacienteSeleccionado.email"
-                            type="email"
+                            v-model="pacienteSeleccionado.Email"
+                            type="Email"
                             class="form-control"
                             placeholder="Ingrese el correo electrónico"
                           />
@@ -441,7 +449,7 @@
                           >
                           <select
                             id="departamentoSelect"
-                            v-model="pacienteSeleccionado.departamentoId"
+                            v-model="pacienteSeleccionado.EstadoId"
                             class="form-select custom-select-height"
                             required
                             @blur="validateDepartamento"
@@ -451,14 +459,14 @@
                             </option>
                             <option
                               v-for="departamento in departamentos"
-                              :key="departamento.id"
-                              :value="departamento.id"
+                              :key="departamento.DepartamentoId"
+                              :value="departamento.DepartamentoId"
                             >
-                              {{ departamento.descripcion }}
+                              {{ departamento.Descripcion }}
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.departamentoId"
+                            v-if="!validaciones.EstadoId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un departamento
@@ -471,7 +479,7 @@
                           >
                           <select
                             id="municipioSelect"
-                            v-model="pacienteSeleccionado.municipioId"
+                            v-model="pacienteSeleccionado.MunicipioId"
                             class="form-select custom-select-height"
                             required
                             @blur="validateMunicipio"
@@ -481,14 +489,14 @@
                             </option>
                             <option
                               v-for="municipio in filteredMunicipios"
-                              :key="municipio.id"
-                              :value="municipio.id"
+                              :key="municipio.MunicipioId"
+                              :value="municipio.MunicipioId"
                             >
-                              {{ municipio.descripcion }}
+                              {{ municipio.Descripcion }}
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.municipioId"
+                            v-if="!validaciones.MunicipioId"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un municipio
@@ -498,7 +506,7 @@
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Organización</label>
                           <input
-                            v-model="pacienteSeleccionado.organizacion"
+                            v-model="pacienteSeleccionado.Observaciones"
                             class="form-control"
                             placeholder="Ingrese la organización"
                           />
@@ -517,7 +525,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Cónyuge</label>
                           <input
-                            v-model="pacienteSeleccionado.conyugue"
+                            v-model="pacienteSeleccionado.Conyugue"
                             class="form-control"
                             placeholder="Ingrese el nombre del cónyuge"
                           />
@@ -525,17 +533,17 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Madre</label>
                           <input
-                            v-model="pacienteSeleccionado.madre"
+                            v-model="pacienteSeleccionado.Madre"
                             class="form-control"
-                            placeholder="Ingrese el nombre de la madre"
+                            placeholder="Ingrese el nombre de la Madre"
                           />
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Padre</label>
                           <input
-                            v-model="pacienteSeleccionado.padre"
+                            v-model="pacienteSeleccionado.Padre"
                             class="form-control"
-                            placeholder="Ingrese el nombre del padre"
+                            placeholder="Ingrese el nombre del Padre"
                           />
                         </div>
                       </q-form>
@@ -555,7 +563,7 @@
                           >
                           <select
                             id="escolaridadSelect"
-                            v-model="pacienteSeleccionado.escolaridadId"
+                            v-model="pacienteSeleccionado.Escolaridad"
                             class="form-select custom-select-height"
                             required
                             @blur="validateEscolaridad"
@@ -564,15 +572,16 @@
                               Seleccione una escolaridad
                             </option>
                             <option
-                              v-for="escolaridad in escolaridades"
+                              v-for="escolaridad in EscolaridadesList"
                               :key="escolaridad.id"
                               :value="escolaridad.id"
                             >
                               {{ escolaridad.descripcion }}
                             </option>
                           </select>
+
                           <div
-                            v-if="!validaciones.escolaridadId"
+                            v-if="!validaciones.Escolaridad"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar la escolaridad
@@ -582,7 +591,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Ocupación</label>
                           <input
-                            v-model="pacienteSeleccionado.ocupacion"
+                            v-model="pacienteSeleccionado.Ocupacion"
                             class="form-control"
                             placeholder="Ingrese la ocupación"
                           />
@@ -593,7 +602,7 @@
                           >
                           <select
                             id="grupoSanguineoSelect"
-                            v-model="pacienteSeleccionado.grupoSanguineoId"
+                            v-model="pacienteSeleccionado.GrupoSanguineo"
                             class="form-select custom-select-height"
                             required
                             @blur="validateGrupoSanguineo"
@@ -602,15 +611,15 @@
                               Seleccione un grupo sanguíneo
                             </option>
                             <option
-                              v-for="grupo in gruposSanguineos"
-                              :key="grupo.id"
-                              :value="grupo.id"
+                              v-for="GrupoSanguineo in GrupoSanguineoList"
+                              :key="GrupoSanguineo.id"
+                              :value="GrupoSanguineo.id"
                             >
-                              {{ grupo.descripcion }}
+                              {{ GrupoSanguineo.descripcion }}
                             </option>
                           </select>
                           <div
-                            v-if="!validaciones.grupoSanguineoId"
+                            v-if="!validaciones.GrupoSanguineo"
                             class="text-danger mt-1"
                           >
                             Debe seleccionar un grupo sanguíneo
@@ -620,9 +629,9 @@
                         <div class="col-md-12 mb-3">
                           <label class="form-label">Alergias</label>
                           <textarea
-                            v-model="pacienteSeleccionado.alergias"
+                            v-model="pacienteSeleccionado.Alergias"
                             class="form-control"
-                            placeholder="Ingrese las alergias del paciente"
+                            placeholder="Ingrese las Alergias del paciente"
                           ></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
@@ -630,7 +639,7 @@
                           <div class="form-check">
                             <input
                               type="checkbox"
-                              v-model="pacienteSeleccionado.vih"
+                              v-model="pacienteSeleccionado.VIH"
                               class="form-check-input small-checkbox"
                             />
                             <label class="form-check-label">Positivo</label>
@@ -664,7 +673,7 @@
         :row-alternation-enabled="true"
         :focused-row-enabled="true"
         :focused-row-key="focusedRowKey"
-        :key-expr="'id'"
+        :key-expr="'PacienteId'"
         :show-borders="true"
         class="grid theme-dependent"
         @row-click="rowClick"
@@ -688,33 +697,33 @@
 
         <!-- Definir las columnas aquí -->
         <DxColumn
-          data-field="codigo"
+          data-field="Codigo"
           caption="Código"
           :allow-editing="false"
           :min-width="80"
         />
         <DxColumn
-          data-field="fechaRegistro"
+          data-field="FechaRegistro"
           caption="F. Registro"
           data-type="date"
           :min-width="100"
           :visible="true"
         />
         <DxColumn
-          data-field="dni"
+          data-field="Identificacion"
           caption="Identificacíon"
           :min-width="120"
           :visible="true"
         />
         <DxColumn
-          data-field="nombres"
+          data-field="Nombre"
           caption="Nombre"
           sort-order="asc"
           :min-width="130"
         />
 
         <DxColumn
-          data-field="fechaNacimiento"
+          data-field="FechaNacimiento"
           caption="F. Nacimiento"
           data-type="date"
           :min-width="80"
@@ -740,7 +749,7 @@
         />
 
         <DxColumn
-          data-field="activo"
+          data-field="Activo"
           caption="Activo"
           data-type="boolean"
           :min-width="80"
@@ -750,8 +759,8 @@
           <template #cell="{ data }">
             <DxCheckBox
               class="small-checkbox"
-              v-model="data.activo"
-              :value="data.activo"
+              v-model="data.Activo"
+              :value="data.Activo"
               @value-changed="onCheckboxChange(data)"
             />
           </template>
@@ -789,16 +798,16 @@ import {
   DxButton,
 } from "devextreme-vue/data-grid";
 import DxCheckBox from "devextreme-vue/check-box";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { useTiposPacientesStore } from "../stores/ConfiMedicasStores";
-import { useMedicoStore } from "../stores/MedicoStores";
+import { useMedicoStore } from "../stores/DirMedico";
 import {
-  useEstadoCivilStore,
   useDepartamentoStore,
   useMunicipioStore,
-  useGrupoSanguineoStore,
-  useEscolaridadStore,
 } from "../stores/DatosGeneralesStores";
+import { EstadosCiviles } from "../stores/EstadosCiviles";
+import { Escolaridades } from "../stores/Escolaridades";
+import { GruposSanguineos } from "../stores/GrupoSanguineo";
 import PacientePanel from "./PacientePanel.vue";
 import { ref, reactive, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
@@ -810,68 +819,63 @@ import { supabase } from "../supabaseClient"; // Asegúrate de que la ruta es co
 const emit = defineEmits(["cambiar-tab"]);
 
 // Almacenes Pinia
-const fichaIdentificacionStore = useFichaIdentificacionStore();
-const TiposPacientesStore = useTiposPacientesStore();
-const EstadoCivilStore = useEstadoCivilStore();
+const dirPacientesStore = useDirPacientesStore();
 const DepartamentoStore = useDepartamentoStore();
 const MunicipioStore = useMunicipioStore();
-const GrupoSanguineoStore = useGrupoSanguineoStore();
-const EscolaridadStore = useEscolaridadStore();
 const MedicoStore = useMedicoStore();
 const authStore = useAuthStore(); // Accede a la tienda de autenticación
 
 // Referencias de los stores
-const { formIdentificacion } = storeToRefs(fichaIdentificacionStore);
-// const { tpacientes } = storeToRefs(TiposPacientesStore);
+const { formIdentificacion } = storeToRefs(dirPacientesStore);
 const { medicos } = storeToRefs(MedicoStore);
-const { estadosCiviles } = storeToRefs(EstadoCivilStore);
 const { departamentos } = storeToRefs(DepartamentoStore);
 const { municipios } = storeToRefs(MunicipioStore);
-const { gruposSanguineos } = storeToRefs(GrupoSanguineoStore);
-const { escolaridades } = storeToRefs(EscolaridadStore);
 
+const EstadosCivilesList = ref(EstadosCiviles);
+const EscolaridadesList = ref(Escolaridades);
+const GrupoSanguineoList = ref(GruposSanguineos);
+
+console.log("Estados Civiles cargados:", EstadosCivilesList.value);
+console.log("Escolaridades cargadas:", EscolaridadesList.value);
 // Lifecycle
 onMounted(async () => {
   await MedicoStore.cargarMedicos();
-  // await TiposPacientesStore.cargarPacientes();
-  await fichaIdentificacionStore.cargarDatos();
-  await EstadoCivilStore.cargarEstadosCiviles();
+  await dirPacientesStore.cargarDatos();
   await DepartamentoStore.cargarDepartamentos();
   await MunicipioStore.cargarMunicipios();
-  await GrupoSanguineoStore.cargarGruposSanguineos();
-  await EscolaridadStore.cargarEscolaridades();
+  console.log("PACIENTES CARGADO=: ", formIdentificacion.value);
 });
 
-// Modelo reactivo para el paciente seleccionado
+// Modelo reActivo para el paciente seleccionado
 const pacienteSeleccionado = reactive({
   id: null, // Se mantiene para operaciones internas
-  fechaRegistro: "",
-  codigo: "",
-  activo: false,
-  medicoId: null,
-  medicoCabecera: null,
-  referidoPorId: null,
-  dni: "",
-  nombres: "",
-  fechaNacimiento: "",
-  sexo: "",
-  estadoCivilId: null,
-  observaciones: "",
-  direccion: "",
-  telCasa: "",
-  telPersonal: "",
-  email: "",
-  departamentoId: null,
-  municipioId: null,
-  organizacion: "",
-  conyugue: "",
-  madre: "",
-  padre: "",
-  escolaridadId: null,
-  ocupacion: "",
-  grupoSanguineoId: null,
-  alergias: "",
-  vih: false,
+  FechaRegistro: "",
+  Codigo: "",
+  Activo: false,
+  MedicoId: null,
+  MedicoCabeceraId: null,
+  ReferidoPorId: null,
+  Identificacion: "",
+  Nombre: "",
+  FechaNacimiento: "",
+  Sexo: "",
+  EstadoCivil: null,
+  Observaciones: "",
+  Direccion: "",
+  TelefonoDos: "",
+  TelefonoUno: "",
+  Email: "",
+  EstadoId: null,
+  MunicipioId: null,
+  Observaciones: "",
+  Conyugue: "",
+  Madre: "",
+  Padre: "",
+  Escolaridad: null,
+  Ocupacion: "",
+  GrupoSanguineo: null,
+  Alergias: "",
+  VIH: false,
   userId: "", // Inicializar para evitar undefined
   tenant_id: "", // Inicializar para evitar undefined
 });
@@ -886,30 +890,51 @@ const subTabFichaIdentificacion = ref("infoTecnica");
 
 // Computed para filtrar municipios en base al departamento seleccionado
 const filteredMunicipios = computed(() => {
-  if (!pacienteSeleccionado.departamentoId) return [];
-  return municipios.value.filter(
-    (municipio) =>
-      municipio.departamentoId === pacienteSeleccionado.departamentoId
+  // Verificar si pacienteSeleccionado y EstadoId están definidos
+  if (!pacienteSeleccionado || !pacienteSeleccionado.EstadoId) {
+    console.warn("EstadoId no está definido o pacienteSeleccionado es nulo:", {
+      pacienteSeleccionado,
+    });
+    return [];
+  }
+
+  // Mostrar el EstadoId que se está filtrando
+  console.log(
+    "Filtrando municipios por EstadoId:",
+    pacienteSeleccionado.EstadoId
   );
+
+  // Filtrar municipios
+  const municipiosFiltrados = municipios.value.filter(
+    (municipio) => municipio.EstadoId === pacienteSeleccionado.EstadoId
+  );
+
+  // Verificar la salida de municipios filtrados
+  console.log(
+    `Municipios filtrados para EstadoId ${pacienteSeleccionado.EstadoId}:`,
+    municipiosFiltrados
+  );
+
+  return municipiosFiltrados;
 });
 
 // Validaciones
 const validaciones = reactive({
-  codigo: true,
+  Codigo: true,
   medico: true,
-  medicoCabecera: true,
-  dni: true,
-  nombres: true,
-  fechaNacimiento: true,
-  sexo: true,
-  estadoCivilId: true,
-  observaciones: true, // si decides hacer obligatorio "observaciones"
-  telPersonal: true,
-  departamentoId: true,
-  municipioId: true,
-  referidoPorId: true,
-  escolaridadId: true,
-  grupoSanguineoId: true,
+  MedicoCabeceraId: true,
+  Identificacion: true,
+  Nombre: true,
+  FechaNacimiento: true,
+  Sexo: true,
+  EstadoCivil: true,
+  Observaciones: true, // si decides hacer obligatorio "Observaciones"
+  TelefonoUno: true,
+  EstadoId: true,
+  MunicipioId: true,
+  ReferidoPorId: true,
+  Escolaridad: true,
+  GrupoSanguineo: true,
 });
 
 /**
@@ -917,123 +942,32 @@ const validaciones = reactive({
  * @returns {string} - Iniciales en mayúsculas.
  */
 
-// const getInitials = (fullName) => {
-//   return fullName
-//     .split(" ")
-//     .map((name) => name.charAt(0).toUpperCase())
-//     .join("");
-// };
-
-// /**
-//  * @returns {Promise<string>}
-//  */
-// const generatePatientCode = async () => {
-//   try {
-//     const nombreUser = authStore.nombreCompleto;
-//     if (!nombreUser) {
-//       throw new Error("Nombre completo del usuario no disponible.");
-//     }
-
-//     const initials = getInitials(nombreUser);
-//     console.log("Iniciales del usuario:", initials);
-
-//     const userId = authStore.userId;
-//     if (!userId || userId.length < 8) {
-//       throw new Error("userId no disponible o demasiado corto.");
-//     }
-
-//     const userIdPrefix = userId.substring(0, 8);
-//     console.log("Prefijo del userId:", userIdPrefix);
-
-//     const { data, error } = await supabase
-//       .from("fichaIdentificacion")
-//       .select("codigo")
-//       .ilike("codigo", `${initials}-%-${userIdPrefix}`)
-//       .order("codigo", { ascending: false })
-//       .limit(1)
-//       .maybeSingle();
-
-//     if (error) {
-//       console.error("Error al consultar la tabla de pacientes:", error.message);
-//       throw error;
-//     }
-
-//     let nextNumber = "01"; // Valor por defecto
-
-//     if (data && data.codigo) {
-//       console.log("Último código encontrado:", data.codigo);
-//       const codeParts = data.codigo.split("-");
-//       if (codeParts.length === 3) {
-//         const lastNumber = parseInt(codeParts[1], 10);
-//         if (!isNaN(lastNumber)) {
-//           const incremented = lastNumber + 1;
-//           nextNumber = incremented.toString().padStart(2, "0");
-//           console.log("Número incrementado:", nextNumber);
-//         }
-//       } else {
-//         console.warn("El formato del código no es el esperado.");
-//       }
-//     } else {
-//       console.log(
-//         "No se encontró ningún código previo. Se asignará el número inicial 01."
-//       );
-//     }
-
-//     const newCode = `${initials}-${nextNumber}-${userIdPrefix}`;
-//     console.log("Nuevo código generado para el paciente:", newCode);
-//     return newCode;
-//   } catch (err) {
-//     console.error("Error generando el código del paciente:", err.message);
-//     throw err;
-//   }
-// };
-
-// const isCodeUnique = async (code) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from("fichaIdentificacion")
-//       .select("id")
-//       .eq("codigo", code)
-//       .maybeSingle();
-
-//     if (error && error.code !== "PGRST116") {
-//       console.error("Error verificando el código del paciente:", error.message);
-//       throw error;
-//     }
-
-//     return !data;
-//   } catch (error) {
-//     console.error("Error verificando el código del paciente:", error.message);
-//     return false;
-//   }
-// };
-
 const validateMedico = () => {
-  validaciones.medico = !!pacienteSeleccionado.medicoId;
+  validaciones.medico = !!pacienteSeleccionado.MedicoId;
 };
 
 const validateMedicoCabecera = () => {
-  validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
+  validaciones.MedicoCabeceraId = !!pacienteSeleccionado.MedicoCabeceraId;
 };
 
 const validateEstadoCivil = () => {
-  validaciones.estadoCivilId = !!pacienteSeleccionado.estadoCivilId;
+  validaciones.EstadoCivil = !!pacienteSeleccionado.EstadoCivil;
 };
 
 const validateDepartamento = () => {
-  validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
+  validaciones.EstadoId = !!pacienteSeleccionado.EstadoId;
 };
 
 const validateMunicipio = () => {
-  validaciones.municipioId = !!pacienteSeleccionado.municipioId;
+  validaciones.MunicipioId = !!pacienteSeleccionado.MunicipioId;
 };
 
 const validateEscolaridad = () => {
-  validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
+  validaciones.Escolaridad = !!pacienteSeleccionado.Escolaridad;
 };
 
 const validateGrupoSanguineo = () => {
-  validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
+  validaciones.GrupoSanguineo = !!pacienteSeleccionado.GrupoSanguineo;
 };
 
 // Cambio de sub tab en el modal
@@ -1053,16 +987,16 @@ const limpiarFormulario = () => {
     }
   });
   // Campos numéricos en null
-  pacienteSeleccionado.id = null;
-  pacienteSeleccionado.medicoId = null;
-  pacienteSeleccionado.medicoCabecera = null;
-  pacienteSeleccionado.referidoPorId = null;
-  pacienteSeleccionado.estadoCivilId = null;
-  pacienteSeleccionado.departamentoId = null;
-  pacienteSeleccionado.municipioId = null;
-  pacienteSeleccionado.escolaridadId = null;
-  pacienteSeleccionado.grupoSanguineoId = null;
-  pacienteSeleccionado.vih = false;
+  pacienteSeleccionado.PacienteId = null;
+  pacienteSeleccionado.MedicoId = null;
+  pacienteSeleccionado.MedicoCabeceraId = null;
+  pacienteSeleccionado.ReferidoPorId = null;
+  pacienteSeleccionado.EstadoCivil = null;
+  pacienteSeleccionado.EstadoId = null;
+  pacienteSeleccionado.MunicipioId = null;
+  pacienteSeleccionado.Escolaridad = null;
+  pacienteSeleccionado.GrupoSanguineo = null;
+  pacienteSeleccionado.VIH = false;
   pacienteSeleccionado.userId = authStore.userId;
   pacienteSeleccionado.tenant_id = authStore.tenant_id;
 };
@@ -1071,20 +1005,20 @@ const limpiarFormulario = () => {
  * Validación del formulario
  */
 const validarFormulario = () => {
-  validaciones.codigo = !!pacienteSeleccionado.codigo?.trim();
-  validaciones.medico = !!pacienteSeleccionado.medicoId;
-  validaciones.dni = !!pacienteSeleccionado.dni?.trim();
-  validaciones.medicoCabecera = !!pacienteSeleccionado.medicoCabecera;
-  validaciones.nombres = !!pacienteSeleccionado.nombres?.trim();
-  validaciones.fechaNacimiento = !!pacienteSeleccionado.fechaNacimiento?.trim();
-  validaciones.estadoCivilId = !!pacienteSeleccionado.estadoCivilId;
-  validaciones.telPersonal = !!pacienteSeleccionado.telPersonal?.trim();
-  validaciones.sexo = !!pacienteSeleccionado.sexo?.trim();
-  validaciones.departamentoId = !!pacienteSeleccionado.departamentoId;
-  validaciones.municipioId = !!pacienteSeleccionado.municipioId;
-  validaciones.referidoPorId = !!pacienteSeleccionado.referidoPorId;
-  validaciones.escolaridadId = !!pacienteSeleccionado.escolaridadId;
-  validaciones.grupoSanguineoId = !!pacienteSeleccionado.grupoSanguineoId;
+  validaciones.Codigo = !!pacienteSeleccionado.Codigo?.trim();
+  validaciones.medico = !!pacienteSeleccionado.MedicoId;
+  validaciones.Identificacion = !!pacienteSeleccionado.Identificacion?.trim();
+  validaciones.MedicoCabeceraId = !!pacienteSeleccionado.MedicoCabeceraId;
+  validaciones.Nombre = !!pacienteSeleccionado.Nombre?.trim();
+  validaciones.FechaNacimiento = !!pacienteSeleccionado.FechaNacimiento?.trim();
+  validaciones.EstadoCivil = !!pacienteSeleccionado.EstadoCivil;
+  validaciones.TelefonoUno = !!pacienteSeleccionado.TelefonoUno?.trim();
+  validaciones.Sexo = !!pacienteSeleccionado.Sexo?.trim();
+  validaciones.EstadoId = !!pacienteSeleccionado.EstadoId;
+  validaciones.MunicipioId = !!pacienteSeleccionado.MunicipioId;
+  validaciones.ReferidoPorId = !!pacienteSeleccionado.ReferidoPorId;
+  validaciones.Escolaridad = !!pacienteSeleccionado.Escolaridad;
+  validaciones.GrupoSanguineo = !!pacienteSeleccionado.GrupoSanguineo;
   // Aquí podrías agregar validaciones específicas para cada campo requerido
 
   return Object.values(validaciones).every((valido) => valido);
@@ -1104,84 +1038,68 @@ const guardarDatosFormulario = async () => {
     return;
   }
 
-  // ---------- INICIO: Código relacionado con generación de código de paciente ----------
-  /*
-  const isUnique = await isCodeUnique(pacienteSeleccionado.codigo);
-  if (!isUnique) {
-    Notify.create({
-      message: "El código generado ya existe. Se generará uno nuevo.",
-      color: "warning",
-      position: "top-right",
-    });
-    try {
-      pacienteSeleccionado.codigo = await generatePatientCode(); // Genera un nuevo código
-      console.log("Nuevo código generado:", pacienteSeleccionado.codigo);
-    } catch (error) {
-      Notify.create({
-        message: "Error al generar el código del paciente.",
-        color: "negative",
-        position: "top-right",
-      });
-      return;
-    }
-    return;
-  }
-  */
-  // ---------- FIN: Código relacionado con generación de código de paciente ----------
-
   // Construir el payload excluyendo el 'id' si es un nuevo paciente
   const payload = {
-    fechaRegistro:
-      pacienteSeleccionado.fechaRegistro || new Date().toISOString(),
-    codigo: pacienteSeleccionado.codigo,
-    activo: pacienteSeleccionado.activo,
-    medicoId: pacienteSeleccionado.medicoId,
-    medicoCabecera: pacienteSeleccionado.medicoCabecera,
-    referidoPorId: pacienteSeleccionado.referidoPorId,
-    dni: pacienteSeleccionado.dni,
-    nombres: pacienteSeleccionado.nombres,
-    fechaNacimiento: pacienteSeleccionado.fechaNacimiento,
-    sexo: pacienteSeleccionado.sexo,
-    estadoCivilId: pacienteSeleccionado.estadoCivilId,
-    observaciones: pacienteSeleccionado.observaciones,
-    direccion: pacienteSeleccionado.direccion,
-    telCasa: pacienteSeleccionado.telCasa,
-    telPersonal: pacienteSeleccionado.telPersonal,
-    email: pacienteSeleccionado.email,
-    departamentoId: pacienteSeleccionado.departamentoId,
-    municipioId: pacienteSeleccionado.municipioId,
-    organizacion: pacienteSeleccionado.organizacion,
-    conyugue: pacienteSeleccionado.conyugue,
-    madre: pacienteSeleccionado.madre,
-    padre: pacienteSeleccionado.padre,
-    escolaridadId: pacienteSeleccionado.escolaridadId,
-    ocupacion: pacienteSeleccionado.ocupacion,
-    grupoSanguineoId: pacienteSeleccionado.grupoSanguineoId,
-    alergias: pacienteSeleccionado.alergias,
-    vih: pacienteSeleccionado.vih,
+    FechaRegistro:
+      pacienteSeleccionado.FechaRegistro || new Date().toISOString(),
+    Codigo: pacienteSeleccionado.Codigo,
+    Activo: pacienteSeleccionado.Activo,
+    MedicoId: pacienteSeleccionado.MedicoId,
+    MedicoCabeceraId: pacienteSeleccionado.MedicoCabeceraId,
+    ReferidoPorId: pacienteSeleccionado.ReferidoPorId,
+    Identificacion: pacienteSeleccionado.Identificacion,
+    Nombre: pacienteSeleccionado.Nombre,
+    FechaNacimiento: pacienteSeleccionado.FechaNacimiento,
+    Sexo: pacienteSeleccionado.Sexo,
+    EstadoCivil: pacienteSeleccionado.EstadoCivil,
+    Observaciones: pacienteSeleccionado.Observaciones,
+    Direccion: pacienteSeleccionado.Direccion,
+    TelefonoDos: pacienteSeleccionado.TelefonoDos,
+    TelefonoUno: pacienteSeleccionado.TelefonoUno,
+    Email: pacienteSeleccionado.Email,
+    EstadoId: pacienteSeleccionado.EstadoId,
+    MunicipioId: pacienteSeleccionado.MunicipioId,
+    Observaciones: pacienteSeleccionado.Observaciones,
+    Conyugue: pacienteSeleccionado.Conyugue,
+    Madre: pacienteSeleccionado.Madre,
+    Padre: pacienteSeleccionado.Padre,
+    Escolaridad: pacienteSeleccionado.Escolaridad,
+    Ocupacion: pacienteSeleccionado.Ocupacion,
+    GrupoSanguineo: pacienteSeleccionado.GrupoSanguineo,
+    Alergias: pacienteSeleccionado.Alergias,
+    VIH: pacienteSeleccionado.VIH,
     tenant_id: pacienteSeleccionado.tenant_id,
     userId: pacienteSeleccionado.userId,
   };
+  console.log("Payload enviado:", payload);
 
   try {
-    if (pacienteSeleccionado.id) {
+    if (pacienteSeleccionado.PacienteId) {
       // Actualización
-      payload.id = pacienteSeleccionado.id; // Incluir 'id' solo para actualización
+      if (pacienteSeleccionado.PacienteId) {
+        payload.PacienteId = pacienteSeleccionado?.PacienteId;
+        console.log("Id del paciente: ", payload.PacienteId);
+      } else {
+        console.error(
+          "Error: PacienteId no está definido para la actualización."
+        );
+        return;
+      }
 
-      await fichaIdentificacionStore.actualizarPaciente(payload);
-      Notify.create({
-        message: "Paciente actualizado",
-        color: "positive",
-        position: "top-right",
-      });
+      await dirPacientesStore.actualizarPaciente(payload);
+      // Notify.create({
+      //   message: "Paciente actualizado",
+      //   color: "positive",
+      //   position: "top-right",
+      // });
     } else {
       // Nuevo registro (sin 'id')
-      await fichaIdentificacionStore.guardarDatos(payload);
-      Notify.create({
-        message: "Paciente guardado",
-        color: "positive",
-        position: "top-right",
-      });
+      await dirPacientesStore.guardarDatos(payload);
+      // Notify.create({
+      //   message: "Paciente guardado",
+      //   color: "positive",
+      //   position: "top-right",
+      // });
     }
     limpiarFormulario();
     dialogNuevoContacto.value = false;
@@ -1206,30 +1124,30 @@ const guardarDatosFormulario = async () => {
 };
 
 /**
- * Computed con datos adicionales (nombres de médicos, etc.)
+ * Computed con datos adicionales (Nombre de médicos, etc.)
  */
 const pacientesConDetalles = computed(() => {
   return (formIdentificacion.value || []).map((paciente) => {
     const medicoEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.medicoId)
+      (medic) => Number(paciente.MedicoId) === Number(medic.MedicoId)
     );
     const medicoCabeceraEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.medicoCabecera)
+      (medic) => Number(paciente.MedicoCabeceraId) === Number(medic.MedicoId)
     );
     const referidoPorEncontrado = (medicos.value || []).find(
-      (medic) => medic.id === Number(paciente.referidoPorId)
+      (medic) => Number(paciente.ReferidoPorId) === Number(medic.MedicoId)
     );
 
     return {
       ...paciente,
       medicoNombre: medicoEncontrado
-        ? medicoEncontrado.nombre
+        ? medicoEncontrado.NombreMedico
         : "Médico no encontrado",
       medicoCabeceraNombre: medicoCabeceraEncontrado
-        ? medicoCabeceraEncontrado.nombre
+        ? medicoCabeceraEncontrado.NombreMedico
         : "No asignado",
       referidoPorNombre: referidoPorEncontrado
-        ? referidoPorEncontrado.nombre
+        ? referidoPorEncontrado.NombreMedico
         : "No asignado",
     };
   });
@@ -1254,12 +1172,12 @@ const rowClick = (e) => {
   isPanelOpened.value = true;
 };
 
-// Checkbox para actualizar el estado "activo"
+// Checkbox para actualizar el estado "Activo"
 const onCheckboxChange = async (data) => {
   try {
-    const success = await fichaIdentificacionStore.actualizarPaciente({
+    const success = await dirPacientesStore.actualizarPaciente({
       id: data.id,
-      activo: data.activo,
+      Activo: data.Activo,
     });
     if (success) {
       Notify.create({
@@ -1289,18 +1207,7 @@ const onCheckboxChange = async (data) => {
  */
 const handleNuevoContacto = async () => {
   limpiarFormulario();
-  /*
-  try {
-    pacienteSeleccionado.codigo = await generatePatientCode(); // Asigna el código generado
-  } catch (error) {
-    Notify.create({
-      message: "Error al generar el código del paciente.",
-      color: "negative",
-      position: "top-right",
-    });
-    return; // Evita abrir el modal si hay un error
-  }
-  */
+
   dialogNuevoContacto.value = true;
 };
 
@@ -1331,9 +1238,9 @@ const onEditButtonClick = (e) => {
 
 // Evento click del botón Eliminar en la columna de acciones
 const onDeleteButtonClick = async (e) => {
-  const id = e.row.data.id;
+  const PacienteId = e.row.data.PacienteId;
   try {
-    const success = await fichaIdentificacionStore.eliminarPaciente(id);
+    const success = await dirPacientesStore.eliminarPaciente(PacienteId);
     if (success) {
       Notify.create({
         message: "Paciente eliminado exitosamente",

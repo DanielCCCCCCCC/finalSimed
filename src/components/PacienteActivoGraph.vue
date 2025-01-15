@@ -14,15 +14,15 @@
 </template>
 
 <script setup>
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { onMounted, ref, computed } from "vue";
 import ApexCharts from "vue3-apexcharts";
 import { storeToRefs } from "pinia";
 import { projectOptions } from "../dahboardData"; // Importa colores desde dashboardData
 
 // Instancia de la tienda
-const FichaIdentificacionStore = useFichaIdentificacionStore();
-const { dataGraficoPacientes } = storeToRefs(FichaIdentificacionStore);
+const dirPacientesStore = useDirPacientesStore();
+const { dataGraficoPacientes } = storeToRefs(dirPacientesStore);
 
 const datosCargados = ref(false);
 

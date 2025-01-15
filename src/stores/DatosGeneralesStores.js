@@ -27,7 +27,7 @@ export const useDepartamentoStore = defineStore("departamentos", () => {
   const cargarDepartamentos = async () => {
     if (!authStore.tenant_id) return;
     const { data, error } = await supabase
-      .from("departamentos")
+      .from("CatDepartamentos")
       .select("*")
       // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
@@ -43,8 +43,8 @@ export const useDepartamentoStore = defineStore("departamentos", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
-        .from("departamentos")
-        .insert([{ descripcion, tenant_id: authStore.tenant_id }])
+        .from("CatDepartamentos")
+        .insert([{ Descripcion: descripcion, tenant_id: authStore.tenant_id }])
         .select(); // Para retornar el registro insertado
 
       if (error) throw error;
@@ -58,14 +58,14 @@ export const useDepartamentoStore = defineStore("departamentos", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { error } = await supabase
-        .from("departamentos")
+        .from("CatDepartamentos")
         .delete()
-        .eq("id", id)
+        .eq("DepartamentoId", id)
         .eq("tenant_id", authStore.tenant_id); // Aseguramos el tenant
 
       if (error) throw error;
       departamentos.value = departamentos.value.filter(
-        (depto) => depto.id !== id
+        (depto) => depto.DepartamentoId !== id
       );
     } catch (error) {
       console.error("Error al eliminar departamento:", error);
@@ -76,14 +76,16 @@ export const useDepartamentoStore = defineStore("departamentos", () => {
     if (!verificarRolAdmin(authStore)) return;
     try {
       const { data, error } = await supabase
-        .from("departamentos")
-        .update({ descripcion })
-        .eq("id", id)
+        .from("CatDepartamentos")
+        .update({ Descripcion: descripcion })
+        .eq("DepartamentoId", id)
         .eq("tenant_id", authStore.tenant_id)
         .select(); // Para retornar el registro actualizado
 
       if (error) throw error;
-      const index = departamentos.value.findIndex((depto) => depto.id === id);
+      const index = departamentos.value.findIndex(
+        (depto) => depto.DepartamentoId === id
+      );
       if (index !== -1 && data && data[0]) {
         departamentos.value[index] = data[0];
       }
@@ -121,7 +123,7 @@ export const useMunicipioStore = defineStore("municipios", () => {
   const cargarMunicipios = async () => {
     if (!authStore.tenant_id) return;
     const { data, error } = await supabase
-      .from("municipios")
+      .from("CatMunicipios")
       .select("*")
       // .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
@@ -133,12 +135,12 @@ export const useMunicipioStore = defineStore("municipios", () => {
     }
   };
 
-  const agregarMunicipio = async (descripcion, departamentoId) => {
+  const agregarMunicipio = async (descripcion, EstadoId) => {
     if (!verificarRolAdmin(authStore)) return;
-    const { data, error } = await supabase.from("municipios").insert([
+    const { data, error } = await supabase.from("CatMunicipios").insert([
       {
-        descripcion,
-        departamentoId,
+        Descripcion: descripcion,
+        EstadoId,
         tenant_id: authStore.tenant_id,
       },
     ]);
@@ -153,25 +155,32 @@ export const useMunicipioStore = defineStore("municipios", () => {
 
   const eliminarMunicipio = async (id) => {
     if (!verificarRolAdmin(authStore)) return;
-    const { error } = await supabase.from("municipios").delete().eq("id", id);
+    const { error } = await supabase
+      .from("CatMunicipios")
+      .delete()
+      .eq("MunicipioId", id);
     if (error) {
       console.error("Error al eliminar municipio:", error);
     } else {
-      municipios.value = municipios.value.filter((muni) => muni.id !== id);
+      municipios.value = municipios.value.filter(
+        (muni) => muni.MunicipioId !== id
+      );
     }
   };
 
-  const actualizarMunicipio = async (id, descripcion, departamentoId) => {
+  const actualizarMunicipio = async (id, descripcion, EstadoId) => {
     if (!verificarRolAdmin(authStore)) return;
     const { data, error } = await supabase
-      .from("municipios")
-      .update({ descripcion, departamentoId })
-      .eq("id", id);
+      .from("CatMunicipios")
+      .update({ Descripcion: descripcion, EstadoId })
+      .eq("MunicipioId", id);
 
     if (error) {
       console.error("Error al actualizar municipio:", error);
     } else if (data && data[0]) {
-      const index = municipios.value.findIndex((muni) => muni.id === id);
+      const index = municipios.value.findIndex(
+        (muni) => muni.MunicipioId === id
+      );
       if (index !== -1) {
         municipios.value[index] = data[0];
       }
@@ -315,216 +324,216 @@ export const useGrupoSanguineoStore = defineStore("grupoSanguineo", () => {
 //------------------------------------------
 // Tienda para Escolaridad
 //------------------------------------------
-export const useEscolaridadStore = defineStore("escolaridad", () => {
-  const escolaridades = ref([]);
-  const authStore = useAuthStore();
+// export const useEscolaridadStore = defineStore("escolaridad", () => {
+//   const escolaridades = ref([]);
+//   const authStore = useAuthStore();
 
-  const cargarEscolaridades = async () => {
-    const { data, error } = await supabase
-      .from("escolaridad")
-      .select("*")
-      // .eq("tenant_id", authStore.tenant_id)
-      .order("created_at", { ascending: true });
+//   const cargarEscolaridades = async () => {
+//     const { data, error } = await supabase
+//       .from("escolaridad")
+//       .select("*")
+//       // .eq("tenant_id", authStore.tenant_id)
+//       .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error("Error al cargar escolaridades:", error);
-    } else {
-      escolaridades.value = data;
-    }
-  };
+//     if (error) {
+//       console.error("Error al cargar escolaridades:", error);
+//     } else {
+//       escolaridades.value = data;
+//     }
+//   };
 
-  const agregarEscolaridad = async (descripcion) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error("El usuario no tiene permisos para agregar escolaridades.");
-      return;
-    }
+//   const agregarEscolaridad = async (descripcion) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error("El usuario no tiene permisos para agregar escolaridades.");
+//       return;
+//     }
 
-    const { data, error } = await supabase
-      .from("escolaridad")
-      .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+//     const { data, error } = await supabase
+//       .from("escolaridad")
+//       .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
-    if (error) {
-      console.error("Error al agregar escolaridad:", error);
-    } else if (data && data[0]) {
-      escolaridades.value.push(data[0]);
-    }
-  };
+//     if (error) {
+//       console.error("Error al agregar escolaridad:", error);
+//     } else if (data && data[0]) {
+//       escolaridades.value.push(data[0]);
+//     }
+//   };
 
-  const eliminarEscolaridad = async (id) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error(
-        "El usuario no tiene permisos para eliminar una escolaridad."
-      );
-      return;
-    }
-    const { error } = await supabase.from("escolaridad").delete().eq("id", id);
-    if (error) {
-      console.error("Error al eliminar escolaridad:", error);
-    } else {
-      escolaridades.value = escolaridades.value.filter((esc) => esc.id !== id);
-    }
-  };
+//   const eliminarEscolaridad = async (id) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error(
+//         "El usuario no tiene permisos para eliminar una escolaridad."
+//       );
+//       return;
+//     }
+//     const { error } = await supabase.from("escolaridad").delete().eq("id", id);
+//     if (error) {
+//       console.error("Error al eliminar escolaridad:", error);
+//     } else {
+//       escolaridades.value = escolaridades.value.filter((esc) => esc.id !== id);
+//     }
+//   };
 
-  const actualizarEscolaridad = async (id, descripcion) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error(
-        "El usuario no tiene permisos para actualizar una escolaridad."
-      );
-      return;
-    }
-    const { data, error } = await supabase
-      .from("escolaridad")
-      .update({ descripcion })
-      .eq("id", id);
+//   const actualizarEscolaridad = async (id, descripcion) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error(
+//         "El usuario no tiene permisos para actualizar una escolaridad."
+//       );
+//       return;
+//     }
+//     const { data, error } = await supabase
+//       .from("escolaridad")
+//       .update({ descripcion })
+//       .eq("id", id);
 
-    if (error) {
-      console.error("Error al actualizar escolaridad:", error);
-    } else if (data && data[0]) {
-      const index = escolaridades.value.findIndex((esc) => esc.id === id);
-      if (index !== -1) {
-        escolaridades.value[index] = data[0];
-      }
-    }
-  };
+//     if (error) {
+//       console.error("Error al actualizar escolaridad:", error);
+//     } else if (data && data[0]) {
+//       const index = escolaridades.value.findIndex((esc) => esc.id === id);
+//       if (index !== -1) {
+//         escolaridades.value[index] = data[0];
+//       }
+//     }
+//   };
 
-  watch(
-    () => authStore.tenant_id,
-    (newTenantId) => {
-      if (newTenantId) {
-        cargarEscolaridades();
-      }
-    },
-    { immediate: true }
-  );
+//   watch(
+//     () => authStore.tenant_id,
+//     (newTenantId) => {
+//       if (newTenantId) {
+//         cargarEscolaridades();
+//       }
+//     },
+//     { immediate: true }
+//   );
 
-  return {
-    escolaridades,
-    cargarEscolaridades,
-    agregarEscolaridad,
-    eliminarEscolaridad,
-    actualizarEscolaridad,
-  };
-});
+//   return {
+//     escolaridades,
+//     cargarEscolaridades,
+//     agregarEscolaridad,
+//     eliminarEscolaridad,
+//     actualizarEscolaridad,
+//   };
+// });
 
 //------------------------------------------
 // Tienda para Estado Civil
 //------------------------------------------
-export const useEstadoCivilStore = defineStore("estadoCivil", () => {
-  const estadosCiviles = ref([]);
-  const authStore = useAuthStore();
+// export const useEstadoCivilStore = defineStore("estadoCivil", () => {
+//   const estadosCiviles = ref([]);
+//   const authStore = useAuthStore();
 
-  const cargarEstadosCiviles = async () => {
-    const { data, error } = await supabase
-      .from("estadoCivil")
-      .select("*")
-      // .eq("tenant_id", authStore.tenant_id)
-      .order("created_at", { ascending: true });
+//   const cargarEstadosCiviles = async () => {
+//     const { data, error } = await supabase
+//       .from("estadoCivil")
+//       .select("*")
+//       // .eq("tenant_id", authStore.tenant_id)
+//       .order("created_at", { ascending: true });
 
-    if (error) {
-      console.error("Error al cargar estados civiles:", error);
-    } else {
-      estadosCiviles.value = data;
-    }
-  };
+//     if (error) {
+//       console.error("Error al cargar estados civiles:", error);
+//     } else {
+//       estadosCiviles.value = data;
+//     }
+//   };
 
-  const agregarEstadoCivil = async (descripcion) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error(
-        "El usuario no tiene permisos para agregar estados civiles."
-      );
-      return;
-    }
-    const { data, error } = await supabase
-      .from("estadoCivil")
-      .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+//   const agregarEstadoCivil = async (descripcion) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error(
+//         "El usuario no tiene permisos para agregar estados civiles."
+//       );
+//       return;
+//     }
+//     const { data, error } = await supabase
+//       .from("estadoCivil")
+//       .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
 
-    if (error) {
-      console.error("Error al agregar estado civil:", error);
-    } else if (data && data[0]) {
-      estadosCiviles.value.push(data[0]);
-    }
-  };
+//     if (error) {
+//       console.error("Error al agregar estado civil:", error);
+//     } else if (data && data[0]) {
+//       estadosCiviles.value.push(data[0]);
+//     }
+//   };
 
-  const eliminarEstadoCivil = async (id) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error(
-        "El usuario no tiene permisos para eliminar un estado civil."
-      );
-      return;
-    }
-    const { error } = await supabase.from("estadoCivil").delete().eq("id", id);
-    if (error) {
-      console.error("Error al eliminar estado civil:", error);
-    } else {
-      estadosCiviles.value = estadosCiviles.value.filter(
-        (estado) => estado.id !== id
-      );
-    }
-  };
+//   const eliminarEstadoCivil = async (id) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error(
+//         "El usuario no tiene permisos para eliminar un estado civil."
+//       );
+//       return;
+//     }
+//     const { error } = await supabase.from("estadoCivil").delete().eq("id", id);
+//     if (error) {
+//       console.error("Error al eliminar estado civil:", error);
+//     } else {
+//       estadosCiviles.value = estadosCiviles.value.filter(
+//         (estado) => estado.id !== id
+//       );
+//     }
+//   };
 
-  const actualizarEstadoCivil = async (id, descripcion) => {
-    if (!authStore.tenant_id) {
-      console.warn("No hay tenant_id disponible");
-      return;
-    }
-    if (authStore.role !== "admin") {
-      console.error(
-        "El usuario no tiene permisos para actualizar un estado civil."
-      );
-      return;
-    }
-    const { data, error } = await supabase
-      .from("estadoCivil")
-      .update({ descripcion })
-      .eq("id", id);
+//   const actualizarEstadoCivil = async (id, descripcion) => {
+//     if (!authStore.tenant_id) {
+//       console.warn("No hay tenant_id disponible");
+//       return;
+//     }
+//     if (authStore.role !== "admin") {
+//       console.error(
+//         "El usuario no tiene permisos para actualizar un estado civil."
+//       );
+//       return;
+//     }
+//     const { data, error } = await supabase
+//       .from("estadoCivil")
+//       .update({ descripcion })
+//       .eq("id", id);
 
-    if (error) {
-      console.error("Error al actualizar estado civil:", error);
-    } else if (data && data[0]) {
-      const index = estadosCiviles.value.findIndex(
-        (estado) => estado.id === id
-      );
-      if (index !== -1) {
-        estadosCiviles.value[index] = data[0];
-      }
-    }
-  };
+//     if (error) {
+//       console.error("Error al actualizar estado civil:", error);
+//     } else if (data && data[0]) {
+//       const index = estadosCiviles.value.findIndex(
+//         (estado) => estado.id === id
+//       );
+//       if (index !== -1) {
+//         estadosCiviles.value[index] = data[0];
+//       }
+//     }
+//   };
 
-  watch(
-    () => authStore.tenant_id,
-    (newTenantId) => {
-      if (newTenantId) {
-        cargarEstadosCiviles();
-      }
-    },
-    { immediate: true }
-  );
+//   watch(
+//     () => authStore.tenant_id,
+//     (newTenantId) => {
+//       if (newTenantId) {
+//         cargarEstadosCiviles();
+//       }
+//     },
+//     { immediate: true }
+//   );
 
-  return {
-    estadosCiviles,
-    cargarEstadosCiviles,
-    agregarEstadoCivil,
-    eliminarEstadoCivil,
-    actualizarEstadoCivil,
-  };
-});
+//   return {
+//     estadosCiviles,
+//     cargarEstadosCiviles,
+//     agregarEstadoCivil,
+//     eliminarEstadoCivil,
+//     actualizarEstadoCivil,
+//   };
+// });

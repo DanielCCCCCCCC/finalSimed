@@ -132,7 +132,7 @@ import {
   DxSummary,
   DxGroupItem,
 } from "devextreme-vue/data-grid";
-import { useEscolaridadStore } from "../stores/DatosGeneralesStores";
+// import { useEscolaridadStore } from "../stores/DatosGeneralesStores";
 import { storeToRefs } from "pinia";
 import { Notify } from "quasar";
 import { ref, onMounted } from "vue";

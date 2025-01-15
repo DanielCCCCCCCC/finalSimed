@@ -14,7 +14,7 @@ function saveToLocalStorage(key, value) {
 
 // Tienda para Clasificación de Diagnósticos
 export const useClasificacionDiagnosticosStore = defineStore(
-  "clasificacionDiagnosticos",
+  "CatClasificacionDiagnosticos",
   () => {
     const clasificaciones = ref([]);
     const authStore = useAuthStore();
@@ -22,7 +22,7 @@ export const useClasificacionDiagnosticosStore = defineStore(
     const cargarClasificaciones = async () => {
       if (!authStore.tenant_id) return;
       const { data, error } = await supabase
-        .from("clasificacionDiagnosticos")
+        .from("CatClasificacionDiagnosticos")
         .select("*")
         .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
@@ -35,7 +35,7 @@ export const useClasificacionDiagnosticosStore = defineStore(
       }
     };
 
-    const agregarClasificacion = async (nombre) => {
+    const agregarClasificacion = async (Descripcion) => {
       if (!authStore.tenant_id) {
         console.warn("No hay tenant_id disponible");
         return;
@@ -48,14 +48,13 @@ export const useClasificacionDiagnosticosStore = defineStore(
       }
 
       const { data, error } = await supabase
-        .from("clasificacionDiagnosticos")
-        .insert([{ nombre, tenant_id: authStore.tenant_id }]);
+        .from("CatClasificacionDiagnosticos")
+        .insert([{ Descripcion: Descripcion, tenant_id: authStore.tenant_id }]);
 
       if (error) {
         console.error("Error al agregar clasificación:", error);
       } else if (data && data.length > 0) {
         clasificaciones.value.push(data[0]);
-        saveToLocalStorage("clasificaciones", clasificaciones.value);
       }
     };
 
@@ -72,22 +71,21 @@ export const useClasificacionDiagnosticosStore = defineStore(
       }
 
       const { data, error } = await supabase
-        .from("clasificacionDiagnosticos")
+        .from("CatClasificacionDiagnosticos")
         .update(datos)
-        .eq("id", id);
+        .eq("ClasificacionDiagnosticoId", id);
 
       if (error) {
         console.error("Error al actualizar clasificación:", error);
       } else if (data) {
         const index = clasificaciones.value.findIndex(
-          (clasificacion) => clasificacion.id === id
+          (clasificacion) => clasificacion.ClasificacionDiagnosticoId === id
         );
         if (index !== -1 && data[0]) {
           clasificaciones.value[index] = {
             ...clasificaciones.value[index],
             ...data[0],
           };
-          saveToLocalStorage("clasificaciones", clasificaciones.value);
         }
       }
     };
@@ -105,15 +103,15 @@ export const useClasificacionDiagnosticosStore = defineStore(
       }
 
       const { error } = await supabase
-        .from("clasificacionDiagnosticos")
+        .from("CatClasificacionDiagnosticos")
         .delete()
-        .eq("id", id);
+        .eq("ClasificacionDiagnosticoId", id);
 
       if (error) {
         console.error("Error al eliminar la clasificación:", error);
       } else {
         clasificaciones.value = clasificaciones.value.filter(
-          (clasificacion) => clasificacion.id !== id
+          (clasificacion) => clasificacion.ClasificacionDiagnosticoId !== id
         );
         saveToLocalStorage("clasificaciones", clasificaciones.value);
       }
@@ -148,7 +146,7 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
   const cargarDiagnosticos = async () => {
     if (!authStore.tenant_id) return;
     const { data, error } = await supabase
-      .from("diagnosticos")
+      .from("CatDiagnosticos")
       .select("*")
       .eq("tenant_id", authStore.tenant_id)
       .order("created_at", { ascending: true });
@@ -160,7 +158,7 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
     }
   };
 
-  const agregarDiagnostico = async (descripcion, clasificacionId) => {
+  const agregarDiagnostico = async (Descripcion, clasificacionId) => {
     if (!authStore.tenant_id) {
       console.warn("No hay tenant_id disponible");
       return;
@@ -172,10 +170,10 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
       return;
     }
 
-    const { data, error } = await supabase.from("diagnosticos").insert([
+    const { data, error } = await supabase.from("CatDiagnosticos").insert([
       {
-        descripcion,
-        clasificacionId: clasificacionId,
+        Descripcion: Descripcion,
+        ClasificacionDiagnosticoId: clasificacionId,
         tenant_id: authStore.tenant_id,
       },
     ]);
@@ -200,7 +198,7 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
     }
 
     const { data, error } = await supabase
-      .from("diagnosticos")
+      .from("CatDiagnosticos")
       .update(datos)
       .eq("id", id);
 
@@ -229,12 +227,17 @@ export const useDiagnosticosStore = defineStore("diagnosticos", () => {
       return;
     }
 
-    const { error } = await supabase.from("diagnosticos").delete().eq("id", id);
+    const { error } = await supabase
+      .from("CatDiagnosticos")
+      .delete()
+      .eq("DignosticoId", id);
 
     if (error) {
       console.error("Error al eliminar el diagnóstico:", error);
     } else {
-      diagnosticos.value = diagnosticos.value.filter((d) => d.id !== id);
+      diagnosticos.value = diagnosticos.value.filter(
+        (d) => d.DignosticoId !== id
+      );
     }
   };
 
@@ -268,7 +271,7 @@ export const useControlesMedicionStore = defineStore(
     const cargarControles = async () => {
       if (!authStore.tenant_id) return;
       const { data, error } = await supabase
-        .from("controles")
+        .from("CatControles")
         .select("*")
         .eq("tenant_id", authStore.tenant_id)
         .order("created_at", { ascending: true });
@@ -277,11 +280,10 @@ export const useControlesMedicionStore = defineStore(
         console.error("Error al cargar controles:", error);
       } else if (data) {
         controles.value = data;
-        saveToLocalStorage("controles", controles.value);
       }
     };
 
-    const agregarControl = async (descripcion) => {
+    const agregarControl = async (Descripcion) => {
       if (!authStore.tenant_id) {
         console.warn("No hay tenant_id disponible");
         return;
@@ -294,14 +296,13 @@ export const useControlesMedicionStore = defineStore(
       }
 
       const { data, error } = await supabase
-        .from("controles")
-        .insert([{ descripcion, tenant_id: authStore.tenant_id }]);
+        .from("CatControles")
+        .insert([{ Descripcion, tenant_id: authStore.tenant_id }]);
 
       if (error) {
         console.error("Error al agregar control:", error);
       } else if (data && data.length > 0) {
         controles.value.push(data[0]);
-        saveToLocalStorage("controles", controles.value);
       }
     };
 
@@ -318,7 +319,7 @@ export const useControlesMedicionStore = defineStore(
       }
 
       const { data, error } = await supabase
-        .from("controles")
+        .from("CatControles")
         .update(datos)
         .eq("id", id);
 
@@ -328,7 +329,6 @@ export const useControlesMedicionStore = defineStore(
         const index = controles.value.findIndex((c) => c.id === id);
         if (index !== -1) {
           controles.value[index] = { ...controles.value[index], ...data[0] };
-          saveToLocalStorage("controles", controles.value);
         }
       }
     };
@@ -345,7 +345,10 @@ export const useControlesMedicionStore = defineStore(
         return;
       }
 
-      const { error } = await supabase.from("controles").delete().eq("id", id);
+      const { error } = await supabase
+        .from("CatControles")
+        .delete()
+        .eq("id", id);
 
       if (error) {
         console.error("Error al eliminar el control:", error);
@@ -353,7 +356,6 @@ export const useControlesMedicionStore = defineStore(
         controles.value = controles.value.filter(
           (control) => control.id !== id
         );
-        saveToLocalStorage("controles", controles.value);
       }
     };
 

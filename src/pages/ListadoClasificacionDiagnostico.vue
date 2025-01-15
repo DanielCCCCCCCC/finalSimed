@@ -27,7 +27,7 @@
         :column-resizing-mode="'widget'"
         :row-alternation-enabled="true"
         :show-borders="true"
-        key-expr="id"
+        key-expr="ClasificacionDiagnosticoId"
         class="custom-data-grid"
       >
         <DxPaging :enabled="true" :page-size="10" />
@@ -47,10 +47,10 @@
           :visible="true"
           placeholder="Buscar Estudio"
         />
-        <!-- Columna para nombre de clasificación -->
+        <!-- Columna para Descripcion de clasificación -->
         <DxColumn
-          data-field="nombre"
-          caption="Nombre de Clasificación"
+          data-field="Descripcion"
+          caption="Descripcion de Clasificación"
           :allow-sorting="true"
           min-width="150"
           width="200"
@@ -107,15 +107,29 @@
 
             <q-form @submit.prevent="guardarCambios">
               <div class="row q-col-gutter-sm">
-                <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="clasificacionSeleccionada.nombre"
-                    label="Nombre de Clasificación"
-                    outlined
-                    :error="!!errores.nombre"
-                    :error-message="errores.nombre"
-                    required
-                  />
+                <div class="mb-3">
+                  <label for="Descripcion" class="form-label fs-14 text-dark">
+                    Descripción<span class="required">*</span>
+                  </label>
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-text-wrap"></i>
+                    </div>
+                    <input
+                      type="text"
+                      id="Descripcion"
+                      class="form-control"
+                      v-model="clasificacionSeleccionada.Descripcion"
+                      placeholder="Ingrese descripción"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="errores.Descripcion"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ errores.Descripcion }}
+                  </div>
                 </div>
               </div>
 
@@ -173,8 +187,8 @@ const isEditMode = ref(false);
 
 // Datos de la clasificación seleccionada
 const clasificacionSeleccionada = ref({
-  id: null,
-  nombre: "",
+  ClasificacionDiagnosticoId: null,
+  Descripcion: "",
 });
 
 // Errores del formulario
@@ -206,8 +220,8 @@ const abrirDialogoNuevaClasificacion = () => {
 // Abrir el formulario de edición con los datos de la clasificación seleccionada
 const abrirFormularioEdicion = (e) => {
   const data = e.row.data;
-  console.log("Abrir edición con datos:", data); // Log para depuración
-  if (!data || !data.id) {
+  console.log("Abrir edición con datos:", data);
+  if (!data || !data.ClasificacionDiagnosticoId) {
     Notify.create({
       type: "negative",
       message: "Error al abrir el modal: la clasificación no tiene ID.",
@@ -222,15 +236,14 @@ const abrirFormularioEdicion = (e) => {
 
 // Guardar los cambios del formulario (agregar o actualizar)
 const guardarCambios = async () => {
-  const id = clasificacionSeleccionada.value.id;
-  const nombre = clasificacionSeleccionada.value.nombre.trim();
+  const id = clasificacionSeleccionada.value.ClasificacionDiagnosticoId;
+  const Descripcion = clasificacionSeleccionada.value.Descripcion.trim();
 
-  // Resetear errores
   errores.value = {};
 
-  // Validar campos requeridos
-  if (!nombre) {
-    errores.value.nombre = "El nombre de la clasificación es obligatorio.";
+  if (!Descripcion) {
+    errores.value.Descripcion =
+      " Descripcion de la clasificación es obligatorio.";
     Notify.create({
       message: "Por favor, corrige los errores en el formulario.",
       color: "negative",
@@ -241,24 +254,22 @@ const guardarCambios = async () => {
 
   try {
     if (isEditMode.value) {
-      // Actualizar clasificación
-      await clasificacionStore.actualizarClasificacion(id, { nombre });
+      await clasificacionStore.actualizarClasificacion(id, {
+        Descripcion: Descripcion,
+      });
       Notify.create({
         type: "positive",
         message: "Clasificación actualizada con éxito",
         position: "top-right",
       });
     } else {
-      // Agregar nueva clasificación
-      await clasificacionStore.agregarClasificacion(nombre);
+      await clasificacionStore.agregarClasificacion(Descripcion);
       Notify.create({
         type: "positive",
         message: "Clasificación agregada con éxito",
         position: "top-right",
       });
     }
-
-    // Recargar clasificaciones y cerrar el modal
     await cargarClasificaciones();
     cerrarDialogo();
   } catch (error) {
@@ -280,8 +291,8 @@ const cerrarDialogo = () => {
 // Resetear el formulario
 const resetFormulario = () => {
   clasificacionSeleccionada.value = {
-    id: null,
-    nombre: "",
+    ClasificacionDiagnosticoId: null,
+    Descripcion: "",
   };
   errores.value = {};
 };
@@ -290,7 +301,7 @@ const resetFormulario = () => {
 const eliminarClasificacion = async (e) => {
   const data = e.row.data;
   console.log("Eliminar clasificación con datos:", data); // Log para depuración
-  if (!data || !data.id) {
+  if (!data || !data.ClasificacionDiagnosticoId) {
     Notify.create({
       type: "negative",
       message: "Error al eliminar: la clasificación no tiene ID.",
@@ -300,7 +311,9 @@ const eliminarClasificacion = async (e) => {
   }
 
   try {
-    await clasificacionStore.eliminarClasificacion(data.id);
+    await clasificacionStore.eliminarClasificacion(
+      data.ClasificacionDiagnosticoId
+    );
     Notify.create({
       type: "positive",
       message: "Clasificación eliminada con éxito",
@@ -336,7 +349,7 @@ onMounted(cargarClasificaciones);
   width: 100%;
   margin: auto;
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 

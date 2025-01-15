@@ -26,15 +26,14 @@
 
               <!-- Información del Médico -->
               <div class="col-md-6 mb-4">
-                <h5>Dr(a). {{ doctorData.nombreCompleto }}</h5>
-
+                <h5>Dr(a). {{ doctorData?.nombreCompleto }}</h5>
                 <p>
                   <i class="ri-phone-line"></i>
-                  {{ doctorData.telefono }}
+                  {{ doctorData?.telefono }}
                 </p>
-                <p v-if="doctorData.direccion">
+                <p v-if="doctorData?.direccion">
                   <i class="ri-map-pin-line"></i>
-                  {{ doctorData.direccion }}
+                  {{ doctorData?.direccion }}
                 </p>
               </div>
             </div>
@@ -43,7 +42,6 @@
             <form @submit.prevent="handleSubmit">
               <!-- Campo de Identificación (DNI) -->
               <div class="row">
-                <!-- Campo de Identificación (DNI) -->
                 <div class="col-md-6 mb-3">
                   <label for="identificacion" class="form-label">
                     Identificación<span class="required">*</span>
@@ -87,7 +85,6 @@
                       required
                     />
                   </div>
-                  <!-- Opcional: Mensaje de error para Nombre del Paciente -->
                   <div
                     v-if="errors.patientNameUI"
                     class="text-danger fs-13 mt-1"
@@ -218,53 +215,52 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { supabase } from "../supabaseClient";
-import { useFichaIdentificacionStore } from "../stores/fichaIdentificacionStores";
+import { useDirPacientesStore } from "../stores/fichaIdentificacionStores";
 import { storeToRefs } from "pinia";
-import { useOrganizacionStore } from "../stores/organizacionStore";
 import { useCrearUsuariosStore } from "../stores/crearUsuarios";
 import { useAuthStore } from "../stores/auth";
 import { Notify } from "quasar";
 
 const route = useRoute();
+// ID del médico (vía parámetro en la URL)
 const doctorId = ref(route.params.userId);
 
-// Store de fichaIdentificacion
-const fichaIdentificacionStore = useFichaIdentificacionStore();
-// Asegúrate de que 'buscarPacientePorDni' en tu store realice la consulta eq("dni", dni)
-const { buscarPacientePorDni } = fichaIdentificacionStore;
+// ------------------------------
+// Store de FichaIdentificacion
+// ------------------------------
+const dirPacientesStore = useDirPacientesStore();
+const { buscarPacientePorDni } = dirPacientesStore;
 
-// Store de organización
-const organizacionStore = useOrganizacionStore();
-const { cargarHorariosAtencion } = organizacionStore;
+// ------------------------------
+// Store de crearUsuarios (Horarios)
+// ------------------------------
 const crearUsuariosStore = useCrearUsuariosStore();
 const { users, loading, error, horariosAtencion, permitirSuperposicion } =
   storeToRefs(crearUsuariosStore);
+
+// ------------------------------
 // Store de autenticación
+// ------------------------------
 const authStore = useAuthStore();
 const { tenant_id, user } = storeToRefs(authStore);
 
-// Datos del médico
+// ------------------------------
+// Datos del médico y org
+// ------------------------------
 const doctorData = ref(null);
 const organization = ref(null);
 
-// const loading = ref(true);
+// Flags y estados
 const success = ref(false);
 const errorMsg = ref("");
+// El "loading" ya está referenciado desde la store (crearUsuariosStore)
 
-const dayOfWeekNames = [
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-  "Domingo",
-];
-
+// Para formatear horas
 const formatTime = (time) => {
   try {
     const [hour, minute] = time.split(":").map(Number);
@@ -276,21 +272,20 @@ const formatTime = (time) => {
   }
 };
 
-/**
- * form.patientName => Guardar el ID del paciente (para la BD en la columna 'nombre')
- * form.patientNameUI => Mostrar en el input el nombre real del paciente.
- */
+// ------------------------------
+// form: datos de la nueva cita
+// ------------------------------
 const form = ref({
-  identificacion: "",
-  patientName: "", // ID del paciente
-  patientNameUI: "", // Nombre real
+  identificacion: "", // PacienteIdentificacion
+  patientName: "", // ID del paciente (columna PacienteNombreId)
+  patientNameUI: "", // Nombre real del paciente (no se guarda en BD)
   date: "",
   time: "",
   description: "",
   phone: "",
 });
 
-// Errores
+// Errores del formulario
 const errors = ref({
   identificacion: "",
   date: "",
@@ -299,20 +294,39 @@ const errors = ref({
 });
 
 const endTime = ref("");
-// Horarios disponibles
 const availableTimes = ref([]);
 
-// --- VALIDACIONES ---
-const validateIdentificacion = () => {
-  const id = form.value.identificacion;
-  if (!id) {
-    errors.value.identificacion = "Identificación es requerida";
-  } else if (!/^\d{8,20}$/.test(id)) {
-    errors.value.identificacion = "Identificación inválida (8 a 20 dígitos)";
-  } else {
-    errors.value.identificacion = "";
-  }
-};
+// ------------------------------
+// Validaciones
+// ------------------------------
+// const validateIdentificacion = () => {
+//   const id = form.value.identificacion;
+//   if (!id) {
+//     errors.value.identificacion = "Identificación es requerida";
+//     return;
+//   }
+
+//   const patrones = [
+//     /^\d{4}\d{4}\d{5}$/,
+//     /^(\d{1,3}\.){3}\d{1,3}$/,
+//     /^[A-Z]\d{8}$/,
+//     /^[XYZ]\d{7}[A-Z]$/,
+//     /^[A-Z]{3}\d{10}$/,
+//     /^\d{3}-\d{2}-\d{4}$/,
+//     /^STU\d{9}$/,
+//     /^CID-\d{9}$/,
+//   ];
+
+//   // Verificar si el ID coincide con alguno de los patrones
+//   const esValido = patrones.some((patron) => patron.test(id));
+
+//   if (!esValido) {
+//     errors.value.identificacion =
+//       "Identificación inválida según los formatos permitidos";
+//   } else {
+//     errors.value.identificacion = "";
+//   }
+// };
 
 const validateDate = () => {
   const date = form.value.date;
@@ -329,6 +343,7 @@ const validateDate = () => {
     }
   }
 };
+
 const validateTime = () => {
   const time = form.value.time;
   if (!time) {
@@ -337,6 +352,7 @@ const validateTime = () => {
     errors.value.time = "";
   }
 };
+
 const validatePhone = () => {
   const phone = form.value.phone;
   const phoneRegex = /^\+?\d{7,15}$/;
@@ -347,11 +363,6 @@ const validatePhone = () => {
   }
 };
 
-/**
- * Buscar Paciente por DNI.
- * - Si se encuentra, llenamos form.patientName (ID), form.patientNameUI (nombres) .
- * - Si no se encuentra, reseteamos campos.
- */
 async function buscarPaciente(dni) {
   if (!dni) {
     console.log("[buscarPaciente] DNI está vacío, no se busca");
@@ -369,10 +380,10 @@ async function buscarPaciente(dni) {
     console.log("[buscarPaciente] Resultado de la store:", paciente);
 
     if (paciente) {
-      form.value.patientName = paciente.id || "";
-      form.value.patientNameUI = paciente.nombres || "";
+      form.value.patientName = paciente.PacienteId || "";
+      form.value.patientNameUI = paciente.Nombre || "";
       console.log(
-        `[buscarPaciente] Paciente encontrado => ID: ${paciente.id}, Nombres: ${paciente.nombres}`
+        `[buscarPaciente] Paciente encontrado => ID: ${paciente.PacienteId}, Nombres: ${paciente.Nombre}`
       );
     } else {
       console.log(`[buscarPaciente] No se encontró paciente con DNI => ${dni}`);
@@ -387,33 +398,28 @@ async function buscarPaciente(dni) {
   }
 }
 
-// --- DEBOUNCE al ingresar DNI ---
+// Debounce para el DNI
 let lookupTimeout;
 watch(
   () => form.value.identificacion,
   (newDni) => {
-    // Log para ver cada cambio del DNI
-    console.log(`[watch identificacion] newDni => ${newDni}`);
-
     clearTimeout(lookupTimeout);
-    validateIdentificacion();
+    // validateIdentificacion();
 
     if (/^\d{8,20}$/.test(newDni)) {
       lookupTimeout = setTimeout(() => {
-        console.log("[watch identificacion] Llamando buscarPaciente...");
         buscarPaciente(newDni);
       }, 500);
     } else {
-      console.log(
-        "[watch identificacion] DNI inválido o vacío, reseteando campos"
-      );
       form.value.patientName = "";
       form.value.patientNameUI = "";
     }
   }
 );
 
-// --- Cargar datos del médico ---
+// ------------------------------
+// Cargar datos del médico
+// ------------------------------
 async function fetchDoctorData() {
   if (!doctorId.value) {
     doctorData.value = null;
@@ -437,7 +443,9 @@ async function fetchDoctorData() {
   }
 }
 
-// --- Cargar datos de la organización ---
+// ------------------------------
+// Cargar datos de la organización
+// ------------------------------
 async function fetchOrganizationInfo() {
   if (!tenant_id.value) {
     organization.value = null;
@@ -474,12 +482,9 @@ async function fetchOrganizationInfo() {
   }
 }
 
-// --- Funciones de horarios ---
-function getDayOfWeek(dateStr) {
-  const date = new Date(dateStr);
-  return date.getDay(); // 0: Domingo, 1: Lunes, etc.
-}
-
+// ------------------------------
+// Generar horarios disponibles
+// ------------------------------
 function generateAvailableTimes(horaInicio, horaFin, intervaloMin) {
   const times = [];
   const [startHour, startMinute] = horaInicio.split(":").map(Number);
@@ -500,25 +505,19 @@ function generateAvailableTimes(horaInicio, horaFin, intervaloMin) {
   return times;
 }
 
+// ------------------------------
+// Obtener horas ocupadas y filtrar
+// ------------------------------
 const allTimes = ref([]);
 async function fetchOccupiedTimes() {
-  console.log("Iniciando fetchOccupiedTimes");
-
-  // Validar que la fecha y el doctorId estén definidos
   if (!form.value.date || !doctorId.value) {
-    console.log(
-      "Fecha o doctorId no definidos:",
-      form.value.date,
-      doctorId.value
-    );
     availableTimes.value = [];
     return;
   }
 
   const selectedDate = form.value.date;
-  console.log("Fecha seleccionada:", selectedDate);
 
-  // Obtener la primera configuración de horarios disponible
+  // Obtenemos la primera configuración de horarios
   const primeraConfiguracion = horariosAtencion.value[0];
   if (!primeraConfiguracion) {
     console.error("No se encontraron configuraciones de horarios.");
@@ -529,39 +528,32 @@ async function fetchOccupiedTimes() {
 
   const { hora_inicio, hora_fin, intervalo_min, autoSuperPosicion } =
     primeraConfiguracion;
-  console.log("Configuración obtenida:", hora_inicio, hora_fin, intervalo_min);
 
-  // Actualizar la variable permitirSuperposicion desde la configuración
   permitirSuperposicion.value = autoSuperPosicion;
 
-  // Generar todos los tiempos disponibles según la configuración dinámica
+  // Generar todas las horas posibles
   allTimes.value = generateAvailableTimes(hora_inicio, hora_fin, intervalo_min);
-  console.log("Todos los tiempos generados:", allTimes.value);
 
-  // Si no se permite superposición, asignar todos los tiempos disponibles sin filtrado
-  console.log("permitirSuperposicion:", permitirSuperposicion.value);
+  // Si se permite superposición, no filtramos
   if (permitirSuperposicion.value) {
-    console.log("Superposición no permitida, no se filtrarán horas ocupadas.");
     availableTimes.value = allTimes.value;
     errorMsg.value = "";
-    console.log("Horas disponibles:", availableTimes.value);
     return;
   }
 
-  // Preparar rango de fechas para consultar citas en Supabase
+  // Caso: sin superposición => Filtrar horas ocupadas
   const nextDate = new Date(selectedDate);
   nextDate.setDate(nextDate.getDate() + 1);
   const nextDateStr = nextDate.toISOString().split("T")[0];
-  console.log("Próxima fecha:", nextDateStr);
 
-  // Consultar citas existentes en la base de datos para el doctor en la fecha seleccionada
+  // Importante: ahora usamos CitaFechaInicio en lugar de startDate
   const { data, error } = await supabase
     .from("appointments")
-    .select("startDate")
-    .eq("userId", doctorId.value)
+    .select("CitaFechaInicio")
+    .eq("UsuarioMedicoId", doctorId.value)
     .eq("tenant_id", tenant_id.value)
-    .gte("startDate", `${selectedDate}T00:00:00`)
-    .lt("startDate", `${nextDateStr}T00:00:00`);
+    .gte("CitaFechaInicio", `${selectedDate}T00:00:00`)
+    .lt("CitaFechaInicio", `${nextDateStr}T00:00:00`);
 
   if (error) {
     console.error("Error al obtener citas existentes:", error);
@@ -569,22 +561,19 @@ async function fetchOccupiedTimes() {
     return;
   }
 
-  // Extraer las horas ocupadas de las citas existentes
+  // Extraer horas ocupadas
   const occupiedTimes = data.map((appt) => {
-    const date = new Date(appt.startDate);
+    const date = new Date(appt.CitaFechaInicio);
     const hh = String(date.getHours()).padStart(2, "0");
     const mm = String(date.getMinutes()).padStart(2, "0");
     return `${hh}:${mm}`;
   });
-  console.log("Horas ocupadas:", occupiedTimes);
 
-  // Filtrar las horas disponibles eliminando las que ya están ocupadas
+  // Filtramos
   availableTimes.value = allTimes.value.filter(
     (t) => !occupiedTimes.includes(t)
   );
-  console.log("Horas disponibles después del filtrado:", availableTimes.value);
 
-  // Actualizar mensaje de error si no hay horas disponibles
   if (availableTimes.value.length === 0) {
     errorMsg.value = "No hay horarios disponibles para la fecha seleccionada.";
   } else {
@@ -596,16 +585,19 @@ function calculateEndTime(startTime) {
   const [hour, minute] = startTime.split(":").map(Number);
   const startDate = new Date();
   startDate.setHours(hour, minute, 0, 0);
-  startDate.setMinutes(startDate.getMinutes() + 30); // 30 minutos extra
+  // Sumar 30 minutos (o intervalo) para el fin de la cita
+  startDate.setMinutes(startDate.getMinutes() + 30);
 
   const endHour = String(startDate.getHours()).padStart(2, "0");
   const endMinute = String(startDate.getMinutes()).padStart(2, "0");
   endTime.value = `${endHour}:${endMinute}`;
 }
 
-// --- Manejo del Submit ---
+// ------------------------------
+// Manejo del submit (INSERT)
+// ------------------------------
 async function handleSubmit() {
-  validateIdentificacion();
+  // validateIdentificacion();
   validateDate();
   validateTime();
   validatePhone();
@@ -624,7 +616,7 @@ async function handleSubmit() {
     return;
   }
 
-  // En lugar de buscar el horario por día, obtenemos la primera configuración disponible.
+  // Obtenemos la primera configuración de horarios
   const primeraConfiguracion = horariosAtencion.value[0];
   if (!primeraConfiguracion) {
     errorMsg.value = "No se encontraron configuraciones de horarios.";
@@ -633,26 +625,34 @@ async function handleSubmit() {
   const { intervalo_min } = primeraConfiguracion;
 
   const startDateStr = `${form.value.date}T${form.value.time}:00`;
-  const endDate = new Date(`${form.value.date}T${form.value.time}:00`);
+  const endDate = new Date(startDateStr);
   endDate.setMinutes(endDate.getMinutes() + intervalo_min);
-
   const endDateStr = endDate.toISOString().slice(0, 19);
 
+  // NOTA: Aquí cambiamos a las columnas nuevas:
   const newAppointment = {
-    title: `AutoCita con: ${form.value?.patientNameUI}`,
-    startDate: startDateStr,
-    endDate: endDateStr,
-    allDay: false,
-    repeat: false,
-    description: form.value.description,
-    nombre: form.value.patientName, // Guardamos en 'nombre' el ID del paciente
-    tipoCita: "Consulta",
-    userId: doctorId.value,
+    CitaTitulo: `AutoCita con: ${form.value?.patientNameUI}`,
+    // Ahora usamos CitaFechaInicio y CitaFechaFinal
+    CitaFechaInicio: startDateStr,
+    CitaFechaFinal: endDateStr,
+    // Y CitaTodoElDia, CitaRepetir
+    CitaTodoElDia: false,
+    CitaRepetir: false,
+
+    CitaDescripcion: form.value.description,
+    PacienteNombreId: form.value.patientName, //No guarda el nombre en el campo del id
+
+    // PacienteNombreId: form.value.patientName || form.value.patientNameUI,
+
+    UsuarioMedicoId: doctorId.value,
     tenant_id: tenant_id.value,
-    patientphone: form.value.phone,
-    identificacion: form.value.identificacion,
-    status: "Pendiente",
-    autoCita: true,
+    userId: user.value?.id || "",
+    PacienteTel: form.value.phone,
+    // PacienteIdentificacion
+    PacienteIdentificacion: form.value.identificacion,
+    // Cambiamos a CitaStatus
+    CitaStatus: "Pendiente",
+    AutoCita: true,
   };
 
   try {
@@ -696,7 +696,9 @@ async function handleSubmit() {
   }
 }
 
-// --- WATCHERS de date, time,  etc. ---
+// ------------------------------
+// WATCHERS de date / time / route
+// ------------------------------
 watch(
   () => form.value.date,
   async () => {
@@ -724,7 +726,6 @@ watch(
   }
 );
 
-// --- Cambios en la ruta (doctorId) ---
 watch(
   () => route.params.userId,
   async (newDoctorId) => {
@@ -733,6 +734,9 @@ watch(
   }
 );
 
+// ------------------------------
+// Recarga de datos general
+// ------------------------------
 async function reloadData() {
   form.value = {
     identificacion: "",
@@ -757,33 +761,27 @@ async function reloadData() {
   await fetchOrganizationInfo();
   await fetchDoctorData();
   await crearUsuariosStore.cargarConfiguraciones();
-  await fichaIdentificacionStore.cargarDatosPorDoctor(
-    tenant_id.value,
-    doctorId.value
-  );
-  await cargarConfiguraciones(tenant_id.value);
-  loading.value = false;
+  await dirPacientesStore.cargarDatosPorDoctor(tenant_id.value, doctorId.value);
 
+  loading.value = false;
   // Asignar fecha de hoy
   const today = new Date().toISOString().split("T")[0];
   form.value.date = today;
   await fetchOccupiedTimes();
 }
 
-// --- onMounted ---
+// ------------------------------
+// onMounted
+// ------------------------------
 onMounted(async () => {
   await fetchOrganizationInfo();
   await fetchDoctorData();
   await crearUsuariosStore.cargarConfiguraciones();
 
-  await fichaIdentificacionStore.cargarDatosPorDoctor(
-    tenant_id.value,
-    doctorId.value
-  );
-  console.log("PACIENTES SUPERPOSICION : ", permitirSuperposicion.value);
-  // await cargarConfiguraciones(tenant_id.value);
+  await dirPacientesStore.cargarDatosPorDoctor(tenant_id.value, doctorId.value);
 
   loading.value = false;
+  // Asignar fecha de hoy
   const today = new Date().toISOString().split("T")[0];
   form.value.date = today;
   await fetchOccupiedTimes();

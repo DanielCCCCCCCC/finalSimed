@@ -36,7 +36,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
 
     appointments.value.forEach((appt) => {
-      const date = new Date(appt.startDate);
+      const date = new Date(appt.CitaFechaInicio);
       if (
         date.getMonth() === currentMonth &&
         date.getFullYear() === currentYear
@@ -64,7 +64,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     const startCurrentMonth = new Date(currentYear, currentMonth, 1);
 
     const currentMonthAppointments = appointments.value.filter((appt) => {
-      const apptDate = new Date(appt.startDate);
+      const apptDate = new Date(appt.CitaFechaInicio);
       return apptDate >= startCurrentMonth && apptDate <= now;
     });
     const currentMonthCount = currentMonthAppointments.length;
@@ -79,7 +79,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     const endPrevMonth = new Date(prevYear, prevMonth + 1, 0);
 
     const prevMonthAppointments = appointments.value.filter((appt) => {
-      const apptDate = new Date(appt.startDate);
+      const apptDate = new Date(appt.CitaFechaInicio);
       return apptDate >= startPrevMonth && apptDate <= endPrevMonth;
     });
     const prevMonthCount = prevMonthAppointments.length;
@@ -123,7 +123,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
           `[fetchAppointments] Consultando citas para userId: ${userId}`
         );
         const { data, error: fetchError } = await supabase
-          .from("appointments")
+          .from("Appointments")
           .select("*")
           .eq("userId", userId);
 
@@ -204,7 +204,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         };
 
         const { data, error: insertError } = await supabase
-          .from("appointments")
+          .from("Appointments")
           .insert([appointmentWithUser])
           .select();
 
@@ -255,7 +255,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         const { data, error: updateError } = await supabase
-          .from("appointments")
+          .from("Appointments")
           .update(updates)
           .eq("id", id)
           .eq("userId", userId);
@@ -311,7 +311,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         const { error: deleteError } = await supabase
-          .from("appointments")
+          .from("Appointments")
           .delete()
           .eq("id", id)
           .eq("userId", userId);
@@ -336,7 +336,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   };
 
   /**
-   * Trae solo las citas con autoCita=true (ejemplo).
+   * Trae solo las citas con AutoCita=true (ejemplo).
    */
   const pendingAppointmentsCount = ref(0);
 
@@ -356,10 +356,10 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         const { data, error: fetchError } = await supabase
-          .from("appointments")
+          .from("Appointments")
           .select("*")
           .eq("userId", userId)
-          .eq("autoCita", true);
+          .eq("AutoCita", true);
 
         if (fetchError) {
           console.error("[fetchAutoAppointments] Error:", fetchError);
@@ -368,7 +368,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         } else {
           appointments.value = data || [];
           pendingAppointmentsCount.value = appointments.value.filter(
-            (a) => a.status === "Pendiente"
+            (a) => a.CitaStatus === "Pendiente"
           ).length;
           resolve(data);
         }
@@ -385,11 +385,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   // ------------------------
   // Notificaciones por WhatsApp (ejemplo)
   // ------------------------
-  async function sendWhatsAppNotification(appointmentId, status) {
+  async function sendWhatsAppNotification(appointmentId, CitaStatus) {
     try {
       const { data, error } = await supabase
-        .from("appointments")
-        .select("patientphone, title, startDate, nombre")
+        .from("Appointments")
+        .select("PacienteTel, CitaTitulo, CitaFechaInicio, PacienteNombreId")
         .eq("id", appointmentId)
         .single();
       if (error || !data) {
@@ -397,14 +397,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         return;
       }
 
-      const { patientphone, title, startDate, nombre } = data;
+      const { PacienteTel, CitaTitulo, CitaFechaInicio, PacienteNombreId } =
+        data;
 
       const response = await fetch("http://localhost:9000/sendwhatsapp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: patientphone,
-          message: `Hola, la cita "${title}" para ${nombre} a las ${startDate} ha sido ${status}.`,
+          to: PacienteTel,
+          message: `Hola, la cita "${CitaTitulo}" para ${PacienteNombreId} a las ${CitaFechaInicio} ha sido ${CitaStatus}.`,
         }),
       });
       const result = await response.json();
@@ -426,8 +427,8 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         const { error: updateError } = await supabase
-          .from("appointments")
-          .update({ status: "Aceptada" })
+          .from("Appointments")
+          .update({ CitaStatus: "Aceptada" })
           .eq("id", id)
           .eq("userId", userId);
 
@@ -436,7 +437,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         await sendWhatsAppNotification(id, "APROBADA");
-        await fetchAutoAppointments(); // refresca las citas autoCita
+        await fetchAutoAppointments(); // refresca las citas AutoCita
         resolve();
       } catch (err) {
         error.value = err.message;
@@ -459,8 +460,8 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         const { error: updateError } = await supabase
-          .from("appointments")
-          .update({ status: "Rechazada" })
+          .from("Appointments")
+          .update({ CitaStatus: "Rechazada" })
           .eq("id", id)
           .eq("userId", userId);
 
@@ -481,11 +482,14 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   };
 
   // ------------------------
-  // Últimas 8 citas autoCita
+  // Últimas 8 citas AutoCita
   // ------------------------
   const last8AutoAppointments = ref([]);
 
-  const fetchLast8AutoAppointmentsByStatus = (status = "Todas", limit = 8) => {
+  const fetchLast8AutoAppointmentsByCitaStatus = (
+    CitaStatus = "Todas",
+    limit = 8
+  ) => {
     loading.value = true;
     error.value = null;
 
@@ -500,15 +504,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
 
         let query = supabase
-          .from("appointments")
+          .from("Appointments")
           .select("*")
-          .eq("autoCita", true)
+          .eq("AutoCita", true)
           .eq("userId", userId)
           .order("created_at", { ascending: false })
           .limit(limit);
 
-        if (status !== "Todas") {
-          query = query.eq("status", status);
+        if (CitaStatus !== "Todas") {
+          query = query.eq("CitaStatus", CitaStatus);
         }
 
         const { data, error: fetchError } = await query;
@@ -563,7 +567,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     // Métodos de carga
     fetchAppointments,
     fetchAutoAppointments,
-    fetchLast8AutoAppointmentsByStatus,
+    fetchLast8AutoAppointmentsByCitaStatus,
 
     // CRUD
     addAppointment,

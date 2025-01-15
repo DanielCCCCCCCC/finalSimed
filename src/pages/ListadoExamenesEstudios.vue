@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center espaciadoLateral q-py-md">
-    <div id="app-container" class="q-mb-xl q-px-xl q-pa-xs">
+    <div id="app-container" class="container-fluid p-3 q-mb-xl q-px-xl q-pa-xs">
       <!-- Encabezado y botón para agregar nuevo estudio -->
       <div class="q-pb-md">
         <div class="row items-center">
@@ -29,7 +29,7 @@
         :column-resizing-mode="'widget'"
         :row-alternation-enabled="true"
         :show-borders="true"
-        key-expr="id"
+        key-expr="EstudioId"
         class="custom-data-grid"
       >
         <DxPaging :enabled="true" :page-size="10" />
@@ -49,32 +49,29 @@
           placeholder="Buscar Estudio"
         />
 
-        <!-- Columnas -->
-        <DxColumn data-field="codigo" caption="Código" width="100px">
+        <DxColumn data-field="Codigo" caption="Código" width="100px">
           <DxRequiredRule />
         </DxColumn>
-        <DxColumn data-field="descripcion" caption="Descripción">
+        <DxColumn data-field="Descripcion" caption="Descripción">
           <DxRequiredRule />
         </DxColumn>
-        <!-- Columna con lookup para mostrar descripción del tipo -->
-        <DxColumn data-field="tipoDescripcion" caption="Tipo">
+        <DxColumn data-field="TipoDescripcion" caption="Tipo">
           <DxRequiredRule />
         </DxColumn>
-        <DxColumn data-field="indicaciones" caption="Indicaciones" />
-        <DxColumn data-field="precioCosto" caption="Precio Costo" width="120px">
+        <DxColumn data-field="Indicaciones" caption="Indicaciones" />
+        <DxColumn data-field="PrecioCosto" caption="Precio Costo" width="120px">
           <template #cell-template="{ data }">
             <span>LPS {{ data.value.toFixed(2) }}</span>
           </template>
         </DxColumn>
 
-        <DxColumn data-field="precioVenta" caption="Precio Venta" width="120px">
+        <DxColumn data-field="PrecioVenta" caption="Precio Venta" width="120px">
           <template #cell-template="{ data }">
             <span>LPS {{ data.value.toFixed(2) }}</span>
           </template>
         </DxColumn>
-        <!-- Columna con lookup para mostrar descripción del status -->
-        <DxColumn data-field="facturar" caption="facturar" />
-        <DxColumn data-field="statusDescripcion" caption="Status" />
+        <DxColumn data-field="Facturar" caption="facturar" />
+        <DxColumn data-field="StatusDescripcion" caption="Status" />
 
         <DxEditing
           mode="popup"
@@ -105,7 +102,6 @@
         </DxColumn>
       </DxDataGrid>
 
-      <!-- Diálogo Modal para Agregar/Editar Estudio -->
       <q-dialog v-model="dialogoEstudio" persistent max-width="600px">
         <q-card class="form-card shadow-2 rounded-borders">
           <q-card-section>
@@ -113,130 +109,230 @@
               <h2 class="text-h4 text-primary">
                 {{ isEditMode ? "Editar Estudio" : "Agregar Estudio" }}
               </h2>
-              <q-btn
-                label="Cerrar"
-                color="secondary"
-                icon="close"
-                flat
+              <button
+                type="button"
+                class="btn btn-secondary btnCerrarModal"
                 @click="cerrarDialogo"
-                class="btnCerrarModal"
-              />
+              >
+                <i class="ri-close-line"></i> Cerrar
+              </button>
             </div>
 
-            <q-form @submit.prevent="guardarEstudio">
+            <!-- Reemplazamos q-form con un formulario HTML básico -->
+            <form @submit.prevent="guardarEstudio">
               <div class="row q-col-gutter-sm">
+                <!-- Campo Código -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="formData.codigo"
-                    label="Código"
-                    outlined
-                    dense
-                    :disable="isEditMode"
-                    :error="!!formErrors.codigo"
-                    :error-message="formErrors.codigo"
-                    required
-                  />
+                  <label for="codigo" class="form-label fs-14 text-dark"
+                    >Código<span class="required">*</span></label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-hashtag"></i>
+                    </div>
+                    <input
+                      type="text"
+                      id="codigo"
+                      class="form-control"
+                      v-model="formData.Codigo"
+                      placeholder="Código del Estudio"
+                      :disabled="isEditMode"
+                      required
+                    />
+                  </div>
+                  <div v-if="formErrors.Codigo" class="text-danger fs-13 mt-1">
+                    {{ formErrors.Codigo }}
+                  </div>
                 </div>
 
+                <!-- Campo Descripción -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="formData.descripcion"
-                    label="Descripción"
-                    outlined
-                    dense
-                    :error="!!formErrors.descripcion"
-                    :error-message="formErrors.descripcion"
-                    required
-                  />
+                  <label for="descripcion" class="form-label fs-14 text-dark"
+                    >Descripción<span class="required">*</span></label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-text-wrap"></i>
+                    </div>
+                    <input
+                      type="text"
+                      id="Descripcion"
+                      class="form-control"
+                      v-model="formData.Descripcion"
+                      placeholder="Descripción del Estudio"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="formErrors.Descripcion"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ formErrors.Descripcion }}
+                  </div>
                 </div>
 
+                <!-- Campo Tipo de Estudio -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-select
-                    v-model="formData.tipoId"
-                    :options="tiposEstudios"
-                    option-value="id"
-                    option-label="descripcion"
-                    label="Tipo de Estudio"
-                    outlined
-                    dense
-                    :error="!!formErrors.tipoId"
-                    :error-message="formErrors.tipoId"
-                    required
-                    emit-value
-                    map-options
-                  />
+                  <label for="tipoEstudio" class="form-label fs-14 text-dark"
+                    >Tipo de Estudio<span class="required">*</span></label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-list-check"></i>
+                    </div>
+                    <select
+                      id="tipoEstudio"
+                      class="form-select"
+                      v-model="formData.TipoEstudioId"
+                      required
+                    >
+                      <option disabled value="">
+                        Seleccione un tipo de estudio
+                      </option>
+                      <option
+                        v-for="tipo in TipoEstudios"
+                        :key="tipo.TipoEstudioId"
+                        :value="tipo.TipoEstudioId"
+                      >
+                        {{ tipo.Descripcion }}
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    v-if="formErrors.TipoEstudioId"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ formErrors.TipoEstudioId }}
+                  </div>
                 </div>
 
+                <!-- Campo Indicaciones -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="formData.indicaciones"
-                    label="Indicaciones"
-                    type="textarea"
-                    outlined
-                    dense
-                  />
+                  <label for="indicaciones" class="form-label fs-14 text-dark"
+                    >Indicaciones</label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-file-text-line"></i>
+                    </div>
+                    <textarea
+                      id="Indicaciones"
+                      class="form-control"
+                      v-model="formData.Indicaciones"
+                      placeholder="Ingrese las indicaciones"
+                      rows="3"
+                    ></textarea>
+                  </div>
                 </div>
 
+                <!-- Campo Precio Costo -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="formData.precioCosto"
-                    label="Precio Costo"
-                    type="number"
-                    outlined
-                    dense
-                    :error="!!formErrors.precioCosto"
-                    :error-message="formErrors.precioCosto"
-                    required
-                  />
+                  <label for="precioCosto" class="form-label fs-14 text-dark"
+                    >Precio Costo<span class="required">*</span></label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-price-tag-3-line"></i>
+                    </div>
+                    <input
+                      type="number"
+                      id="precioCosto"
+                      class="form-control"
+                      v-model="formData.PrecioCosto"
+                      placeholder="Precio Costo"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="formErrors.PrecioCosto"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ formErrors.PrecioCosto }}
+                  </div>
                 </div>
 
+                <!-- Campo Precio Venta -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-input
-                    v-model="formData.precioVenta"
-                    label="Precio Venta"
-                    type="number"
-                    outlined
-                    dense
-                    :error="!!formErrors.precioVenta"
-                    :error-message="formErrors.precioVenta"
-                    required
-                  />
+                  <label for="precioVenta" class="form-label fs-14 text-dark"
+                    >Precio Venta<span class="required">*</span></label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-price-tag-3-fill"></i>
+                    </div>
+                    <input
+                      type="number"
+                      id="PrecioVenta"
+                      class="form-control"
+                      v-model="formData.PrecioVenta"
+                      placeholder="Precio Venta"
+                      required
+                    />
+                  </div>
+                  <div
+                    v-if="formErrors.PrecioVenta"
+                    class="text-danger fs-13 mt-1"
+                  >
+                    {{ formErrors.PrecioVenta }}
+                  </div>
                 </div>
+
+                <!-- Checkbox Facturar -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-checkbox
-                    v-model="formData.facturar"
-                    label="Facturar"
-                    outlined
-                    class="w-10"
-                  />
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      id="Facturar"
+                      class="form-check-input"
+                      v-model="formData.Facturar"
+                    />
+                    <label for="facturar" class="form-check-label"
+                      >Facturar</label
+                    >
+                  </div>
                 </div>
+
+                <!-- Campo Status -->
                 <div class="col-12 col-md-6 mb-3">
-                  <q-select
-                    v-model="formData.status"
-                    :options="statusExamenEstudios"
-                    option-value="id"
-                    option-label="descripcion"
-                    label="Status"
-                    outlined
-                    dense
-                    :error="!!formErrors.status"
-                    :error-message="formErrors.status"
-                    emit-value
-                    map-options
-                  />
+                  <label for="status" class="form-label fs-14 text-dark"
+                    >Status</label
+                  >
+                  <div class="input-group">
+                    <div class="input-group-text">
+                      <i class="ri-information-line"></i>
+                    </div>
+                    <select
+                      id="StatusId"
+                      class="form-select"
+                      v-model="formData.Status"
+                      required
+                    >
+                      <option disabled value="">Seleccione un status</option>
+                      <option
+                        v-for="status in statusExamenEstudios"
+                        :key="status.StatusEstudioId"
+                        :value="status.StatusEstudioId"
+                      >
+                        {{ status.Descripcion }}
+                      </option>
+                    </select>
+                  </div>
+                  <div v-if="formErrors.Status" class="text-danger fs-13 mt-1">
+                    {{ formErrors.Status }}
+                  </div>
                 </div>
               </div>
 
               <div class="flex justify-center q-mt-sm">
-                <q-btn
-                  :label="isEditMode ? 'Actualizar Estudio' : 'Guardar Estudio'"
-                  color="primary"
+                <button
                   type="submit"
-                  class="btn-primary"
+                  class="btn btn-primary"
                   style="font-size: 14px; padding: 8px 16px"
-                />
+                >
+                  {{ isEditMode ? "Actualizar Estudio" : "Guardar Estudio" }}
+                </button>
               </div>
-            </q-form>
+            </form>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -274,7 +370,7 @@ const statusExamenEstudiosStore = useStatusExamenEstudiosStore();
 
 // Referencias a los datos de las tiendas
 const { estudios } = storeToRefs(estudioStore);
-const { estudios: tiposEstudios } = storeToRefs(tiposEstudiosStore); // Corregido
+const { TipoEstudios } = storeToRefs(tiposEstudiosStore); // Corregido
 const { statusExamenEstudios } = storeToRefs(statusExamenEstudiosStore);
 
 // Estado para el modal
@@ -284,14 +380,14 @@ const selectedEstudioId = ref(null); // Cambiado a ref
 
 // Formulario de datos
 const formData = ref({
-  codigo: "",
-  descripcion: "",
-  tipoId: null,
-  indicaciones: "",
-  precioCosto: "",
-  precioVenta: "",
-  facturar: false,
-  status: null,
+  Codigo: "",
+  Descripcion: "",
+  TipoEstudioId: null,
+  Indicaciones: "",
+  PrecioCosto: "",
+  PrecioVenta: "",
+  Facturar: false,
+  Status: null,
 });
 
 // Errores del formulario
@@ -305,6 +401,8 @@ onMounted(async () => {
       tiposEstudiosStore.cargarEstudios(), // Asegurar que cargue tiposEstudios
       statusExamenEstudiosStore.cargarStatusExamenEstudios(),
     ]);
+    const estudios = ref([]);
+    console.log("Tipos de estudios: ", estudios.value);
   } catch (error) {
     console.error("Error al cargar datos:", error);
     Notify.create({
@@ -318,22 +416,25 @@ onMounted(async () => {
 // Computed para agregar descripciones a los estudios
 const estudiosConDetalles = computed(() => {
   console.log("estudios:", estudios.value);
-  console.log("tiposEstudios:", tiposEstudios.value);
+  console.log("tiposEstudios:", TipoEstudios.value);
   console.log("statusExamenEstudios:", statusExamenEstudios.value);
 
-  if (!estudios.value || !tiposEstudios.value || !statusExamenEstudios.value) {
+  if (!estudios.value || !TipoEstudios.value || !statusExamenEstudios.value) {
     return [];
   }
 
   return estudios.value.map((estudio) => {
-    const tipo = tiposEstudios.value.find((t) => t.id === estudio.tipoId);
-    const status = statusExamenEstudios.value.find(
-      (s) => s.id === estudio.status
+    const tipo = TipoEstudios.value.find(
+      (t) => t.TipoEstudioId === Number(estudio.TipoEstudioId)
     );
+    const status = statusExamenEstudios.value.find(
+      (s) => s.StatusEstudioId === estudio.StatusId
+    );
+    console.log("TIPO DESCRIPCION XD: ", tipo.Descripcion);
     return {
       ...estudio,
-      tipoDescripcion: tipo ? tipo.descripcion : "Tipo no encontrado",
-      statusDescripcion: status ? status.descripcion : "Status no encontrado",
+      TipoDescripcion: tipo ? tipo.Descripcion : "Tipo no encontrado",
+      StatusDescripcion: status ? status.Descripcion : "Status no encontrado",
     };
   });
 });
@@ -356,7 +457,7 @@ function resetFormulario() {
   formData.value = {
     codigo: "",
     descripcion: "",
-    tipoId: null,
+    TipoEstudioId: null,
     indicaciones: "",
     precioCosto: "",
     precioVenta: "",
@@ -374,14 +475,14 @@ function abrirFormularioEdicion(e) {
   isEditMode.value = true;
   selectedEstudioId.value = estudio.id; // Usar ref
   formData.value = {
-    codigo: estudio.codigo || "",
-    descripcion: estudio.descripcion || "",
-    tipoId: estudio.tipoId || null,
-    indicaciones: estudio.indicaciones || "",
-    precioCosto: estudio.precioCosto || "",
-    precioVenta: estudio.precioVenta || "",
-    facturar: estudio.facturar || false,
-    status: estudio.status || null,
+    Codigo: estudio.Codigo || "",
+    Descripcion: estudio.Descripcion || "",
+    TipoEstudioId: estudio.TipoEstudioId || null,
+    Indicaciones: estudio.Indicaciones || "",
+    PrecioCosto: estudio.PrecioCosto || "",
+    PrecioVenta: estudio.PrecioVenta || "",
+    Facturar: estudio.Facturar || false,
+    StatusId: estudio.StatusId || null,
   };
   dialogoEstudio.value = true;
 }
@@ -390,16 +491,16 @@ function abrirFormularioEdicion(e) {
 async function guardarEstudio() {
   // Validar campos requeridos
   formErrors.value = {};
-  if (!formData.value.codigo && !isEditMode.value)
-    formErrors.value.codigo = "El código es obligatorio.";
-  if (!formData.value.descripcion)
-    formErrors.value.descripcion = "La descripción es obligatoria.";
-  if (!formData.value.tipoId)
-    formErrors.value.tipoId = "El tipo es obligatorio.";
-  if (!formData.value.precioCosto)
-    formErrors.value.precioCosto = "El precio costo es obligatorio.";
-  if (!formData.value.precioVenta)
-    formErrors.value.precioVenta = "El precio venta es obligatorio.";
+  if (!formData.value.Codigo && !isEditMode.value)
+    formErrors.value.Codigo = "El código es obligatorio.";
+  if (!formData.value.Descripcion)
+    formErrors.value.Descripcion = "La descripción es obligatoria.";
+  if (!formData.value.TipoEstudioId)
+    formErrors.value.TipoEstudioId = "El tipo es obligatorio.";
+  if (!formData.value.PrecioCosto)
+    formErrors.value.PrecioCosto = "El precio costo es obligatorio.";
+  if (!formData.value.PrecioVenta)
+    formErrors.value.PrecioVenta = "El precio venta es obligatorio.";
 
   if (Object.keys(formErrors.value).length > 0) {
     Notify.create({
@@ -412,25 +513,25 @@ async function guardarEstudio() {
 
   try {
     const estudioData = {
-      codigo: formData.value.codigo,
-      descripcion: formData.value.descripcion,
-      tipoId: formData.value.tipoId, // bigint (ID)
-      indicaciones: formData.value.indicaciones,
-      precioCosto: formData.value.precioCosto,
-      precioVenta: formData.value.precioVenta,
-      facturar: formData.value.facturar,
-      status: formData.value.status, // bigint (ID)
+      Codigo: formData.value.Codigo,
+      Descripcion: formData.value.Descripcion,
+      TipoEstudioId: formData.value.TipoEstudioId, // bigint (ID)
+      Indicaciones: formData.value.Indicaciones,
+      PrecioCosto: formData.value.PrecioCosto,
+      PrecioVenta: formData.value.PrecioVenta,
+      Facturar: formData.value.Facturar,
+      StatusId: formData.value.Status, // bigint (ID)
     };
 
     // Verificar que tipoId y status son números
-    console.log("Tipo ID:", estudioData.tipoId);
-    console.log("Status ID:", estudioData.status);
+    // console.log("Tipo ID:", estudioData.tipoId);
+    // console.log("Status ID:", estudioData.status);
 
     if (isEditMode.value && selectedEstudioId.value) {
       console.log("Actualizando Estudio con ID:", selectedEstudioId.value);
       console.log("Datos para actualizar:", estudioData);
       await estudioStore.actualizarEstudio({
-        id: selectedEstudioId.value, // Usar 'id' en lugar de 'codigo'
+        EstudioId: selectedEstudioId.value,
         ...estudioData,
       });
       Notify.create({
@@ -463,7 +564,7 @@ async function guardarEstudio() {
 // Función para eliminar un estudio
 async function eliminarEstudio(e) {
   try {
-    const estudioId = e.row.data.id; // Usar 'id' en lugar de 'codigo'
+    const estudioId = e.row.data.EstudioId; // Usar 'id' en lugar de 'codigo'
     console.log("Eliminando Estudio con ID:", estudioId);
     await estudioStore.eliminarEstudio(estudioId);
     Notify.create({
@@ -491,6 +592,8 @@ async function eliminarEstudio(e) {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 93%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .form-card {
@@ -541,9 +644,9 @@ async function eliminarEstudio(e) {
   color: #1565c0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768) {
   .form-card {
-    max-width: 700px;
+    max-width: 576px;
   }
 }
 

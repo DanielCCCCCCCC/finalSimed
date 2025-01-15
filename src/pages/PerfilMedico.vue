@@ -223,7 +223,7 @@
                 <!-- DataGrid con eventos @editingStart y @rowRemoving -->
                 <DxDataGrid
                   :data-source="horariosAtencion"
-                  keyExpr="id"
+                  keyExpr="ConfiguracionesId"
                   show-borders
                   @editingStart="onEditingStart"
                   @rowRemoving="onRowRemoving"
@@ -392,7 +392,7 @@ const fullUrl = ref("");
 
 // Formulario del Horario
 const formHorario = reactive({
-  id: null,
+  ConfiguracionesId: null,
   dia_semana: "",
   hora_inicio: "",
   hora_fin: "",
@@ -462,7 +462,7 @@ function downloadQRCode() {
 /** Abrir Modal para Crear */
 function abrirModalcrearConfiguraciones() {
   esEditar.value = false;
-  formHorario.id = null;
+  formHorario.ConfiguracionesId = null;
   formHorario.hora_inicio = "";
   formHorario.hora_fin = "";
   formHorario.intervalo_min = 15;
@@ -572,8 +572,9 @@ async function actualizarHorario() {
   };
 
   try {
-    await crearUsuariosStore.actualizarHorarioAtencion(
-      formHorario.id,
+    console.log("EL id del horario es: ", formHorario.ConfiguracionesId);
+    await crearUsuariosStore.actualizarConfiguraciones(
+      formHorario.ConfiguracionesId,
       horarioActualizado
     );
     cerrarModalHorario();
@@ -603,7 +604,7 @@ function onEditingStart(e) {
 
   // Llenamos nuestro formHorario con los datos del row
   esEditar.value = true;
-  formHorario.id = e.data.id;
+  formHorario.ConfiguracionesId = e.data.ConfiguracionesId;
   formHorario.hora_inicio = e.data.hora_inicio;
   formHorario.hora_fin = e.data.hora_fin;
   formHorario.intervalo_min = e.data.intervalo_min;
@@ -630,7 +631,7 @@ function onRowRemoving(e) {
   })
     .onOk(async () => {
       try {
-        await crearUsuariosStore.eliminarHorarioAtencion(e.data.id);
+        await crearUsuariosStore.eliminarConfiguraciones(e.data.id);
         await crearUsuariosStore.cargarConfiguraciones(tenant_id.value);
         $q.notify({
           type: "positive",
